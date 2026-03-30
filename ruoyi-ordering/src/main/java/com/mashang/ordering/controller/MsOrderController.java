@@ -38,9 +38,18 @@ public class MsOrderController {
     @GetMapping("/homeList")
     public R<List<SysNotice>> homeList() {
         LambdaQueryWrapper<SysNotice> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(SysNotice::getStatus, 0)      // 关键：查状态为正常的
-                .orderByDesc(SysNotice::getCreateTime) // 按创建时间倒序
-                .last("LIMIT 5");                 // 只取前5条
+        wrapper.select(
+                        SysNotice::getNoticeId,
+                        SysNotice::getNoticeTitle,
+                        SysNotice::getNoticeContent,
+                        SysNotice::getNoticeType,
+                        SysNotice::getStatus,
+                        SysNotice::getCreateTime,
+                        SysNotice::getRemark
+                )
+                .eq(SysNotice::getStatus, "0")  // 正常公告
+                .orderByDesc(SysNotice::getCreateTime)
+                .last("LIMIT 5");
 
         List<SysNotice> list = sysNoticeMapper.selectList(wrapper);
         return R.ok(list);

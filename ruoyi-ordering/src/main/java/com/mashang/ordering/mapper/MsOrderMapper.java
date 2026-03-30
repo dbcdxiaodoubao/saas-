@@ -8,6 +8,6 @@ import java.math.BigDecimal;
 
 public interface MsOrderMapper extends BaseMapper<MsOrder> {
 
-    @Select("SELECT IFNULL(SUM(pay_amount), 0) FROM order_info WHERE pay_status = 1 AND del_flag = 0")
+    @Select("SELECT IFNULL(SUM(actual_pay), 0) FROM ms_order WHERE order_status = 1 AND del_flag = 0")
     BigDecimal getTotalAmount();
 }
