@@ -25,6 +25,7 @@ public class MsProduct {
   private String status;
   private String earnPoints;
   private String createBy;
+  //todo 这里看看是改java.utils.Date还是java.sql.Timestamp
   private Date createTime;
   private String updateBy;
   private Date updateTime;
