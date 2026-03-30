@@ -236,6 +236,7 @@
         <module>ruoyi-generator</module>
         <module>ruoyi-common</module>
         <module>ruoyi-ordering</module>
+
     </modules>
     <packaging>pom</packaging>
 
