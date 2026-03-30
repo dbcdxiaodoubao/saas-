@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class MsProduct {
 
@@ -23,9 +25,9 @@ public class MsProduct {
   private String status;
   private String earnPoints;
   private String createBy;
-  private java.sql.Timestamp createTime;
+  private Date createTime;
   private String updateBy;
-  private java.sql.Timestamp updateTime;
+  private Date updateTime;
   private String delFlag;
 
 }

@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.mashang.ordering.domain.model.BaseModel;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class MsOrder extends BaseModel {
 
@@ -20,7 +22,7 @@ public class MsOrder extends BaseModel {
   private String pointsDeduction;
   private String actualPay;
   private String buyType;
-  private java.sql.Timestamp reservePickTime;
+  private Date reservePickTime;
   private double productTotalPrice;
   private String dinersNumber;
 }
