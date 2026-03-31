@@ -3,6 +3,8 @@ package com.ruoyi.common.core.controller;
 import java.beans.PropertyEditorSupport;
 import java.util.Date;
 import java.util.List;
+
+import com.ruoyi.common.core.domain.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.WebDataBinder;
@@ -23,7 +25,7 @@ import com.ruoyi.common.utils.sql.SqlUtil;
 
 /**
  * web层通用数据处理
- * 
+ *
  * @author ruoyi
  */
 public class BaseController
@@ -91,6 +93,19 @@ public class BaseController
     }
 
     /**
+     * 响应请求分页数据
+     */
+    protected TableDataInfo getDataTable(List<?> list , long total){
+        TableDataInfo rspData = new TableDataInfo();
+        rspData.setCode(HttpStatus.SUCCESS);
+        rspData.setMsg("查询成功");
+        rspData.setRows(list);
+        rspData.setTotal(total);
+        return rspData;
+    }
+
+
+    /**
      * 返回成功
      */
     public AjaxResult success()
@@ -113,7 +128,7 @@ public class BaseController
     {
         return AjaxResult.success(message);
     }
-    
+
     /**
      * 返回成功消息
      */
@@ -140,7 +155,7 @@ public class BaseController
 
     /**
      * 响应返回结果
-     * 
+     *
      * @param rows 影响行数
      * @return 操作结果
      */
@@ -151,13 +166,35 @@ public class BaseController
 
     /**
      * 响应返回结果
-     * 
+     *
      * @param result 结果
      * @return 操作结果
      */
     protected AjaxResult toAjax(boolean result)
     {
         return result ? success() : error();
+    }
+
+    /**
+     * 响应返回结果
+     *
+     * @param rows 影响行数
+     * @return 操作结果
+     */
+    protected R toResult(int rows)
+    {
+        return rows > 0 ? R.ok() : R.fail();
+    }
+
+    /**
+     * 响应返回结果
+     *
+     * @param result 结果
+     * @return 操作结果
+     */
+    protected R toResult(boolean result)
+    {
+        return result ? R.ok() : R.fail();
     }
 
     /**
