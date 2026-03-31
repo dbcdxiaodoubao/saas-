@@ -68,10 +68,12 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
+                            <version>1.18.24</version> <!-- 必须加 -->
                         </path>
                         <path>
                             <groupId>org.mapstruct</groupId>
                             <artifactId>mapstruct-processor</artifactId>
+                            <version>1.5.5.Final</version> <!-- 必须加 -->
                         </path>
                     </annotationProcessorPaths>
                 </configuration>

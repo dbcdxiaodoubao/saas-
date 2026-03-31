@@ -1,4 +1,4 @@
-package com.mashang.ordering.controller;
+package com.mashang.ordering.controller.manage;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mashang.ordering.domain.entity.MsStore;

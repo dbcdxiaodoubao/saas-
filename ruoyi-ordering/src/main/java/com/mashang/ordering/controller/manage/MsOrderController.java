@@ -1,4 +1,4 @@
-package com.mashang.ordering.controller;
+package com.mashang.ordering.controller.manage;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.mashang.ordering.domain.vo.MsOrderDTO;
