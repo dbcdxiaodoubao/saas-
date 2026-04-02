@@ -1,5 +1,6 @@
 package com.ruoyi.system.domain.query;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -41,6 +42,7 @@ public class SysUserCreate {
     private String sex;
 
     @ApiModelProperty("生日")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @NotBlank(message = "生日不能为空")
     private Date birthday;
 
@@ -74,6 +76,7 @@ public class SysUserCreate {
     private String accountLimit;
 
     @ApiModelProperty("过期时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date expirationTime;
 
     @ApiModelProperty("绑定域名")

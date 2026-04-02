@@ -14,10 +14,13 @@ import com.ruoyi.framework.web.domain.server.Sys;
 import com.ruoyi.system.domain.SysUserRole;
 import com.ruoyi.system.domain.query.SysUserCreate;
 import com.ruoyi.system.domain.query.SysUserQuery;
+import com.ruoyi.system.domain.query.SysUserUpdate;
+import com.ruoyi.system.domain.vo.SysUserDtlVo;
 import com.ruoyi.system.domain.vo.SysUserListVo;
 import com.ruoyi.system.mapper.SysUserRoleMapper;
 import com.ruoyi.web.mapping.SysUserMapping;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -313,5 +316,44 @@ public class SysUserController extends BaseController {
         Page<SysUserListVo> result = SysUserMapping.INSTANCE.toPage(page);
 
         return getDataTable(result.getRecords(), result.getTotal());
+    }
+
+    @ApiOperation(("查询租户信息详情"))
+    @ApiImplicitParam(name = "userId", value = "租户id")
+    @GetMapping("/dtl/{userId}")
+    public R<SysUserDtlVo> selectById(@PathVariable Long userId){
+
+        LambdaQueryWrapper<SysUser> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(SysUser::getUserId, userId);
+
+        long count = userService.count(lqw);
+        if (count == 0){
+            return R.fail("当前租户不存在，请重新输入!");
+        }
+
+        return R.ok(SysUserMapping.INSTANCE.toDtl(userService.getById(userId)));
+    }
+
+    @ApiOperation("修改租户信息")
+    @PutMapping("/update/tenant")
+    public R updateUser(@RequestBody @Validated SysUserUpdate sysUserUpdate){
+
+        //容错
+        LambdaQueryWrapper<SysUser> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(SysUser::getNickName, StringUtils.trim(sysUserUpdate.getNickName()));
+        //检验租户名称是否重复
+        SysUser one = userService.getOne(lqw);
+        if (StringUtils.isNotNull(one)){
+            return R.fail("当前租户已存在,请重新添加!");
+        }
+        return toResult(userService.updateById(SysUserMapping.INSTANCE.toUpdate(sysUserUpdate)));
+    }
+
+    @ApiOperation("删除租户信息")
+    @DeleteMapping("/tenant/{userId}")
+    @ApiImplicitParam(name = "userId", value = "租户id")
+    public R deleteById(@PathVariable Long userId){
+
+        return toResult(userService.removeById(userId));
     }
 }
