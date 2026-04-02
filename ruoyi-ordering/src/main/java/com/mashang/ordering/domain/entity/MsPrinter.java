@@ -3,10 +3,12 @@ package com.mashang.ordering.domain.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.mashang.ordering.domain.model.BaseModel;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
+@ApiModel(value = "MsPrinter",description = "打印机信息")
 public class MsPrinter extends BaseModel {
 
     @TableId(type = IdType.AUTO)

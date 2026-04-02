@@ -3,8 +3,12 @@ package com.mashang.ordering.domain.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.mashang.ordering.domain.model.BaseModel;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
+@Data
+@ApiModel(value = "MsTable",description = "餐桌信息")
 public class MsTable extends BaseModel {
 
     @TableId(type = IdType.AUTO)
