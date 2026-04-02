@@ -45,4 +45,42 @@
             </if>
         </where>
     </select>
+
+    <resultMap id="UserProductDtlResultMap" type="com.mashang.ordering.domain.vo.MsUserProductDtlVo">
+        <id column="product_id" property="productId"/>
+        <result column="categories_name" property="categoriesName"/>
+        <result column="product_name" property="productName"/>
+        <result column="product_price" property="productPrice"/>
+        <result column="product_cover" property="productCover"/>
+        <result column="product_carousel" property="productCarousel"/>
+        <result column="product_introduction" property="productIntroduction"/>
+        <result column="product_description" property="productDescription"/>
+        <result column="earn_points" property="earnPoints"/>
+
+        <!-- JSON 自动映射成 List<SpecificationType> -->
+        <result column="jsonful_price" property="jsonfulPrice" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+    </resultMap>
+
+    <select id="getDtl" resultMap="UserProductDtlResultMap">
+        SELECT
+            p.product_id,
+            c.categories_name,
+            p.product_name,
+            p.product_price,
+            p.product_cover,
+            p.product_carousel,
+            p.product_introduction,
+            p.product_description,
+            p.earn_points,
+            s.jsonful_price
+        FROM ms_product p
+                 INNER JOIN ms_specification s
+                            ON p.specification_id = s.specification_id
+                 INNER JOIN ms_categories c
+                            ON p.product_categories_id = c.categories_id
+        WHERE
+            p.product_id = #{id}
+          AND p.del_flag = 0
+          AND p.status = 0
+    </select>
 </mapper>

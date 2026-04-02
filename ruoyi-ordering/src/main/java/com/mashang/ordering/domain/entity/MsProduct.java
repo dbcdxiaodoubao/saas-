@@ -23,6 +23,7 @@ public class MsProduct {
   private String productCover;
   private String productCarousel;
   private String productIntroduction;
+  private String productDescription;
   private String status;
   private String earnPoints;
   private String createBy;
