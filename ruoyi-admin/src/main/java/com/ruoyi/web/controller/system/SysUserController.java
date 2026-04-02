@@ -1,12 +1,21 @@
 package com.ruoyi.web.controller.system;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 
+import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.core.domain.R;
+import com.ruoyi.common.core.page.PageQuery;
+import com.ruoyi.framework.web.domain.server.Sys;
+import com.ruoyi.system.domain.SysUserRole;
 import com.ruoyi.system.domain.query.SysUserCreate;
+import com.ruoyi.system.domain.query.SysUserQuery;
+import com.ruoyi.system.domain.vo.SysUserListVo;
+import com.ruoyi.system.mapper.SysUserRoleMapper;
 import com.ruoyi.web.mapping.SysUserMapping;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -44,7 +53,7 @@ import com.ruoyi.system.service.ISysUserService;
  * 
  * @author ruoyi
  */
-@Api(tags = "用户信息")
+@Api(tags = "管理端-租户管理")
 @RestController
 @RequestMapping("/system/user")
 public class SysUserController extends BaseController {
@@ -59,6 +68,9 @@ public class SysUserController extends BaseController {
 
     @Autowired
     private ISysPostService postService;
+
+    @Autowired
+    private SysUserRoleMapper sysUserRoleMapper;
 
     /**
      * 获取用户列表
@@ -248,6 +260,58 @@ public class SysUserController extends BaseController {
         if (StringUtils.isNotNull(one)) {
             return R.fail("当前用户账号已存在,请重新添加!");
         }
-        return toResult(userService.save(SysUserMapping.INSTANCE.toCreate(sysUserCreate)));
+
+        // 1. 保存用户
+        SysUser user = SysUserMapping.INSTANCE.toCreate(sysUserCreate);
+        boolean save = userService.save(user);
+        if (!save) {
+            return R.fail("保存用户失败");
+        }
+
+        // 2. 绑定角色（单个角色，使用你项目自带的 batchUserRole）
+        if (sysUserCreate.getRoleId() != null) {
+            List<SysUserRole> userRoleList = new ArrayList<>();
+            SysUserRole userRole = new SysUserRole();
+            userRole.setUserId(user.getUserId());
+            userRole.setRoleId(sysUserCreate.getRoleId());
+            userRoleList.add(userRole);
+
+            // 调用你已有的批量插入方法（支持单个+多个）
+            sysUserRoleMapper.batchUserRole(userRoleList);
+        }
+
+        return R.ok("新增成功");
+    }
+
+    @ApiOperation(("分页查询租户信息列表"))
+    @GetMapping("/tenant/list")
+    public TableDataInfo<List<SysUserListVo>> List(@Validated PageQuery pageQuery, SysUserQuery sysUserQuery){
+
+        LambdaQueryWrapper<SysUser> lqw = new LambdaQueryWrapper<>();
+
+        lqw.like(StringUtils.isNotEmpty(sysUserQuery.getNickName()), SysUser::getNickName, sysUserQuery.getNickName());
+
+        lqw.like(StringUtils.isNotEmpty(sysUserQuery.getContact()), SysUser::getContact, sysUserQuery.getContact());
+
+        lqw.like(StringUtils.isNotEmpty(sysUserQuery.getContactPhonenumber()),
+                SysUser::getContactPhonenumber, sysUserQuery.getContactPhonenumber());
+
+        lqw.eq(StringUtils.isNotNull(sysUserQuery.getStatus()), SysUser::getStatus, sysUserQuery.getStatus());
+
+        lqw.like(StringUtils.isNotNull(sysUserQuery.getCreateTime()), SysUser::getCreateTime, sysUserQuery.getCreateTime());
+
+        if (StringUtils.isNotNull(sysUserQuery.getRoleIds()) ) {
+            lqw.inSql(SysUser::getUserId,
+                    "SELECT user_id FROM sys_user_role WHERE role_id IN (" +
+                            StringUtils.join(sysUserQuery.getRoleIds()) +
+                            ")"
+            );
+        }
+
+        Page<SysUser> page = userService.page(new Page<>(pageQuery.getPageNum(), pageQuery.getPageSize()), lqw);
+
+        Page<SysUserListVo> result = SysUserMapping.INSTANCE.toPage(page);
+
+        return getDataTable(result.getRecords(), result.getTotal());
     }
 }
