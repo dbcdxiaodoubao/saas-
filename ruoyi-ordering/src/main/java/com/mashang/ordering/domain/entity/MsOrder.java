@@ -1,8 +1,11 @@
 package com.mashang.ordering.domain.entity;
 
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.mashang.ordering.domain.model.BaseModel;
 import lombok.Data;
 
@@ -14,7 +17,7 @@ public class MsOrder extends BaseModel {
   @TableId(type = IdType.AUTO)
   private long orderId;
   private long userId;
-  private long tableNumberId;
+  private long tableId;
   private String orderNumber;
   private String orderType;
   private String orderStatus;
@@ -25,4 +28,7 @@ public class MsOrder extends BaseModel {
   private Date reservePickTime;
   private double productTotalPrice;
   private String dinersNumber;
+
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  private Date finishTime;
 }
