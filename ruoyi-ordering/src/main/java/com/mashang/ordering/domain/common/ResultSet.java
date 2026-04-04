@@ -16,6 +16,13 @@ public class ResultSet<T> {
         result.setData(data);
         return result;
     }
+    public static <T> ResultSet<T> success(T data,String msg) {
+        ResultSet<T> result = new ResultSet<>();
+        result.setSuccess(true);
+        result.setData(data);
+        result.setMessage(msg);
+        return result;
+    }
     public static <T> ResultSet<T> fail(String message) {
         ResultSet<T> result = new ResultSet<>();
         result.setSuccess(false);
