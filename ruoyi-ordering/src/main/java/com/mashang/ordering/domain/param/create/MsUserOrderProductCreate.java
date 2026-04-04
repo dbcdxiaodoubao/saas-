@@ -1,12 +1,12 @@
-package com.mashang.ordering.domain.vo;
+package com.mashang.ordering.domain.param.create;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@ApiModel("用户订单详情商品实体")
-public class MsUserOderProductDtl {
+@ApiModel("用户订单新增商品实体")
+public class MsUserOrderProductCreate {
 
   @ApiModelProperty("商品id")
   private long productId;
@@ -21,11 +21,9 @@ public class MsUserOderProductDtl {
   private String specification;
 
   @ApiModelProperty("商品价格")
-  private long productPrice;
+  private double productPrice;
 
   @ApiModelProperty("累计加菜次数")
   private long cumulativeAddCount;
 
-  @ApiModelProperty("商品封面url")
-  private String productCover;
 }

@@ -1,13 +1,9 @@
 package com.mashang.ordering.domain.vo;
 
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.mashang.ordering.domain.model.BaseModel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 
 import java.util.Date;
@@ -27,7 +23,7 @@ public class MsUserOrderDtlVo{
   private String orderNumber;
 
   @ApiModelProperty("订单详情商品列表")
-  private List<MsUserOderProductDtl> userOderProductDtlList;
+  private List<MsUserOrderProductDtl> userOderProductDtlList;
 
   @ApiModelProperty("订单类型（0为堂食，1为外卖）")
   private String orderType;

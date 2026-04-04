@@ -1,12 +1,7 @@
 package com.mashang.ordering.domain.vo;
 
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.mashang.ordering.domain.model.BaseModel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -31,7 +26,7 @@ public class MsUserOrderListVo{
   private long productNum;
 
   @ApiModelProperty("商品信息列表")
-  private List<MsUserOderProduct> productList;
+  private List<MsUserOrderProduct> productList;
 
   @ApiModelProperty("订单状态(0为未支付，1为未出单，2为已取餐，3退款单，4为已删除)")
   private String orderStatus;

@@ -3,6 +3,7 @@ package com.mashang.ordering.controller.user;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.mashang.ordering.domain.common.PageQuery;
+import com.mashang.ordering.domain.param.create.MsUserOrderCreate;
 import com.mashang.ordering.domain.vo.MsUserOrderDtlVo;
 import com.mashang.ordering.domain.vo.MsUserOrderListVo;
 import com.mashang.ordering.service.IMsUserOrderService;
@@ -45,7 +46,8 @@ public class MsUserOrderController extends BaseController {
 
     @PostMapping("/new")
     @ApiOperation("用户新建订单")
-    public R newOder(){
+    public R newOder(@Validated @RequestBody MsUserOrderCreate msUserOrderCreate){
+        msUserOrderService.insertOrder(msUserOrderCreate);
         return R.ok();
     }
 
