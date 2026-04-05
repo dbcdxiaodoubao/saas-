@@ -2,6 +2,7 @@ package com.mashang.ordering.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.mashang.ordering.domain.entity.MsOrder;
+import com.mashang.ordering.domain.param.create.MsUserOrderAdd;
 import com.mashang.ordering.domain.param.create.MsUserOrderCreate;
 import com.mashang.ordering.domain.vo.MsUserOrderDtlVo;
 import com.mashang.ordering.domain.vo.MsUserOrderListVo;
@@ -29,4 +30,10 @@ public interface IMsUserOrderService extends IService<MsOrder> {
      * @param create
      */
     void insertOrder(MsUserOrderCreate create);
+
+    /**
+     * 用户加菜
+     * @param msUserOrderAdd
+     */
+    void addProduct(MsUserOrderAdd msUserOrderAdd);
 }

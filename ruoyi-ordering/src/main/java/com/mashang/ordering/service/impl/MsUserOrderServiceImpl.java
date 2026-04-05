@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mashang.ordering.domain.entity.MsOrder;
 import com.mashang.ordering.domain.entity.MsOrderDetail;
+import com.mashang.ordering.domain.param.create.MsUserOrderAdd;
 import com.mashang.ordering.domain.param.create.MsUserOrderCreate;
 import com.mashang.ordering.domain.param.create.MsUserOrderProductCreate;
 import com.mashang.ordering.domain.vo.MsUserOrderDtlVo;
@@ -58,7 +59,19 @@ public class MsUserOrderServiceImpl extends ServiceImpl<MsUserOrderMapper, MsOrd
         msUserOrderMapper.insertOrder(create);
 
         msUserOrderMapper.batchInsertOrderDetail(orderId, productList);
+    }
 
+    @Override
+    public void addProduct(MsUserOrderAdd msUserOrderAdd) {
+        Long addCount = msUserOrderMapper.selectAddCount(msUserOrderAdd.getOrderId())+1;
+
+        List<MsUserOrderProductCreate> productList = msUserOrderAdd.getMsUserOderProductCreateList();
+
+        for (MsUserOrderProductCreate product : productList) {
+            product.setCumulativeAddCount(addCount);
+        }
+
+        msUserOrderMapper.batchInsertOrderDetail(msUserOrderAdd.getOrderId(), productList);
     }
 
 

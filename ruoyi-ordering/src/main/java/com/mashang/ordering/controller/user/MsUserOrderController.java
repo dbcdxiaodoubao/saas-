@@ -3,6 +3,7 @@ package com.mashang.ordering.controller.user;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.mashang.ordering.domain.common.PageQuery;
+import com.mashang.ordering.domain.param.create.MsUserOrderAdd;
 import com.mashang.ordering.domain.param.create.MsUserOrderCreate;
 import com.mashang.ordering.domain.vo.MsUserOrderDtlVo;
 import com.mashang.ordering.domain.vo.MsUserOrderListVo;
@@ -53,7 +54,8 @@ public class MsUserOrderController extends BaseController {
 
     @PostMapping("/add")
     @ApiOperation("用户加菜")
-    public R add(){
+    public R add(@Validated @RequestBody MsUserOrderAdd msUserOrderAdd){
+        msUserOrderService.addProduct(msUserOrderAdd);
         return R.ok();
     }
 

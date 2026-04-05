@@ -23,7 +23,7 @@ public class MsUserOrderProductCreate {
   @ApiModelProperty("商品价格")
   private double productPrice;
 
-  @ApiModelProperty("累计加菜次数")
+  @ApiModelProperty(hidden = true)
   private long cumulativeAddCount;
 
 }

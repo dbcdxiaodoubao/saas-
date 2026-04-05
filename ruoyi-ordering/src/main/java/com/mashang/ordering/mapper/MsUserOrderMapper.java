@@ -43,4 +43,21 @@ public interface MsUserOrderMapper extends BaseMapper<MsOrder> {
             @Param("orderId") Long orderId,
             @Param("list") List<MsUserOrderProductCreate> list
     );
+
+    /**
+     * 查询加菜次数
+     * @param orderId
+     * @return
+     */
+    Long selectAddCount(Long orderId);
+
+    /**
+     * 用户加菜
+     * @param orderId
+     * @param list
+     */
+    void addProduct(
+            @Param("orderId") Long orderId,
+            @Param("list") List<MsUserOrderProductCreate> list
+    );
 }

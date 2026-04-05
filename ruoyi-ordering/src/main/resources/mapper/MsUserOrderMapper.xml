@@ -164,6 +164,17 @@
                  )
     </insert>
 
+    <select id="selectAddCount" resultType="Long">
+        SELECT
+            ms_order_detail.cumulative_add_count
+        FROM
+            ms_order_detail
+        WHERE
+            ms_order_detail.order_id = 1
+        ORDER BY ms_order_detail.create_time DESC
+            LIMIT 1
+    </select>
+
     <insert id="batchInsertOrderDetail">
         INSERT INTO ms_order_detail (
         order_id,
@@ -173,7 +184,8 @@
         specification,
         product_price,
         cumulative_add_count,
-        total_amount
+        total_amount,
+        create_time
         ) VALUES
         <foreach collection="list" item="item" separator=",">
             (
@@ -184,10 +196,36 @@
             #{item.specification},
             #{item.productPrice},
             #{item.cumulativeAddCount},
-            #{item.productPrice} * #{item.productQuantity}
+            #{item.productPrice} * #{item.productQuantity},
+            NOW()
             )
         </foreach>
     </insert>
 
-
+    <insert id="addProduct">
+        INSERT INTO ms_order_detail (
+        order_id,
+        product_id,
+        product_name,
+        product_quantity,
+        specification,
+        product_price,
+        cumulative_add_count,
+        total_amount,
+        create_time
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{orderId},
+            #{item.productId},
+            #{item.productName},
+            #{item.productQuantity},
+            #{item.specification},
+            #{item.productPrice},
+            #{item.cumulativeAddCount},
+            #{item.productPrice} * #{item.productQuantity},
+            NOW()
+            )
+        </foreach>
+    </insert>
 </mapper>
