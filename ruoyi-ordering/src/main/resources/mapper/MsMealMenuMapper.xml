@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mashang.ordering.mapper.MsMealMenuMapper">
+
+    <insert id="batchMealMenu">
+        INSERT INTO ms_meal_Menu (meal_id, menu_id)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.mealId}, #{item.menuId})
+        </foreach>
+    </insert>
+
+    <!-- 删除套餐下所有菜单 -->
+    <delete id="deleteByMealId">
+        delete from ms_meal_menu
+        where meal_id = #{mealId}
+    </delete>
+
+    <!-- 查询套餐拥有的菜单ID -->
+    <select id="selectMenuIdsByMealId" resultType="Long">
+        select menu_id
+        from ms_meal_menu
+        where meal_id = #{mealId}
+    </select>
+</mapper>

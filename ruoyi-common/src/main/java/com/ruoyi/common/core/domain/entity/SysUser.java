@@ -141,6 +141,9 @@ public class SysUser extends BaseEntity
     /** 联系人电话 */
     private String contactPhonenumber;
 
+    /** 套餐ID */
+    private Long mealId;
+
 
     public SysUser()
     {

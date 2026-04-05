@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mashang.ordering.mapper.MsMealMapper">
+
+    <resultMap id="MealResult" type="com.mashang.ordering.domain.vo.MsMealDtlVo">
+        <id column="meal_id" property="mealId"/>
+        <result column="meal_name" property="mealName"/>
+        <result column="meal_status" property="mealStatus"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+    <!-- 获取套餐详情 -->
+    <select id="getMealById" resultMap="MealResult">
+        select meal_id, meal_name, meal_status, remark
+        from ms_meal
+        where meal_id = #{mealId}
+    </select>
+
+    <!-- 修改套餐 -->
+    <update id="updateMeal">
+        update ms_meal
+        <set>
+            <if test="mealName != null">meal_name = #{mealName},</if>
+            <if test="meal_status != null">status = #{mealStatus},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </set>
+        where meal_id = #{mealId}
+    </update>
+</mapper>
