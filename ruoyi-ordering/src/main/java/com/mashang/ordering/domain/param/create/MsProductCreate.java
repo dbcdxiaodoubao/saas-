@@ -1,12 +1,11 @@
 package com.mashang.ordering.domain.param.create;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -66,8 +65,8 @@ public class MsProductCreate {
 
   @ApiModelProperty(value = "规格")
   @NotBlank(message = "请输入规格")
-  @TableField(typeHandler = FastjsonTypeHandler.class)
-  private String specification;
+  @TableField(typeHandler = JacksonTypeHandler.class)
+  private String specsAndAttrs;
 
   @ApiModelProperty(value = "产品描述")
   private String productDescription;
@@ -79,7 +78,7 @@ public class MsProductCreate {
   private Long specificationId;
 
   @ApiModelProperty(value = "规格是否相同")
-  @AssertTrue(message = "规格是否相同必须为true或false")
+  @NotNull(message = "请选择规格是否相同")
   private Boolean isSpecSame;
 
 }

@@ -10,6 +10,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
+
 public class MsProduct {
 
   @ApiModelProperty(value = "商品ID")

@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -24,18 +24,18 @@ public class MsSpecification {
   private Long sort;
 
   @ApiModelProperty(value = "规格及属性值")
-  @TableField(typeHandler = FastjsonTypeHandler.class)
+  @TableField(typeHandler = JacksonTypeHandler.class)
   private String specsAndAttrs;
 
-  @ApiModelProperty(value = "商品ID")
+  @ApiModelProperty(value = "创建时间")
+  @TableField(fill = FieldFill.INSERT)
   private Date createTime;
 
   @TableField(fill = FieldFill.INSERT)
-  @ApiModelProperty(value = "创建时间")
+  @ApiModelProperty(value = "更新时间")
   private Date updateTime;
 
-  @TableField(fill = FieldFill.INSERT_UPDATE)
-  @ApiModelProperty(value = "更新时间")
+  @ApiModelProperty(value = "备注")
   private String remark;
 
 }

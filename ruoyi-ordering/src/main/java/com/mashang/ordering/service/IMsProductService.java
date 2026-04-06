@@ -1,6 +1,7 @@
 package com.mashang.ordering.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.mashang.ordering.domain.common.ResultSet;
 import com.mashang.ordering.domain.entity.MsProduct;
 import com.mashang.ordering.domain.param.create.MsProductCreate;
 import com.mashang.ordering.domain.param.selete.MsProductPageQuery;
@@ -19,6 +20,6 @@ public interface IMsProductService extends IService<MsProduct> {
     /**
      * 添加商品
      */
-    Integer addProduct(MsProductCreate msProductCreate);
+    ResultSet addProduct(MsProductCreate msProductCreate);
 
 }
