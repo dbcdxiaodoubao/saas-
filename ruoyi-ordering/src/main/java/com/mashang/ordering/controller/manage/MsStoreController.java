@@ -6,7 +6,10 @@ import com.mashang.ordering.domain.common.ResultSet;
 import com.mashang.ordering.domain.entity.MsStore;
 import com.mashang.ordering.domain.param.create.MsStoreCreate;
 import com.mashang.ordering.domain.param.selete.MsStoreListParam;
+import com.mashang.ordering.domain.param.update.MsStoreUpdate;
+import com.mashang.ordering.domain.vo.MsStoreDto;
 import com.mashang.ordering.domain.vo.MsStoreListVo;
+import com.mashang.ordering.mapping.MsStoreMapping;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.R;
 import com.ruoyi.common.core.page.TableDataInfo;
@@ -22,7 +25,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/store")
-@Api(tags = "门店管理")
+@Api(tags = "管理端-门店管理")
 public class MsStoreController extends BaseController {
 
     @Autowired
@@ -48,6 +51,34 @@ public class MsStoreController extends BaseController {
         }
     }
 
+    @ApiOperation("获得门店详情")
+    @GetMapping("/{storeId}")
+    private R getMsStore(@PathVariable Long storeId) {
+        MsStoreDto data = MsStoreMapping.INSTANCE.toDto(msStoreService.getById(storeId));
+        return R.ok(data);
+    }
 
+    @ApiOperation("修改门店")
+    @PutMapping("")
+    private R updateMsStore(@RequestBody @Validated MsStoreUpdate msStoreUpdate) {
+        ResultSet<Object> objectResultSet = msStoreService.updateMsStore(msStoreUpdate);
+        if(objectResultSet.isSuccess()){
+            return R.ok(objectResultSet.getData());
+        }
+        else{
+            return R.fail(objectResultSet.getMessage());
+        }
+    }
 
+    @ApiOperation("删除门店")
+    @DeleteMapping("/{storeId}")
+    private R deleteMsStore(@PathVariable Long storeId) {
+        ResultSet<Object> objectResultSet = msStoreService.deleteMsStore(storeId);
+        if(objectResultSet.isSuccess()){
+            return R.ok(objectResultSet.getData());
+        }
+        else{
+            return R.fail(objectResultSet.getMessage());
+        }
+    }
 }

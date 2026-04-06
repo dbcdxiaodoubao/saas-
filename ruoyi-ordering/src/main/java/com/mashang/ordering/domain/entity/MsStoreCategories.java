@@ -1,0 +1,20 @@
+package com.mashang.ordering.domain.entity;
+
+import com.ruoyi.common.core.domain.BaseEntity;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+@Data
+@ApiModel(value = "MsStoreCategories",description = "商品分类和门店映射项")
+public class MsStoreCategories extends BaseEntity {
+
+    @ApiModelProperty(value = "商品分类和门店映射项id")
+    private Long storeCategoriesId;
+
+    @ApiModelProperty(value = "商品分类id")
+    private Long categoriesId;
+
+    @ApiModelProperty(value = "门店id")
+    private Long storeId;
+}

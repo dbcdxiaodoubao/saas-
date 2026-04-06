@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mashang.ordering.mapper.MsCategoriesMapper">
+
+    <select id="getAllCategories" resultType="com.mashang.ordering.domain.vo.MsCategoriesListVo">
+        SELECT
+        t2.store_name,
+        t1.store_categories_id,
+        t1.categories_id,
+        t1.store_id,
+        t3.categories_name,
+        t3.sort,
+        t3.`status`
+        FROM
+        ms_store_categories AS t1
+        LEFT JOIN ms_store AS t2 ON t1.store_id = t2.store_id
+        LEFT JOIN ms_categories AS t3 ON t3.categories_id = t1.categories_id
+        <where>
+            t1.categories_name LIKE CONCAT('%', #{MsCategoriesName}, '%')
+            AND t3.store_name LIKE CONCAT('%', #{MsStoreName}, '%')
+        </where>
+    </select>
+
+</mapper>

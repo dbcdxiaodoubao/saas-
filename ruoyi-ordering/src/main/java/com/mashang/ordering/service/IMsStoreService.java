@@ -7,6 +7,7 @@ import com.mashang.ordering.domain.common.ResultSet;
 import com.mashang.ordering.domain.entity.MsStore;
 import com.mashang.ordering.domain.param.create.MsPrinterCreate;
 import com.mashang.ordering.domain.param.create.MsStoreCreate;
+import com.mashang.ordering.domain.param.update.MsStoreUpdate;
 import com.mashang.ordering.domain.vo.MsStoreListVo;
 
 import java.util.List;
@@ -15,4 +16,6 @@ import java.util.List;
 public interface IMsStoreService extends IService<MsStore> {
     Page<MsStoreListVo> getMsStoreList(String storeName, String storeTel, PageQuery pageQuery);
     ResultSet<Object> addMsStore(MsStoreCreate msStoreCreate);
+    ResultSet<Object> updateMsStore(MsStoreUpdate msStoreUpdate);
+    ResultSet<Object> deleteMsStore(Long id);
 }

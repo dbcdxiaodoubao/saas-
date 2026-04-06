@@ -9,6 +9,7 @@ import com.mashang.ordering.domain.entity.MsPrinter;
 import com.mashang.ordering.domain.entity.MsStore;
 import com.mashang.ordering.domain.param.create.MsPrinterCreate;
 import com.mashang.ordering.domain.param.create.MsStoreCreate;
+import com.mashang.ordering.domain.param.update.MsStoreUpdate;
 import com.mashang.ordering.domain.vo.MsPrinterListVo;
 import com.mashang.ordering.domain.vo.MsStoreListVo;
 import com.mashang.ordering.mapper.MsPrinterMapper;
@@ -47,22 +48,53 @@ public class MsStoreServiceImpl extends ServiceImpl<MsStoreMapper, MsStore> impl
         String msg = "";
         if(msStoreCreate.getIsOpen().length() > 1 || (msStoreCreate.getIsOpen().charAt(0)!= '1' && msStoreCreate.getIsOpen().charAt(0)!= '0')){
             right = false;
-            msg += "门店营业状态输入有误 1-开 0-关\n";
+            msg += "门店营业状态输入有误 1-开 0-关-";
         }
         if(!Checker.isTimeString(msStoreCreate.getBusinessStartTime()) || !Checker.isTimeString(msStoreCreate.getBusinessEndTime())){
             right = false;
-            msg += "门店营业时间输入有误\n";
+            msg += "门店营业时间输入有误-";
         }
         LambdaQueryWrapper<MsStore> lqw = new LambdaQueryWrapper<MsStore>();
         lqw.eq(MsStore::getStoreName, msStoreCreate.getStoreName());
         if(msStoreMapper.selectOne(lqw) != null){
             right = false;
-            msg += "当前门店名称已存在\n";
+            msg += "当前门店名称已存在-";
         }
         if(!right){
             return ResultSet.fail(msg.substring(0, msg.length() - 1));
         }
         MsStore msStore = MsStoreMapping.INSTANCE.fromCreate(msStoreCreate);
         return ResultSet.success(msStoreMapper.insert(msStore));
+    }
+
+    @Override
+    public ResultSet<Object> updateMsStore(MsStoreUpdate msStoreUpdate) {
+        boolean right = true;
+        String msg = "";
+        if(msStoreUpdate.getIsOpen().length() > 1 || (msStoreUpdate.getIsOpen().charAt(0)!= '1' && msStoreUpdate.getIsOpen().charAt(0)!= '0')){
+            right = false;
+            msg += "门店营业状态输入有误 1-开 0-关-";
+        }
+        if(!Checker.isTimeString(msStoreUpdate.getBusinessStartTime()) || !Checker.isTimeString(msStoreUpdate.getBusinessEndTime())){
+            right = false;
+            msg += "门店营业时间输入有误-";
+        }
+        LambdaQueryWrapper<MsStore> lqw = new LambdaQueryWrapper<MsStore>();
+        lqw.eq(MsStore::getStoreName, msStoreUpdate.getStoreName());
+        if(msStoreMapper.selectOne(lqw) != null){
+            right = false;
+            msg += "当前门店名称已存在-";
+        }
+        if(!right){
+            return ResultSet.fail(msg.substring(0, msg.length() - 1));
+        }
+        MsStore msStore = MsStoreMapping.INSTANCE.fromUpdate(msStoreUpdate);
+        return ResultSet.success(msStoreMapper.updateById(msStore));
+    }
+
+    @Override
+    public ResultSet<Object> deleteMsStore(Long id) {
+        //todo 检查桌号
+        return ResultSet.success(msStoreMapper.deleteById(id));
     }
 }
