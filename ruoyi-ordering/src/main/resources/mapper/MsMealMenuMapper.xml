@@ -3,7 +3,7 @@
 <mapper namespace="com.mashang.ordering.mapper.MsMealMenuMapper">
 
     <insert id="batchMealMenu">
-        INSERT INTO ms_meal_Menu (meal_id, menu_id)
+        INSERT INTO ms_meal_menu (meal_id, menu_id)
         VALUES
         <foreach collection="list" item="item" separator=",">
             (#{item.mealId}, #{item.menuId})

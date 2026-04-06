@@ -40,15 +40,19 @@ public class MsMealController extends BaseController {
     @Autowired
     private IMsMealService msMealService;
 
-    @Autowired
-    private ISysMenuService sysMenuService;
-
-    @Autowired
-    private IMsMealMenuService msMealMenuService;
 
     @ApiOperation(("新增租户套餐信息"))
     @PostMapping
     public R insert(@RequestBody @Validated MsMealCreate msMealCreate) {
+
+        LambdaQueryWrapper<MsMeal> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(MsMeal::getMealName, StringUtils.trim(msMealCreate.getMealName()));
+        //检验班级名称是否重复
+        MsMeal one = msMealService.getOne(lqw);
+        if (StringUtils.isNotNull(one)){
+            return R.fail("当前套餐名已存在,请重新添加!");
+        }
+
         return toResult(msMealService.insertMeal(msMealCreate));
     }
 

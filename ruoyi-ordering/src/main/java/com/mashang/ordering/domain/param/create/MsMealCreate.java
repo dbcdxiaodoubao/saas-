@@ -17,7 +17,7 @@ import java.util.List;
 public class MsMealCreate{
 
   @ApiModelProperty("菜单ID列表")
-  @NotNull(message ="菜单ID列表不能为空")
+/*  @NotNull(message ="菜单ID列表不能为空")*/
   private List<Long> menuIds;
 
   @ApiModelProperty("套餐名称")
@@ -27,5 +27,8 @@ public class MsMealCreate{
   @ApiModelProperty("套餐状态")
   @NotBlank(message = "套餐状态不能为空")
   private String mealStatus;
+
+  @ApiModelProperty("备注")
+  private String remark;
 
 }

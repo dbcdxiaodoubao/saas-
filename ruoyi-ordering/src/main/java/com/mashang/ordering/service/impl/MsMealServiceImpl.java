@@ -43,20 +43,62 @@ public class MsMealServiceImpl extends ServiceImpl<MsMealMapper, MsMeal> impleme
     private SysMenuMapper sysMenuMapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean insertMeal(MsMealCreate msMealCreate) {
-        boolean save = save(MsMealMapping.INSTANCE.toCreate(msMealCreate));
 
-        // 批量插入菜单权限
-        if (save && StringUtils.isNotNull(msMealCreate.getMenuIds())) {
-            List<MsMealMenu> list = new ArrayList<>();
-            for (Long menuId : msMealCreate.getMenuIds()) {
-                MsMealMenu msMealMenu = new MsMealMenu();
-                msMealMenu.setMenuId(menuId);
-                list.add(msMealMenu);
-            }
-            msMealMenuMapper.batchMealMenu(list);
+        MsMeal meal = new MsMeal();
+        meal.setMealName(msMealCreate.getMealName());
+        meal.setMealStatus(msMealCreate.getMealStatus());
+        meal.setRemark(msMealCreate.getRemark()); // 修复！从create取remark，不是自己get
+
+        // 保存套餐
+        this.save(meal);
+        Long mealId = meal.getMealId();
+
+
+        //获取菜单ID
+        List<Long> menuIds = msMealCreate.getMenuIds();
+        if (StringUtils.isEmpty(menuIds)) {
+            return true;
         }
-        return save;
+
+        //传父ID → 自动拿所有子菜单
+        Set<Long> finalMenuIds = new HashSet<>();
+
+        for (Long menuId : menuIds) {
+            // 递归加入：当前菜单 + 所有子菜单（无限层级）
+            collectAllMenus(menuId, finalMenuIds);
+        }
+
+        //批量插入
+        List<MsMealMenu> saveList = finalMenuIds.stream().map(id -> {
+            MsMealMenu mm = new MsMealMenu();
+            mm.setMealId(mealId);
+            mm.setMenuId(id);
+            return mm;
+        }).collect(Collectors.toList());
+
+        msMealMenuMapper.batchMealMenu(saveList);
+
+        return true;
+    }
+
+    //递归获取所有子菜单
+    private void collectAllMenus(Long menuId, Set<Long> menuSet) {
+        // 加入自己
+        menuSet.add(menuId);
+
+        // 查询子菜单
+        LambdaQueryWrapper<SysMenu> wrapper = Wrappers.lambdaQuery();
+        wrapper.select(SysMenu::getMenuId);
+        wrapper.eq(SysMenu::getParentId, menuId);
+
+        List<SysMenu> children = sysMenuMapper.selectList(wrapper);
+
+        // 递归加入子菜单
+        for (SysMenu child : children) {
+            collectAllMenus(child.getMenuId(), menuSet);
+        }
     }
 
     @Override
