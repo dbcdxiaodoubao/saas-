@@ -6,6 +6,9 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.FastByteArrayOutputStream;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +29,7 @@ import com.ruoyi.system.service.ISysConfigService;
  * @author ruoyi
  */
 @RestController
+@Api(tags = "验证码管理")  // 添加这个注解，定义模块名称
 public class CaptchaController
 {
     @Resource(name = "captchaProducer")
@@ -42,6 +46,7 @@ public class CaptchaController
     /**
      * 生成验证码
      */
+    @ApiOperation(value = "获取验证码")
     @GetMapping("/captchaImage")
     public AjaxResult getCode(HttpServletResponse response) throws IOException
     {
