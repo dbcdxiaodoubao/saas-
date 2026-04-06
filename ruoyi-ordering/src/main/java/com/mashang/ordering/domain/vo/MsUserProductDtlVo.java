@@ -41,7 +41,7 @@ public class MsUserProductDtlVo {
   @ApiModelProperty("商品积分")
   private String earnPoints;
   @ApiModelProperty("规格值及加价")
-  private List<MsUserProductListVo.SpecificationType> jsonfulPrice;
+  private List<MsUserProductListVo.SpecificationType> specsAndAttrs;
 
   @Data
   @ApiModel("规格实体")

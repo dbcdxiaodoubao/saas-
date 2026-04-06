@@ -22,8 +22,8 @@ public class MsUserProductServiceImpl extends ServiceImpl<MsUserProductMapper, M
 
 
     @Override
-    public List<MsUserProductListVo> getList(Long productCategoriesId, String keyWord) {
-        return msUserProductMapper.getList(productCategoriesId, keyWord);
+    public List<MsUserProductListVo> getList(Long productCategoriesId, String keyWord,Long storeId) {
+        return msUserProductMapper.getList(productCategoriesId, keyWord,storeId);
     }
 
     @Override

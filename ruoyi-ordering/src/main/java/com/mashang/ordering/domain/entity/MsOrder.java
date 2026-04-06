@@ -26,6 +26,7 @@ public class MsOrder extends BaseModel {
   private Date reservePickTime;
   private double productTotalPrice;
   private String dinersNumber;
+  private Long storeId;
 
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private Date finishTime;

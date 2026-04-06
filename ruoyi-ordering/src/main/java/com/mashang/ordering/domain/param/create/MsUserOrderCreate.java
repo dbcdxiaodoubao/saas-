@@ -17,6 +17,8 @@ public class MsUserOrderCreate {
   private Long userId;
   @ApiModelProperty(value = "桌号id",required = true,example = "1")
   private Long tableId;
+  @ApiModelProperty(value = "商店id",required = true,example = "1")
+  private Long storeId;
   @ApiModelProperty(value = "订单类型（0为堂食，1为外卖）",required = true,example = "0")
   private String orderType;
   @ApiModelProperty(value = "积分减额",required = true,example = "1")

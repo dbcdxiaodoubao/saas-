@@ -35,7 +35,7 @@ public class MsUserProductListVo {
   private String productIntroduction;
 
   @ApiModelProperty("规格值及加价")
-  private List<SpecificationType> jsonfulPrice;
+  private List<SpecificationType> specsAndAttrs;
 
   @Data
   @ApiModel("规格实体")

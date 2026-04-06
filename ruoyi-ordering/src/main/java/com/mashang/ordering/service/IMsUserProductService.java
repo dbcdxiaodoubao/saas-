@@ -16,7 +16,7 @@ public interface IMsUserProductService extends IService<MsProduct> {
      * @param keyWord
      * @return
      */
-    List<MsUserProductListVo> getList(Long productCategoriesId, String keyWord);
+    List<MsUserProductListVo> getList(Long productCategoriesId, String keyWord,Long storeId);
 
     /**
      * 根据商品id查询详情

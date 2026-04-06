@@ -19,6 +19,8 @@ public class MsUserOrderDtlVo{
   private long userId;
   @ApiModelProperty("桌号id")
   private long tableId;
+  @ApiModelProperty("商店id")
+  private Long storeId;
   @ApiModelProperty("订单号")
   private String orderNumber;
 

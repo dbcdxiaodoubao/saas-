@@ -45,7 +45,7 @@ public class MsUserOrderServiceImpl extends ServiceImpl<MsUserOrderMapper, MsOrd
 
         long orderId = System.currentTimeMillis();
 
-        String orderNumber = generate4DigitDailyOrderNo();
+        String orderNumber = generate4DigitDailyOrderNo(create.getStoreId());
 
         create.setOrderId(orderId);
         create.setOrderNumber(orderNumber);
@@ -75,11 +75,12 @@ public class MsUserOrderServiceImpl extends ServiceImpl<MsUserOrderMapper, MsOrd
     }
 
 
-    private String generate4DigitDailyOrderNo() {
+    private String generate4DigitDailyOrderNo(Long storeId) {
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
         LambdaQueryWrapper<MsOrder> wrapper = new LambdaQueryWrapper<>();
         wrapper.apply("DATE(create_time) = {0}", today)
+                .eq(MsOrder::getStoreId, storeId)  // 关键：按当前商店筛选
                 .orderByDesc(MsOrder::getOrderNumber)
                 .last("LIMIT 1");
 

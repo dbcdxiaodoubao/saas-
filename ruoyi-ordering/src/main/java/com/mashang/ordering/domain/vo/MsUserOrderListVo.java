@@ -19,6 +19,9 @@ public class MsUserOrderListVo{
   @ApiModelProperty("订单号")
   private String orderNumber;
 
+  @ApiModelProperty("商店id")
+  private Long storeId;
+
   @ApiModelProperty("订单类型（0为堂食，1为外卖）")
   private String orderType;
 

@@ -20,7 +20,8 @@ public interface MsUserProductMapper extends BaseMapper<MsProduct> {
      * @return
      */
     List<MsUserProductListVo> getList( @Param("productCategoriesId") Long productCategoriesId,
-                                       @Param("keyWord") String keyWord);
+                                       @Param("keyWord") String keyWord,
+                                       @Param("storeId") Long storeId);
 
     /**
      * 根据商品id查询详情

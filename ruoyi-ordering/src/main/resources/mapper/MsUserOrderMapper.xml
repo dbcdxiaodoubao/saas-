@@ -6,6 +6,7 @@
         SELECT
             mo.order_id,
             mo.table_id,
+            mo.store_id,
             mo.order_number,
             mo.order_type,
             mo.order_status,
@@ -46,6 +47,7 @@
         <result column="order_number" property="orderNumber"/>
         <result column="order_type" property="orderType"/>
         <result column="order_status" property="orderStatus"/>
+        <result column="store_id" property="storeId"/>
         <result column="pay_time" property="payTime"/>
         <result column="actual_pay" property="actualPay"/>
         <result column="product_total_price" property="productTotalPrice"/>
@@ -69,6 +71,7 @@
             mo.order_id,
             mo.user_id,
             mo.table_id,
+            mo.store_id,
             mo.order_number,
             mo.order_type,
             mo.order_status,
@@ -107,6 +110,7 @@
         <id column="order_id" property="orderId"/>
         <result column="user_id" property="userId"/>
         <result column="table_id" property="tableId"/>
+        <result column="store_id" property="storeId"/>
         <result column="order_number" property="orderNumber"/>
         <result column="order_type" property="orderType"/>
         <result column="order_status" property="orderStatus"/>
@@ -135,6 +139,7 @@
             order_id,
             user_id,
             table_id,
+            store_id,
             order_number,
             order_type,
             order_status,
@@ -150,6 +155,7 @@
                      #{orderId},
                      #{userId},
                      #{tableId},
+                     #{storeId},
                      #{orderNumber},
                      #{orderType},
                      '0',
