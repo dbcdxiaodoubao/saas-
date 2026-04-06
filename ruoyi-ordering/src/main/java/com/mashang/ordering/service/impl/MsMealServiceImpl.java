@@ -119,25 +119,46 @@ public class MsMealServiceImpl extends ServiceImpl<MsMealMapper, MsMeal> impleme
     @Override
     public boolean updateMeal(MsMealUpdate msMealUpdate) {
         // 1. 修改套餐
-        int rows = msMealMapper.updateMeal(msMealUpdate);
+        // 1. 先更新套餐基本信息
+        MsMeal meal = new MsMeal();
+        meal.setMealId(msMealUpdate.getMealId());
+        meal.setMealName(msMealUpdate.getMealName());
+        meal.setMealStatus(msMealUpdate.getMealStatus());
+        meal.setRemark(msMealUpdate.getRemark());
 
-        // 2. 删除旧权限
-        msMealMenuMapper.deleteByMealId(msMealUpdate.getMealId());
+        // 执行更新（自动填充 updateBy / updateTime）
+        this.updateById(meal);
 
-        // 3. 批量插入新权限
-        if (msMealUpdate.getMenuIds() != null && !msMealUpdate.getMenuIds().isEmpty()) {
-            List<MsMealMenu> list = new ArrayList<>();
-            for (Long menuId : msMealUpdate.getMenuIds()) {
-                MsMealMenu mm = new MsMealMenu();
-                mm.setMealId(msMealUpdate.getMealId());
-                mm.setMenuId(menuId);
-                list.add(mm);
-            }
-            msMealMenuMapper.batchMealMenu(list);
+        // 2. 删除该套餐原来绑定的所有菜单
+        LambdaQueryWrapper<MsMealMenu> delWrapper = Wrappers.lambdaQuery();
+        delWrapper.eq(MsMealMenu::getMealId, msMealUpdate.getMealId());
+        msMealMenuMapper.delete(delWrapper);
+
+        // 3. 获取新的菜单ID
+        List<Long> menuIds = msMealUpdate.getMenuIds();
+        if (StringUtils.isEmpty(menuIds)) {
+            return true;
         }
 
-        return rows > 0;
+        // 4. 递归获取 父菜单 + 所有子菜单
+        Set<Long> finalMenuIds = new HashSet<>();
+        for (Long menuId : menuIds) {
+            collectAllMenus(menuId, finalMenuIds);
         }
+
+        // 5. 批量插入新的关联
+        List<MsMealMenu> saveList = finalMenuIds.stream().map(id -> {
+            MsMealMenu mm = new MsMealMenu();
+            mm.setMealId(msMealUpdate.getMealId());
+            mm.setMenuId(id);
+            return mm;
+        }).collect(Collectors.toList());
+
+        msMealMenuMapper.batchMealMenu(saveList);
+
+        return true;
+    }
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)
