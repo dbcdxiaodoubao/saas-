@@ -9,6 +9,7 @@ import com.mashang.ordering.domain.vo.MsMealDtlVo;
 import io.lettuce.core.dynamic.annotation.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IMsMealService extends IService<MsMeal> {
 
@@ -39,4 +40,12 @@ public interface IMsMealService extends IService<MsMeal> {
      * @return
      */
      boolean deleteMeal(Long mealId);
+
+    /**
+     *  获取套餐权限树
+     * @param
+     * @return
+     */
+    Map<String, Object> getMenuTree();
+
 }

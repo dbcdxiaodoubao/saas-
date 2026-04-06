@@ -586,7 +586,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
                 "t1.contact", sysUserQuery.getContact());
         qw.like(StringUtils.isNotEmpty(sysUserQuery.getContactPhonenumber()),
                 "t1.contact_phonenumber", sysUserQuery.getContactPhonenumber());
-        qw.eq("t1.status", '0');
 
         return userMapper.page(page, qw);
     }

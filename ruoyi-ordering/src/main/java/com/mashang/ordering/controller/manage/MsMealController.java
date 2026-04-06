@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mashang.ordering.domain.entity.MsMeal;
+import com.mashang.ordering.domain.entity.MsMealMenu;
 import com.mashang.ordering.domain.param.create.MsMealCreate;
 import com.mashang.ordering.domain.param.selete.MsMealParam;
 import com.mashang.ordering.domain.param.update.MsMealUpdate;
@@ -14,6 +15,7 @@ import com.mashang.ordering.service.IMsMealMenuService;
 import com.mashang.ordering.service.IMsMealService;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.R;
+import com.ruoyi.common.core.domain.entity.SysMenu;
 import com.ruoyi.common.core.page.PageQuery;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.StringUtils;
@@ -25,7 +27,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Api(tags = "管理端-租户套餐管理")
 @RestController
@@ -34,6 +39,12 @@ public class MsMealController extends BaseController {
 
     @Autowired
     private IMsMealService msMealService;
+
+    @Autowired
+    private ISysMenuService sysMenuService;
+
+    @Autowired
+    private IMsMealMenuService msMealMenuService;
 
     @ApiOperation(("新增租户套餐信息"))
     @PostMapping
@@ -86,5 +97,11 @@ public class MsMealController extends BaseController {
     public R deleteById(@PathVariable Long mealId){
 
         return toResult(msMealService.deleteMeal(mealId));
+    }
+
+    @ApiOperation("获取套餐树")
+    @GetMapping("/menuTree")
+    public R getMenuTree() {
+        return R.ok(msMealService.getMenuTree());
     }
 }
