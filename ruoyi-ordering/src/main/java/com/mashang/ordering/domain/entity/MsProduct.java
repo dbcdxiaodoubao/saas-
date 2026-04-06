@@ -1,6 +1,8 @@
 package com.mashang.ordering.domain.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -23,7 +25,7 @@ public class MsProduct {
   @ApiModelProperty(value = "关键词")
   private String keyword;
 
-  @ApiModelProperty(value = "规格类型")
+  @ApiModelProperty(value = "规格类型（单规格0，多规格1）")
   private String specificationType;
 
   @ApiModelProperty(value = "单位名称")
@@ -35,8 +37,8 @@ public class MsProduct {
   @ApiModelProperty(value = "市场价格")
   private Double marketPrice;
 
-  @ApiModelProperty(value = "总库存")
-  private String totalInventory;
+  @ApiModelProperty(value = "库存")
+  private Integer inventory;
 
   @ApiModelProperty(value = "商品封面图")
   private String productCover;
@@ -56,15 +58,22 @@ public class MsProduct {
   @ApiModelProperty(value = "获得积分")
   private String earnPoints;
 
+  @ApiModelProperty(value = "销量")
+  private Long sales;
+
+  @TableField(fill = FieldFill.INSERT)
   @ApiModelProperty(value = "创建者")
   private String createBy;
 
+  @TableField(fill = FieldFill.INSERT)
   @ApiModelProperty(value = "创建时间")
   private Date createTime;
 
+  @TableField(fill = FieldFill.INSERT_UPDATE)
   @ApiModelProperty(value = "更新者")
   private String updateBy;
 
+  @TableField(fill = FieldFill.INSERT_UPDATE)
   @ApiModelProperty(value = "更新时间")
   private Date updateTime;
 
@@ -73,5 +82,8 @@ public class MsProduct {
 
   @ApiModelProperty(value = "删除标志")
   private String delFlag;
+
+  @ApiModelProperty(value = "规格id")
+  private Long specificationId;
 
 }

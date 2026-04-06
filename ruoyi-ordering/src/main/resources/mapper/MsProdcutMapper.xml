@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mashang.ordering.mapper.MsProductMapper">
+
+    <resultMap id="MsProductPageVo" type="com.mashang.ordering.domain.vo.MsProductPageVo">
+        <id column="product_id" property="productId"/>
+        <result column="product_cover" property="productCover"/>
+        <result column="store_name" property="belongStore"/>
+        <result column="product_name" property="productName"/>
+        <result column="product_price" property="productPrice"/>
+        <result column="sales" property="sales"/>
+        <result column="keyword" property="keyword"/>
+        <result column="specification_type" property="specificationType"/>
+        <result column="unit_name" property="unitName"/>
+        <result column="inventory" property="inventory"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <!-- 分页模糊查询条件 -->
+    <sql id="page_condition">
+        <where>
+            <!-- 商品分类ID精确查询 -->
+            <if test="categoriesId != null">
+                AND ms_categories.categories_id = #{categoriesId}
+            </if>
+
+            <!-- 商品名称模糊查询 -->
+            <if test="productName != null and productName != ''">
+                AND ms_product.product_name LIKE CONCAT('%', #{productName}, '%')
+            </if>
+
+            <!-- 店铺名称模糊查询 -->
+            <if test="storeName != null and storeName != ''">
+                AND ms_store.store_name LIKE CONCAT('%', #{storeName}, '%')
+            </if>
+
+            <!-- 商品状态精确查询 -->
+            <if test="status != null and status != ''">
+                AND ms_product.`status` = #{status}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 模糊分页查询商品列表 -->
+    <select id="page" resultMap="MsProductPageVo">
+        SELECT
+        ms_product.product_id,
+        ms_product.product_cover,
+        ms_store.store_name,
+        ms_product.product_name,
+        ms_product.product_price,
+        ms_product.sales,
+        ms_product.keyword,
+        ms_product.specification_type,
+        ms_product.unit_name,
+        ms_product.inventory,
+        ms_product.`status`,
+        ms_product.create_time
+        FROM ms_product
+        INNER JOIN ms_categories ON ms_product.product_id = ms_categories.product_id
+        INNER JOIN ms_store_product ON ms_product.product_id = ms_store_product.product_id
+        INNER JOIN ms_store ON ms_store.store_id = ms_store_product.store_id
+        <include refid="page_condition"/>
+        GROUP BY ms_product.product_id
+        ORDER BY ms_product.create_time DESC
+    </select>
+
+</mapper>
