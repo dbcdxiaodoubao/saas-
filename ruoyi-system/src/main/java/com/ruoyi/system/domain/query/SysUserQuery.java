@@ -32,6 +32,6 @@ public class SysUserQuery {
 
     @ApiModelProperty(value = "角色ID",required = true)
     @NotBlank(message = "角色ID不能为空")
-    private Long roleIds;
+    private Long roleId;
 
 }

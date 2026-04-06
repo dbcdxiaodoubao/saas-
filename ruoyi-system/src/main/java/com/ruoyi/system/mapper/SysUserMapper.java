@@ -3,7 +3,12 @@ package com.ruoyi.system.mapper;
 import java.util.Date;
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.system.domain.vo.SysMealNameVo;
+import com.ruoyi.system.domain.vo.SysUserListVo;
 import org.apache.ibatis.annotations.Param;
 import com.ruoyi.common.core.domain.entity.SysUser;
 
@@ -146,4 +151,20 @@ public interface SysUserMapper extends BaseMapper<SysUser>
      * @return 结果
      */
     public SysUser checkEmailUnique(String email);
+
+    /**
+     * 分页查询租户信息列表
+     * @param page 分页对象
+     * @param wrapper 条件构造器对象
+     * @return
+     */
+    Page<SysUserListVo> page (@Param("page") Page<SysUserListVo> page,
+                              @Param(Constants.WRAPPER) Wrapper<SysUserListVo> wrapper);
+
+    /**
+     * 查询所有套餐名称列表
+     * @return
+     */
+
+    List<SysMealNameVo> selectMealNames();
 }

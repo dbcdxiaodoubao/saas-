@@ -15,6 +15,7 @@ import com.ruoyi.system.domain.SysUserRole;
 import com.ruoyi.system.domain.query.SysUserCreate;
 import com.ruoyi.system.domain.query.SysUserQuery;
 import com.ruoyi.system.domain.query.SysUserUpdate;
+import com.ruoyi.system.domain.vo.SysMealNameVo;
 import com.ruoyi.system.domain.vo.SysUserDtlVo;
 import com.ruoyi.system.domain.vo.SysUserListVo;
 import com.ruoyi.system.mapper.SysUserRoleMapper;
@@ -289,33 +290,9 @@ public class SysUserController extends BaseController {
     @ApiOperation(("分页查询租户信息列表"))
     @GetMapping("/tenant/list")
     public TableDataInfo<List<SysUserListVo>> List(@Validated PageQuery pageQuery, SysUserQuery sysUserQuery){
+        Page<SysUserListVo> page = userService.list(pageQuery, sysUserQuery);
 
-        LambdaQueryWrapper<SysUser> lqw = new LambdaQueryWrapper<>();
-
-        lqw.like(StringUtils.isNotEmpty(sysUserQuery.getNickName()), SysUser::getNickName, sysUserQuery.getNickName());
-
-        lqw.like(StringUtils.isNotEmpty(sysUserQuery.getContact()), SysUser::getContact, sysUserQuery.getContact());
-
-        lqw.like(StringUtils.isNotEmpty(sysUserQuery.getContactPhonenumber()),
-                SysUser::getContactPhonenumber, sysUserQuery.getContactPhonenumber());
-
-        lqw.eq(StringUtils.isNotNull(sysUserQuery.getStatus()), SysUser::getStatus, sysUserQuery.getStatus());
-
-        lqw.like(StringUtils.isNotNull(sysUserQuery.getCreateTime()), SysUser::getCreateTime, sysUserQuery.getCreateTime());
-
-        if (StringUtils.isNotNull(sysUserQuery.getRoleIds()) ) {
-            lqw.inSql(SysUser::getUserId,
-                    "SELECT user_id FROM sys_user_role WHERE role_id IN (" +
-                            StringUtils.join(sysUserQuery.getRoleIds()) +
-                            ")"
-            );
-        }
-
-        Page<SysUser> page = userService.page(new Page<>(pageQuery.getPageNum(), pageQuery.getPageSize()), lqw);
-
-        Page<SysUserListVo> result = SysUserMapping.INSTANCE.toPage(page);
-
-        return getDataTable(result.getRecords(), result.getTotal());
+        return getDataTable(page.getRecords(), page.getTotal());
     }
 
     @ApiOperation(("查询租户信息详情"))
@@ -355,5 +332,11 @@ public class SysUserController extends BaseController {
     public R deleteById(@PathVariable Long userId){
 
         return toResult(userService.removeById(userId));
+    }
+
+    @ApiOperation(("查询所有套餐名称列表"))
+    @GetMapping("/mealNames")
+    public R<List<SysMealNameVo>> selectTeacherNames(){
+        return R.ok(userService.selectMealNames());
     }
 }

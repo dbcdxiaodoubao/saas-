@@ -19,8 +19,8 @@ public class SysUserListVo {
     @ApiModelProperty("租户名称")
     private String nickName;
 
-    @ApiModelProperty("套餐ID")
-    private String mealId;
+    @ApiModelProperty("套餐名称")
+    private String mealName;
 
     @ApiModelProperty("联系人")
     private String contact;

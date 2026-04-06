@@ -223,5 +223,30 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			#{userId}
         </foreach> 
  	</delete>
-	
+	<select id="page" resultType="sysUserListVo">
+		SELECT
+			t1.user_id,
+			t1.nick_name,
+			t2.meal_name,
+			t1.contact,
+			t1.contact_phonenumber,
+			t1.account_limit,
+			t1.expiration_time,
+			t1.bind_domain,
+			t1.`status`
+		FROM sys_user AS t1
+		LEFT JOIN ms_meal AS t2
+		ON t1.meal_id = t2.meal_id
+		LEFT JOIN sys_user_role t3
+		ON t1.user_id = t3.user_id
+		LEFT JOIN sys_role t4
+		ON t3.role_id = t4.role_id
+		${ew.customSqlSegment}
+	</select>
+
+	<select id="selectMealNames" resultType="sysMealNameVo">
+		SELECT meal_id,
+		       meal_name
+		FROM ms_meal
+	</select>
 </mapper> 

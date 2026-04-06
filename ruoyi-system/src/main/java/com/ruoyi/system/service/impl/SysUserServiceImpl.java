@@ -1,12 +1,19 @@
 package com.ruoyi.system.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Validator;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.common.core.page.PageQuery;
+import com.ruoyi.system.domain.query.SysUserQuery;
+import com.ruoyi.system.domain.vo.SysMealNameVo;
+import com.ruoyi.system.domain.vo.SysUserListVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -563,5 +570,29 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             successMsg.insert(0, "恭喜您，数据已全部导入成功！共 " + successNum + " 条，数据如下：");
         }
         return successMsg.toString();
+    }
+
+    @Override
+    public Page<SysUserListVo> list(PageQuery pageQuery, SysUserQuery sysUserQuery) {
+
+        Page<SysUserListVo> page = new Page<>(pageQuery.getPageNum(), pageQuery.getPageSize());
+
+        QueryWrapper<SysUserListVo> qw = new QueryWrapper();
+        qw.eq(StringUtils.isNotNull(sysUserQuery.getRoleId()),
+                "t4.role_id", sysUserQuery.getRoleId());
+        qw.like(StringUtils.isNotEmpty(sysUserQuery.getNickName()),
+                "t1.nick_name", sysUserQuery.getNickName());
+        qw.like(StringUtils.isNotEmpty(sysUserQuery.getContact()),
+                "t1.contact", sysUserQuery.getContact());
+        qw.like(StringUtils.isNotEmpty(sysUserQuery.getContactPhonenumber()),
+                "t1.contact_phonenumber", sysUserQuery.getContactPhonenumber());
+        qw.eq("t1.status", '0');
+
+        return userMapper.page(page, qw);
+    }
+
+    @Override
+    public List<SysMealNameVo> selectMealNames() {
+        return userMapper.selectMealNames();
     }
 }

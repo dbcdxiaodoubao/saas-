@@ -3,8 +3,13 @@ package com.ruoyi.system.service;
 import java.util.Date;
 import java.util.List;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.core.page.PageQuery;
+import com.ruoyi.system.domain.query.SysUserQuery;
+import com.ruoyi.system.domain.vo.SysMealNameVo;
+import com.ruoyi.system.domain.vo.SysUserListVo;
 
 /**
  * 用户 业务层
@@ -216,4 +221,19 @@ public interface ISysUserService extends IService<SysUser>
      * @return 结果
      */
     public String importUser(List<SysUser> userList, Boolean isUpdateSupport, String operName);
+
+    /**
+     * 分页查询租户信息列表
+     * @param pageQuery 分页条件
+     * @param sysUserQuery 课程检索条件
+     * @return
+     */
+    Page<SysUserListVo> list(PageQuery pageQuery, SysUserQuery sysUserQuery);
+
+    /**
+     * 查询所有套餐名称列表
+     * @return
+     */
+
+    List<SysMealNameVo> selectMealNames();
 }
