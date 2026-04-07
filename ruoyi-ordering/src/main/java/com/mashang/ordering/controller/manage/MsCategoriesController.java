@@ -17,8 +17,8 @@ import com.ruoyi.common.core.controller.BaseController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/store")
-@Api(tags = "管理端-门店管理")
+@RequestMapping("/Categories")
+@Api(tags = "管理端-商品分类管理")
 public class MsCategoriesController extends BaseController {
 
     @Autowired
