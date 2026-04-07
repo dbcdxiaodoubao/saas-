@@ -17,7 +17,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/Categories")
+@RequestMapping("/categories")
 @Api(tags = "管理端-商品分类管理")
 public class MsCategoriesController extends BaseController {
 
