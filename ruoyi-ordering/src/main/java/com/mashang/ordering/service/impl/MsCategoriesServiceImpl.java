@@ -15,10 +15,12 @@ import com.mashang.ordering.mapper.MsStoreCategoriesMapper;
 import com.mashang.ordering.mapping.MsCategoriesMapping;
 import com.mashang.ordering.service.IMsCategoriesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Service
 public class MsCategoriesServiceImpl extends ServiceImpl<MsCategoriesMapper, MsCategories> implements IMsCategoriesService {
 
     @Autowired

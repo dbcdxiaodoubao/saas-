@@ -16,6 +16,6 @@ public interface MsCategoriesMapper extends BaseMapper<MsCategories> {
     @Select("SELECT LAST_INSERT_ID()")
     Long getLastInsertId();
 
-    List<MsCategoriesListVo> getAllCategories(@Param("MsCategoriesName") String MsCategoriesName,
-                                              @Param("MsStoreName") String MsStoreName);
+    List<MsCategoriesListVo> getAllCategories(@Param("msCategoriesName") String msCategoriesName,
+                                              @Param("msStoreName") String msStoreName);
 }

@@ -9,6 +9,7 @@ import com.ruoyi.common.core.domain.R;
 import com.mashang.ordering.domain.common.PageQuery;
 import com.ruoyi.common.core.page.TableDataInfo;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,7 @@ public class MsCategoriesController extends BaseController {
     private IMsCategoriesService msCategoriesService;
 
     @PostMapping("")
+    @ApiOperation("添加商品分类")
     public R addCategoriesWithStore(@Validated @RequestBody MsCategoriesCreate msCategoriesCreate) {
         try {
             ResultSet<Object> resultSet = msCategoriesService.addCategoriesWithStore(msCategoriesCreate);
@@ -39,6 +41,7 @@ public class MsCategoriesController extends BaseController {
     }
 
     @GetMapping("/list")
+    @ApiOperation("查询商品分类列表")
     public TableDataInfo<List<MsCategoriesListVo>> list(MsCategoriesParam msCategoriesParam, PageQuery pageQuery) {
         Page<MsCategoriesListVo> page = msCategoriesService.getCategoriesList(msCategoriesParam, pageQuery);
         return new TableDataInfo<>(page.getRecords(), page.getTotal());
