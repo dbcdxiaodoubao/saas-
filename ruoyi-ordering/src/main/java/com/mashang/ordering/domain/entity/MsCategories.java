@@ -1,5 +1,7 @@
 package com.mashang.ordering.domain.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.mashang.ordering.domain.model.BaseModel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -15,6 +17,7 @@ public class MsCategories extends BaseModel {
     //who calls this with plural? it's obvious that single is singular
 
     @ApiModelProperty(value = "分类id")
+    @TableId(type = IdType.AUTO)
     private Long categoriesId;
 
     @ApiModelProperty(value = "分类名称")
