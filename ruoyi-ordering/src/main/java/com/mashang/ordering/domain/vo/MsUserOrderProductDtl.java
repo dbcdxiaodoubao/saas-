@@ -27,5 +27,5 @@ public class MsUserOrderProductDtl {
   private long cumulativeAddCount;
 
   @ApiModelProperty("商品封面url")
-  private String productCover;
+  private String productImage;
 }

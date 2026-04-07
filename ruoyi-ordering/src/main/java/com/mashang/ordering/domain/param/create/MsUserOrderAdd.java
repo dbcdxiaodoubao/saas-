@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
@@ -12,6 +13,7 @@ import java.util.List;
 public class MsUserOrderAdd {
 
   @ApiModelProperty(value = "订单id",required = true)
+  @NotNull(message = "订单id不能为空")
   private Long orderId;
 
   @ApiModelProperty(value = "商品列表",required = true)

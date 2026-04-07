@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mashang.ordering.mapper.MsUserShoppingCartMapper">
+
+    <select id="getList" resultType="com.mashang.ordering.domain.vo.MsUserShoppingCartListVo">
+        SELECT
+            ms_shopping_cart.shopping_cart_id,
+            ms_shopping_cart.product_id,
+            ms_shopping_cart.product_quantity,
+            ms_shopping_cart.total_amount,
+            ms_shopping_cart.product_name,
+            ms_shopping_cart.specification,
+            ms_shopping_cart.product_price,
+            ms_shopping_cart.product_image
+        FROM
+            ms_shopping_cart
+        WHERE
+            ms_shopping_cart.user_id = #{userId}
+          AND
+            ms_shopping_cart.store_id = #{storeId}
+    </select>
+</mapper>

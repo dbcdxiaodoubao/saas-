@@ -191,6 +191,7 @@
         product_price,
         cumulative_add_count,
         total_amount,
+        product_image,
         create_time
         ) VALUES
         <foreach collection="list" item="item" separator=",">
@@ -203,6 +204,7 @@
             #{item.productPrice},
             #{item.cumulativeAddCount},
             #{item.productPrice} * #{item.productQuantity},
+            #{item.productImage},
             NOW()
             )
         </foreach>
@@ -218,6 +220,7 @@
         product_price,
         cumulative_add_count,
         total_amount,
+        product_image,
         create_time
         ) VALUES
         <foreach collection="list" item="item" separator=",">
@@ -230,6 +233,7 @@
             #{item.productPrice},
             #{item.cumulativeAddCount},
             #{item.productPrice} * #{item.productQuantity},
+            #{item.productImage},
             NOW()
             )
         </foreach>
