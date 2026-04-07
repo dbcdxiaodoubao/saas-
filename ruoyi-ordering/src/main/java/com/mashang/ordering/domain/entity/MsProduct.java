@@ -1,16 +1,12 @@
 package com.mashang.ordering.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
-
 public class MsProduct {
 
   @ApiModelProperty(value = "商品ID")
@@ -82,6 +78,7 @@ public class MsProduct {
   private String remark;
 
   @ApiModelProperty(value = "删除标志")
+  @TableLogic
   private String delFlag;
 
   @ApiModelProperty(value = "规格id")

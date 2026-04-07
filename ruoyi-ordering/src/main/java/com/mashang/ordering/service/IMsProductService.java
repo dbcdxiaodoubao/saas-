@@ -5,6 +5,8 @@ import com.mashang.ordering.domain.common.ResultSet;
 import com.mashang.ordering.domain.entity.MsProduct;
 import com.mashang.ordering.domain.param.create.MsProductCreate;
 import com.mashang.ordering.domain.param.selete.MsProductPageQuery;
+import com.mashang.ordering.domain.param.update.MsProductUpdate;
+import com.mashang.ordering.domain.vo.MsProductDtlVo;
 import com.mashang.ordering.domain.vo.MsProductPageVo;
 import com.ruoyi.common.core.page.TableDataInfo;
 
@@ -22,4 +24,18 @@ public interface IMsProductService extends IService<MsProduct> {
      */
     ResultSet addProduct(MsProductCreate msProductCreate);
 
+    /**
+     * 查询商品详情
+     */
+    MsProductDtlVo selectProductDtl(Long productId);
+
+    /**
+     *修改商品
+     */
+    ResultSet updateProduct(MsProductUpdate msProductUpdate);
+
+    /**
+     *删除商品
+     */
+    ResultSet deleteProduct(Long productId);
 }

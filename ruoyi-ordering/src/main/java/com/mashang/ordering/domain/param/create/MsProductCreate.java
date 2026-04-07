@@ -50,6 +50,7 @@ public class MsProductCreate {
   private String productCarousel;
 
   @ApiModelProperty(value = "状态（'0'下架，'1'上架）")
+  @NotBlank(message = "请插入状态（'0'下架，'1'上架）")
   private String status;
 
   @ApiModelProperty(value = "商品简介")
