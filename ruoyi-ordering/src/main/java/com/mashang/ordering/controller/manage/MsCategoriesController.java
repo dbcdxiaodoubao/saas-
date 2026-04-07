@@ -1,13 +1,12 @@
 package com.mashang.ordering.controller.manage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.mashang.ordering.common.base.BaseController;
 import com.mashang.ordering.domain.common.ResultSet;
 import com.mashang.ordering.domain.param.create.MsCategoriesCreate;
 import com.mashang.ordering.domain.param.selete.MsCategoriesParam;
 import com.mashang.ordering.domain.vo.MsCategoriesListVo;
 import com.mashang.ordering.service.IMsCategoriesService;
 import com.ruoyi.common.core.domain.R;
-import com.ruoyi.common.core.page.PageQuery;
+import com.mashang.ordering.domain.common.PageQuery;
 import com.ruoyi.common.core.page.TableDataInfo;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
