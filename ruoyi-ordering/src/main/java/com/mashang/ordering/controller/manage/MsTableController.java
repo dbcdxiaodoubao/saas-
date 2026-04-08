@@ -6,6 +6,8 @@ import com.mashang.ordering.domain.entity.MsTable;
 import com.mashang.ordering.domain.param.create.MsTableBatchCreate;
 import com.mashang.ordering.domain.param.create.MsTableCreate;
 import com.mashang.ordering.domain.param.selete.MsTableParam;
+import com.mashang.ordering.domain.param.update.MsTableDtlVo;
+import com.mashang.ordering.domain.param.update.MsTableUpdate;
 import com.mashang.ordering.domain.vo.MsTableListVo;
 import com.mashang.ordering.mapping.MsTableMapping;
 import com.mashang.ordering.service.IMsTableService;
@@ -16,6 +18,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.StringUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -57,5 +60,34 @@ public class MsTableController extends BaseController {
         Page<MsTableListVo> page = msTableService.tablePage(pageQuery, msTableParam);
         return getDataTable(page.getRecords(), page.getTotal());
 
+    }
+
+    @ApiOperation("查询桌号信息详情")
+    @GetMapping("/dtl/{tableId}")
+    public R<MsTableDtlVo> selectById(@PathVariable Long tableId){
+
+        LambdaQueryWrapper<MsTable> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(MsTable::getTableId, tableId);
+
+        long count = msTableService.count(lqw);
+        if (count == 0){
+            return R.fail("当前餐桌不存在，请重新输入!");
+        }
+        return R.ok(MsTableMapping.INSTANCE.toDtl(msTableService.getById(tableId)));
+    }
+
+    @ApiOperation("修改桌号信息")
+    @PutMapping
+    public R updateById(@RequestBody @Validated MsTableUpdate msTableUpdate){
+        LambdaQueryWrapper<MsTable> lqw = new LambdaQueryWrapper<>();
+
+        lqw.eq(MsTable::getTableNumber, StringUtils.trim(msTableUpdate.getTableNumber()));
+
+        MsTable one = msTableService.getOne(lqw);
+
+        if (StringUtils.isNotNull(one)){
+            return R.fail("当前桌号已存在,请重新修改!");
+        }
+        return toResult(msTableService.updateById(MsTableMapping.INSTANCE.toUpdate(msTableUpdate)));
     }
 }
