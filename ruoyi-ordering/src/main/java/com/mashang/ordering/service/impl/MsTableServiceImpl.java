@@ -8,6 +8,7 @@ import com.mashang.ordering.domain.entity.MsTable;
 import com.mashang.ordering.domain.param.create.MsTableBatchCreate;
 import com.mashang.ordering.domain.param.selete.MsTableParam;
 import com.mashang.ordering.domain.vo.MsMealListVo;
+import com.mashang.ordering.domain.vo.MsStoreNameVo;
 import com.mashang.ordering.domain.vo.MsTableListVo;
 import com.mashang.ordering.mapper.MsTableMapper;
 import com.mashang.ordering.service.IMsTableService;
@@ -88,6 +89,11 @@ public class MsTableServiceImpl extends ServiceImpl<MsTableMapper, MsTable> impl
                 "t1.table_number", msTableParam.getTableNumber());
         qw.eq("t1.del_flag", 0);
         return msTableMapper.tablePage(page, qw);
+    }
+
+    @Override
+    public List<MsStoreNameVo> selectStoreNames() {
+        return msTableMapper.selectStoreNames();
     }
 
 }

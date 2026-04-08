@@ -6,6 +6,7 @@ import com.mashang.ordering.domain.entity.MsTable;
 import com.mashang.ordering.domain.param.create.MsTableBatchCreate;
 import com.mashang.ordering.domain.param.selete.MsTableParam;
 import com.mashang.ordering.domain.vo.MsMealListVo;
+import com.mashang.ordering.domain.vo.MsStoreNameVo;
 import com.mashang.ordering.domain.vo.MsTableListVo;
 import com.ruoyi.common.core.page.PageQuery;
 
@@ -28,4 +29,11 @@ public interface IMsTableService extends IService<MsTable> {
      * @return
      */
     Page<MsTableListVo> tablePage(PageQuery pageQuery, MsTableParam msTableParam);
+
+    /**
+     * 查询所有店铺名称列表
+     * @return
+     */
+
+    List<MsStoreNameVo> selectStoreNames();
 }

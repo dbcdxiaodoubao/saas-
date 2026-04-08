@@ -8,6 +8,7 @@ import com.mashang.ordering.domain.param.create.MsTableCreate;
 import com.mashang.ordering.domain.param.selete.MsTableParam;
 import com.mashang.ordering.domain.param.update.MsTableDtlVo;
 import com.mashang.ordering.domain.param.update.MsTableUpdate;
+import com.mashang.ordering.domain.vo.MsStoreNameVo;
 import com.mashang.ordering.domain.vo.MsTableListVo;
 import com.mashang.ordering.mapping.MsTableMapping;
 import com.mashang.ordering.service.IMsTableService;
@@ -17,6 +18,7 @@ import com.ruoyi.common.core.page.PageQuery;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.StringUtils;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +65,7 @@ public class MsTableController extends BaseController {
     }
 
     @ApiOperation("查询桌号信息详情")
+    @ApiImplicitParam(name = "tableId", value = "桌号id")
     @GetMapping("/dtl/{tableId}")
     public R<MsTableDtlVo> selectById(@PathVariable Long tableId){
 
@@ -89,5 +92,18 @@ public class MsTableController extends BaseController {
             return R.fail("当前桌号已存在,请重新修改!");
         }
         return toResult(msTableService.updateById(MsTableMapping.INSTANCE.toUpdate(msTableUpdate)));
+    }
+
+    @ApiOperation("删除桌号信息")
+    @ApiImplicitParam(name = "tableId", value = "桌号id")
+    @DeleteMapping("/{tableId}")
+    public R deleteById(@PathVariable Long tableId){
+        return toResult(msTableService.removeById(tableId));
+    }
+
+    @ApiOperation(("查询所有餐桌名称列表"))
+    @GetMapping("/tableNames")
+    public R<List<MsStoreNameVo>> selectTeacherNames(){
+        return R.ok(msTableService.selectStoreNames());
     }
 }
