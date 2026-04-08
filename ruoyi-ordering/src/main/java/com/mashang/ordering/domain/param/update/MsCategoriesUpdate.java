@@ -9,8 +9,12 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
-@ApiModel(value = "MsCategoriesCreate",description = "商品分类创建参数")
-public class MsCategoriesUpdate extends BaseModel {
+@ApiModel(value = "MsCategoriesUpdate",description = "商品分类修改参数")
+public class MsCategoriesUpdate{
+
+    @ApiModelProperty(value = "商品分类和门店映射项id")
+    @NotNull(message = "商品分类和门店映射项id不能为空,此项为必填项")
+    private Long storeCategoriesId;
 
     @ApiModelProperty(value = "门店id")
     @NotNull(message = "门店id不能为空,此项为必填项")

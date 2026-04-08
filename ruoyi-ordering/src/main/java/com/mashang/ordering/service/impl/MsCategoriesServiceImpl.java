@@ -6,11 +6,15 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mashang.ordering.domain.common.PageQuery;
 import com.mashang.ordering.domain.common.ResultSet;
 import com.mashang.ordering.domain.entity.MsCategories;
+import com.mashang.ordering.domain.entity.MsProduct;
 import com.mashang.ordering.domain.entity.MsStoreCategories;
 import com.mashang.ordering.domain.param.create.MsCategoriesCreate;
 import com.mashang.ordering.domain.param.selete.MsCategoriesParam;
+import com.mashang.ordering.domain.param.update.MsCategoriesUpdate;
+import com.mashang.ordering.domain.vo.MsCategoriesDto;
 import com.mashang.ordering.domain.vo.MsCategoriesListVo;
 import com.mashang.ordering.mapper.MsCategoriesMapper;
+import com.mashang.ordering.mapper.MsProductMapper;
 import com.mashang.ordering.mapper.MsStoreCategoriesMapper;
 import com.mashang.ordering.mapping.MsCategoriesMapping;
 import com.mashang.ordering.service.IMsCategoriesService;
@@ -29,6 +33,8 @@ public class MsCategoriesServiceImpl extends ServiceImpl<MsCategoriesMapper, MsC
     @Autowired
     private MsStoreCategoriesMapper msStoreCategoriesMapper;
 
+    @Autowired
+    private MsProductMapper msProductMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -62,10 +68,60 @@ public class MsCategoriesServiceImpl extends ServiceImpl<MsCategoriesMapper, MsC
 
     @Override
     public Page<MsCategoriesListVo> getCategoriesList(MsCategoriesParam msCategoriesParam, PageQuery pageQuery) {
+        if (msCategoriesParam.getMsCategoriesName()==null) {
+            msCategoriesParam.setMsCategoriesName("");
+        }
+        if (msCategoriesParam.getMsStoreName()==null) {
+            msCategoriesParam.setMsStoreName("");
+        }
         List<MsCategoriesListVo> msCategoriesListVoList = msCategoriesMapper.getAllCategories(
                 msCategoriesParam.getMsCategoriesName(), msCategoriesParam.getMsStoreName());
         Page<MsCategoriesListVo> page = new Page<>(pageQuery.getPageNum(), pageQuery.getPageSize(), msCategoriesListVoList.size());
         page.setRecords(msCategoriesListVoList);
         return page;
+    }
+
+    @Override
+    public ResultSet<MsCategoriesDto> getCategoriesById(Long id) {
+        return ResultSet.success(msCategoriesMapper.getCategoriesById(id));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public ResultSet<Object> updateCategories(MsCategoriesUpdate msCategoriesUpdate) throws Exception {
+        MsStoreCategories msStoreCategories = new MsStoreCategories();
+        msStoreCategories.setStoreCategoriesId(msCategoriesUpdate.getStoreCategoriesId());
+        msStoreCategories.setStoreId(msCategoriesUpdate.getMsStoreId());
+        int updateRes1 = msStoreCategoriesMapper.updateById(msStoreCategories);
+        if(updateRes1 != 1){
+            throw new Exception("修改失败");
+        }
+        MsCategories msCategories = MsCategoriesMapping.INSTANCE.fromUpdate(msCategoriesUpdate);
+        int updateRes2 = msCategoriesMapper.updateById(msCategories);
+        if(updateRes2 != 1){
+            throw new Exception("修改失败");
+        }
+        return ResultSet.success(null,"修改成功");
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public ResultSet<Object> deleteCategoriesById(Long msCategoriesid) throws Exception {
+        LambdaQueryWrapper<MsProduct> selectLqw = new LambdaQueryWrapper<>();
+        selectLqw.eq(MsProduct::getProductCategoriesId, msCategoriesid);
+        if(msProductMapper.selectCount(selectLqw) > 0) {
+            return ResultSet.fail("当前分类下有商品，不能删除");
+        }
+        LambdaQueryWrapper<MsStoreCategories> deleteLqw = new LambdaQueryWrapper<>();
+        deleteLqw.eq(MsStoreCategories::getCategoriesId, msCategoriesid);
+        int deleteRes = msStoreCategoriesMapper.delete(deleteLqw);
+        if(deleteRes != 1){
+            throw new Exception("删除失败");
+        }
+        int deleteRes2 = msCategoriesMapper.deleteById(msCategoriesid);
+        if(deleteRes2 != 1){
+            throw new Exception("删除失败");
+        }
+        return ResultSet.success(null,"删除成功");
     }
 }

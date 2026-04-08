@@ -1,5 +1,7 @@
 package com.mashang.ordering.utils;
 
+import com.alibaba.fastjson2.JSONValidator;
+
 public class Checker {
     static public boolean isTimeString(String timeString) {
         if(!timeString.matches("^[0-9]{2}:[0-9]{2}:[0-9]{2}$")){
@@ -12,5 +14,12 @@ public class Checker {
         return  (hour   >= 0 && hour   < 24) &&
                 (minute >= 0 && minute < 60) &&
                 (second >= 0 && second < 60);
+    }
+
+    public static boolean isValidJson(String jsonStr) {
+        if (jsonStr == null || jsonStr.trim().isEmpty()) {
+            return false;
+        }
+        return JSONValidator.from(jsonStr).validate();
     }
 }

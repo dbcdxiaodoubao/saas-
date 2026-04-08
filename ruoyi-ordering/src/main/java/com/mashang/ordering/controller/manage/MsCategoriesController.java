@@ -3,6 +3,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mashang.ordering.domain.common.ResultSet;
 import com.mashang.ordering.domain.param.create.MsCategoriesCreate;
 import com.mashang.ordering.domain.param.selete.MsCategoriesParam;
+import com.mashang.ordering.domain.param.update.MsCategoriesUpdate;
 import com.mashang.ordering.domain.vo.MsCategoriesListVo;
 import com.mashang.ordering.service.IMsCategoriesService;
 import com.ruoyi.common.core.domain.R;
@@ -45,5 +46,42 @@ public class MsCategoriesController extends BaseController {
     public TableDataInfo<List<MsCategoriesListVo>> list(MsCategoriesParam msCategoriesParam, PageQuery pageQuery) {
         Page<MsCategoriesListVo> page = msCategoriesService.getCategoriesList(msCategoriesParam, pageQuery);
         return new TableDataInfo<>(page.getRecords(), page.getTotal());
+    }
+
+    @GetMapping("/{storeCategoriesId}")
+    @ApiOperation("查询商品分类详情")
+    public R selectById(@PathVariable("storeCategoriesId") String id) {
+        return R.ok(msCategoriesService.getCategoriesById(Long.parseLong(id)).getData());
+    }
+
+    @PutMapping("/")
+    @ApiOperation("修改商品分类")
+    public R updateCategories(@Validated @RequestBody MsCategoriesUpdate MsCategoriesUpdate) {
+        try{
+            ResultSet<Object> resultSet = msCategoriesService.updateCategories(MsCategoriesUpdate);
+            if (resultSet.isSuccess()) {
+                return R.ok(resultSet.getData());
+            } else {
+                return R.fail(resultSet.getMessage());
+            }
+        }catch (Exception e){
+            return R.fail(e.getMessage());
+        }
+    }
+
+
+    @DeleteMapping("/{id}")
+    @ApiOperation("删除商品分类")
+    public R deleteCategoriesById(@PathVariable("id") String id) {
+        try{
+            ResultSet<Object> resultSet = msCategoriesService.deleteCategoriesById(Long.parseLong(id));
+            if (resultSet.isSuccess()) {
+                return R.ok(resultSet.getData());
+            } else {
+                return R.fail(resultSet.getMessage());
+            }
+        }catch (Exception e){
+            return R.fail(e.getMessage());
+        }
     }
 }

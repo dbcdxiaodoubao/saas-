@@ -21,4 +21,29 @@
         </where>
     </select>
 
+    <select id="getCategoriesById" resultType="com.mashang.ordering.domain.vo.MsCategoriesDto">
+        SELECT
+            t1.store_categories_id,
+            t3.categories_id,
+            t3.categories_name,
+            t2.store_id,
+            t2.store_name,
+            t3.sort,
+            t3.picture_url,
+            t3.`status`,
+            t3.remark
+        FROM
+            ms_store_categories AS t1
+                LEFT JOIN
+            ms_store AS t2
+            ON
+                t1.store_id = t2.store_id
+                LEFT JOIN
+            ms_categories AS t3
+            ON
+                t3.categories_id = t1.categories_id
+        WHERE
+        t1.store_categories_id = #{id}
+    </select>
+
 </mapper>

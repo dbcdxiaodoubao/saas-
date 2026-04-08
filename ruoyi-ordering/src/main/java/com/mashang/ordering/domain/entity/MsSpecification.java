@@ -5,13 +5,15 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.mashang.ordering.domain.model.BaseModel;
+import com.ruoyi.common.core.domain.BaseEntity;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
-public class MsSpecification {
+public class MsSpecification extends BaseModel {
 
   @ApiModelProperty(value = "规格ID")
   @TableId(type = IdType.AUTO)
@@ -27,15 +29,5 @@ public class MsSpecification {
   @TableField(typeHandler = JacksonTypeHandler.class)
   private String specsAndAttrs;
 
-  @ApiModelProperty(value = "创建时间")
-  @TableField(fill = FieldFill.INSERT)
-  private Date createTime;
-
-  @TableField(fill = FieldFill.INSERT)
-  @ApiModelProperty(value = "更新时间")
-  private Date updateTime;
-
-  @ApiModelProperty(value = "备注")
-  private String remark;
 
 }

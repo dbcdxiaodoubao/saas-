@@ -61,6 +61,12 @@
             <artifactId>ruoyi-generator</artifactId>
         </dependency>
 
+        <!-- 点餐模块-->
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-ordering</artifactId>
+        </dependency>
+
         <!-- ruoyi-springboot2 / swagger knife4j 配置 -->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>

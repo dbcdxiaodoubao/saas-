@@ -3,6 +3,7 @@ package com.mashang.ordering.mapper;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mashang.ordering.domain.entity.MsCategories;
+import com.mashang.ordering.domain.vo.MsCategoriesDto;
 import com.mashang.ordering.domain.vo.MsCategoriesListVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -18,4 +19,6 @@ public interface MsCategoriesMapper extends BaseMapper<MsCategories> {
 
     List<MsCategoriesListVo> getAllCategories(@Param("msCategoriesName") String msCategoriesName,
                                               @Param("msStoreName") String msStoreName);
+
+    MsCategoriesDto getCategoriesById(@Param("id") Long id);
 }
