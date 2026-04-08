@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mashang.ordering.mapper.MsTableMapper">
+
+    <insert id="batchInsert">
+        INSERT INTO ms_table (
+        store_id,
+        table_number,
+        table_number_prefix,
+        start_table_number,
+        end_table_number,
+        state,
+        remark,
+        create_by,
+        create_time,
+        del_flag
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.storeId},
+            #{item.tableNumber},
+            #{item.tableNumberPrefix},
+            #{item.startTableNumber},
+            #{item.endTableNumber},
+            #{item.state},
+            #{item.remark},
+            #{item.createBy},
+            #{item.createTime},
+            #{item.delFlag}
+            )
+        </foreach>
+    </insert>
+
+</mapper>
