@@ -141,3 +141,16 @@ xss:
   excludes: /system/notice
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
+
+#支付宝
+alipay:
+  app-id: change-me
+  private-key: change-me
+  public-key: change-me
+  gateway-url: https://openapi-sandbox.dl.alipaydev.com/gateway.do
+  charset: utf-8
+  format: json
+  sign-type: RSA2
+  # 支付成功后 异步回调地址（必须公网可访问，本地用内网穿透）
+  notify-url: https://ecdcf6f.r7.cpolar.top/alipay/notify
+  return-url: https://ecdcf6f.r7.cpolar.top/alipay/return

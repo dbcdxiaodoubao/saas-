@@ -74,6 +74,16 @@ public class MsUserOrderServiceImpl extends ServiceImpl<MsUserOrderMapper, MsOrd
         msUserOrderMapper.batchInsertOrderDetail(msUserOrderAdd.getOrderId(), productList);
     }
 
+    @Override
+    public void pay(Long orderId,String totalAmount) {
+        msUserOrderMapper.pay(orderId,totalAmount);
+    }
+
+    @Override
+    public void updateOrderStatusToRefund(Long orderId) {
+        msUserOrderMapper.updateOrderStatusToRefund(orderId);
+    }
+
 
     private String generate4DigitDailyOrderNo(Long storeId) {
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));

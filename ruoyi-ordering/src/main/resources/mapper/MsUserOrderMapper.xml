@@ -238,4 +238,20 @@
             )
         </foreach>
     </insert>
+
+    <update id="pay">
+        UPDATE ms_order
+        SET order_status = 1,
+            actual_pay = #{totalAmount},
+            pay_time = NOW(),  -- 同步更新支付时间
+            update_time = NOW()
+        WHERE order_id = #{orderId}
+    </update>
+
+    <update id="updateOrderStatusToRefund">
+        UPDATE ms_order
+        SET order_status = 3,  <!-- 3 代表已退款，你可以自己改 -->
+        update_time = NOW()
+        WHERE order_id = #{orderId}
+    </update>
 </mapper>

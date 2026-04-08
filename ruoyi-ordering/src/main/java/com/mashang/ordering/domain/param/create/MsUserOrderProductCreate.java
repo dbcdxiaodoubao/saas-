@@ -23,6 +23,9 @@ public class MsUserOrderProductCreate {
   @NotNull(message = "商品数量不能为空")
   private long productQuantity;
 
+  @ApiModelProperty(value = "商品图片url",required = true)
+  private String productImage;
+
   @ApiModelProperty("规格")
   private String specification;
 

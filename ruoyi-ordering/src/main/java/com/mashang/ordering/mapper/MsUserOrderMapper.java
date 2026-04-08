@@ -60,4 +60,17 @@ public interface MsUserOrderMapper extends BaseMapper<MsOrder> {
             @Param("orderId") Long orderId,
             @Param("list") List<MsUserOrderProductCreate> list
     );
+
+    /**
+     * 支付
+     * @param orderId
+     */
+    void pay(@Param("orderId")Long orderId,
+             @Param("totalAmount")String totalAmount);
+
+    /**
+     * 退款
+     * @param orderId
+     */
+    void updateOrderStatusToRefund(Long orderId);
 }

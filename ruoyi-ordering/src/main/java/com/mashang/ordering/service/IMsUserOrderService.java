@@ -36,4 +36,16 @@ public interface IMsUserOrderService extends IService<MsOrder> {
      * @param msUserOrderAdd
      */
     void addProduct(MsUserOrderAdd msUserOrderAdd);
+
+    /**
+     * 支付
+     * @param orderId
+     */
+    void pay(Long orderId,String totalAmount);
+
+    /**
+     * 退款
+     * @param orderId
+     */
+    void updateOrderStatusToRefund(Long orderId);
 }
