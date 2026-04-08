@@ -19,7 +19,7 @@ public class MsTable extends BaseModel {
     private long storeId;
 
     @ApiModelProperty(value = "桌号", example = "1")
-    private long tableNumber;
+    private String tableNumber;
 
     @ApiModelProperty(value = "桌号前缀", example = "TEST")
     private String tableNumberPrefix;
