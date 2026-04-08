@@ -1,15 +1,24 @@
 package com.mashang.ordering.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mashang.ordering.domain.entity.MsTable;
 import com.mashang.ordering.domain.param.create.MsTableBatchCreate;
+import com.mashang.ordering.domain.param.selete.MsTableParam;
+import com.mashang.ordering.domain.vo.MsMealListVo;
+import com.mashang.ordering.domain.vo.MsTableListVo;
 import com.mashang.ordering.mapper.MsTableMapper;
 import com.mashang.ordering.service.IMsTableService;
+import com.ruoyi.common.core.page.PageQuery;
+import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -59,9 +68,26 @@ public class MsTableServiceImpl extends ServiceImpl<MsTableMapper, MsTable> impl
 
             table.setState(msTableBatchCreate.getState());
             table.setRemark(msTableBatchCreate.getRemark());
+            table.setDelFlag("0");
             saveList.add(table);
         }
         // 5. 批量保存
         return msTableMapper.batchInsert(saveList);
     }
+
+    @Override
+    public Page<MsTableListVo> tablePage(PageQuery pageQuery, MsTableParam msTableParam) {
+
+        Page<MsTableListVo> page = new Page<>(pageQuery.getPageNum(), pageQuery.getPageSize());
+
+        QueryWrapper<MsTableListVo> qw = new QueryWrapper();
+
+        qw.eq(StringUtils.isNotEmpty(msTableParam.getStoreName()),
+                "t2.store_name", msTableParam.getStoreName());
+        qw.eq(StringUtils.isNotEmpty(msTableParam.getTableNumber()),
+                "t1.table_number", msTableParam.getTableNumber());
+        qw.eq("t1.del_flag", 0);
+        return msTableMapper.tablePage(page, qw);
+    }
+
 }
