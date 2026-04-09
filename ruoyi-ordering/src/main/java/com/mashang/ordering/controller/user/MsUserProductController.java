@@ -5,6 +5,8 @@ import com.github.pagehelper.PageHelper;
 import com.mashang.ordering.domain.common.PageQuery;
 import com.mashang.ordering.domain.vo.MsUserProductDtlVo;
 import com.mashang.ordering.domain.vo.MsUserProductListVo;
+import com.mashang.ordering.domain.vo.MsUserTableListVo;
+import com.mashang.ordering.service.IMsUserOrderService;
 import com.mashang.ordering.service.IMsUserProductService;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.R;
@@ -29,6 +31,9 @@ public class MsUserProductController extends BaseController {
     @Autowired
     private IMsUserProductService msUserProductService;
 
+    @Autowired
+    private IMsUserOrderService msUserOrderService;
+
     @GetMapping
     @ApiOperation("查询商品列表")
     public TableDataInfo<List<MsUserProductListVo>> list(@Validated PageQuery pageQuery
@@ -46,5 +51,10 @@ public class MsUserProductController extends BaseController {
     @ApiOperation("查询商品详情")
     public R<MsUserProductDtlVo> dtl(@Validated @PathVariable Long id){
         return R.ok(msUserProductService.getDtl(id));
+    }
+
+    @GetMapping("/table/{storeId}")
+    public R<List<MsUserTableListVo>> tabel(@Validated @PathVariable Long storeId){
+        return R.ok(msUserOrderService.getLabelId(storeId));
     }
 }

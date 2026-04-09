@@ -11,6 +11,7 @@ import com.mashang.ordering.domain.param.create.MsUserOrderProductCreate;
 import com.mashang.ordering.domain.vo.MsUserOrderDtlVo;
 import com.mashang.ordering.domain.vo.MsUserOrderListVo;
 import com.mashang.ordering.domain.vo.MsUserOrderProduct;
+import com.mashang.ordering.domain.vo.MsUserTableListVo;
 import com.mashang.ordering.mapper.MsUserOrderMapper;
 import com.mashang.ordering.service.IMsUserOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,18 +38,21 @@ public class MsUserOrderServiceImpl extends ServiceImpl<MsUserOrderMapper, MsOrd
 
     @Override
     public MsUserOrderDtlVo getDtl(long orderId) {
-        return msUserOrderMapper.getDtl(orderId);
+        MsUserOrderDtlVo dtl = msUserOrderMapper.getDtl(orderId);
+
+        dtl.setTableNumber(msUserOrderMapper.getLabelNumber(orderId));
+        return dtl;
     }
 
 
     public void insertOrder(MsUserOrderCreate create) {
 
-        long orderId = System.currentTimeMillis();
+        String orderNumber = String.valueOf(System.currentTimeMillis());
 
-        String orderNumber = generate4DigitDailyOrderNo(create.getStoreId());
+        String pickupNumber = generate4DigitDailyOrderNo(create.getStoreId());
 
-        create.setOrderId(orderId);
         create.setOrderNumber(orderNumber);
+        create.setPickupNumber(pickupNumber);
         List<MsUserOrderProductCreate> productList = create.getMsUserOderProductCreateList();
         double total = 0;
         for (MsUserOrderProductCreate product : productList) {
@@ -57,6 +61,8 @@ public class MsUserOrderServiceImpl extends ServiceImpl<MsUserOrderMapper, MsOrd
         create.setProductTotalPrice(total);
 
         msUserOrderMapper.insertOrder(create);
+
+        Long orderId = msUserOrderMapper.getOrderIdByOrderNumberLong(orderNumber);
 
         msUserOrderMapper.batchInsertOrderDetail(orderId, productList);
     }
@@ -82,6 +88,11 @@ public class MsUserOrderServiceImpl extends ServiceImpl<MsUserOrderMapper, MsOrd
     @Override
     public void updateOrderStatusToRefund(Long orderId) {
         msUserOrderMapper.updateOrderStatusToRefund(orderId);
+    }
+
+    @Override
+    public List<MsUserTableListVo> getLabelId(Long storeId) {
+        return msUserOrderMapper.getLabelId(storeId);
     }
 
 

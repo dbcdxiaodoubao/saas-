@@ -24,9 +24,6 @@ public class MsUserOrderCreate {
   @ApiModelProperty(value = "商店id",required = true,example = "1")
   @NotNull(message = "商店id不能为空")
   private Long storeId;
-  @ApiModelProperty(value = "订单类型（0为堂食，1为外卖）",required = true,example = "0")
-  @NotBlank(message = "订单类型不能为空")
-  private String orderType;
   @ApiModelProperty(value = "积分减额",required = true,example = "1")
   @NotNull(message = "积分剪额不能为空")
   private String pointsDeduction;
@@ -35,6 +32,9 @@ public class MsUserOrderCreate {
   @ApiModelProperty(value = "就餐人数",required = true,example = "2")
   @NotBlank(message = "就餐人数不能为空")
   private String dinersNumber;
+  @ApiModelProperty(value = "购买类型（'0'堂食,'1'自取,'2'预约）",required = true,example = "0")
+  @NotBlank(message = "购买类型不能为空")
+  private String buyType;
   @ApiModelProperty(value = "备注",required = false,example = "多加米饭")
   private String remark;
 
@@ -46,4 +46,7 @@ public class MsUserOrderCreate {
 
   @ApiModelProperty(hidden = true)
   private String orderNumber;
+
+  @ApiModelProperty(hidden = true)
+  private String pickupNumber;
 }

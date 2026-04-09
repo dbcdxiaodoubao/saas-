@@ -6,6 +6,7 @@ import com.mashang.ordering.domain.param.create.MsUserOrderCreate;
 import com.mashang.ordering.domain.param.create.MsUserOrderProductCreate;
 import com.mashang.ordering.domain.vo.MsUserOrderDtlVo;
 import com.mashang.ordering.domain.vo.MsUserOrderListVo;
+import com.mashang.ordering.domain.vo.MsUserTableListVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -73,4 +74,25 @@ public interface MsUserOrderMapper extends BaseMapper<MsOrder> {
      * @param orderId
      */
     void updateOrderStatusToRefund(Long orderId);
+
+    /**
+     * 查询该商店的桌号id
+     * @param storeId
+     * @return
+     */
+    List<MsUserTableListVo> getLabelId(Long storeId);
+
+    /**
+     * 根据订单号查询订单id
+     * @param orderNumber
+     * @return
+     */
+    Long getOrderIdByOrderNumberLong(String orderNumber);
+
+    /**
+     * 通过订单id查询桌号
+     * @param orderId
+     * @return
+     */
+    String getLabelNumber(Long orderId);
 }

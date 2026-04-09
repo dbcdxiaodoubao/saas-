@@ -17,7 +17,6 @@ public class MsOrder extends BaseModel {
   private long userId;
   private long tableId;
   private String orderNumber;
-  private String orderType;
   private String orderStatus;
   private java.sql.Timestamp payTime;
   private String pointsDeduction;
@@ -27,6 +26,7 @@ public class MsOrder extends BaseModel {
   private double productTotalPrice;
   private String dinersNumber;
   private Long storeId;
+  private String pickupNumber;
 
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private Date finishTime;

@@ -18,12 +18,13 @@ public class MsUserOrderListVo{
 
   @ApiModelProperty("订单号")
   private String orderNumber;
-
+  @ApiModelProperty("取餐号")
+  private String pickupNumber;
   @ApiModelProperty("商店id")
   private Long storeId;
 
-  @ApiModelProperty("订单类型（0为堂食，1为外卖）")
-  private String orderType;
+  @ApiModelProperty("购买类型（'0'堂食,'1'自取,'2'预约）")
+  private String buyType;
 
   @ApiModelProperty("商品数")
   private long productNum;

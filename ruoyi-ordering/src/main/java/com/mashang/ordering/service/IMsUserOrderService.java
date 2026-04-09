@@ -6,6 +6,7 @@ import com.mashang.ordering.domain.param.create.MsUserOrderAdd;
 import com.mashang.ordering.domain.param.create.MsUserOrderCreate;
 import com.mashang.ordering.domain.vo.MsUserOrderDtlVo;
 import com.mashang.ordering.domain.vo.MsUserOrderListVo;
+import com.mashang.ordering.domain.vo.MsUserTableListVo;
 
 import java.util.List;
 
@@ -48,4 +49,11 @@ public interface IMsUserOrderService extends IService<MsOrder> {
      * @param orderId
      */
     void updateOrderStatusToRefund(Long orderId);
+
+    /**
+     * 查询该商店的桌号id
+     * @param storeId
+     * @return
+     */
+    List<MsUserTableListVo> getLabelId(Long storeId);
 }

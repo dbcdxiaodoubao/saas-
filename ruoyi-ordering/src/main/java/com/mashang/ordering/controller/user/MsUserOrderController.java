@@ -7,6 +7,7 @@ import com.mashang.ordering.domain.param.create.MsUserOrderAdd;
 import com.mashang.ordering.domain.param.create.MsUserOrderCreate;
 import com.mashang.ordering.domain.vo.MsUserOrderDtlVo;
 import com.mashang.ordering.domain.vo.MsUserOrderListVo;
+import com.mashang.ordering.domain.vo.MsUserTableListVo;
 import com.mashang.ordering.service.IMsUserOrderService;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.R;
@@ -24,7 +25,7 @@ import java.util.List;
 @RequestMapping("/user-oder")
 @Api(tags = "用户端-订单管理")
 public class MsUserOrderController extends BaseController {
-
+    //TODO 删除buytype字段
     @Autowired
     IMsUserOrderService msUserOrderService;
 
@@ -48,6 +49,19 @@ public class MsUserOrderController extends BaseController {
     @PostMapping("/new")
     @ApiOperation("用户新建订单")
     public R newOder(@Validated @RequestBody MsUserOrderCreate msUserOrderCreate){
+
+        List<MsUserTableListVo> tables = msUserOrderService.getLabelId(msUserOrderCreate.getStoreId());
+
+        boolean flag = false;
+        for (MsUserTableListVo table : tables) {
+            if (table.getTableId()==msUserOrderCreate.getTableId()){
+                flag = true;
+            }
+        }
+        if (!flag){
+            return R.fail("该桌号不存在于该商店中");
+        }
+
         msUserOrderService.insertOrder(msUserOrderCreate);
         return R.ok();
     }

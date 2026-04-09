@@ -61,7 +61,7 @@ public class AlipayController {
         // 拼接支付参数
         String bizContent = "{\"out_trade_no\":\"" + orderId + "\","
                 + "\"total_amount\":\"" + dtl.getProductTotalPrice() + "\","
-                + "\"subject\":\"" + "订单号："+orderId + "\","
+                + "\"subject\":\"" + "OrderId:"+orderId + "\","
                 + "\"product_code\":\"FAST_INSTANT_TRADE_PAY\"}";
 
         request.setBizContent(bizContent);
@@ -103,7 +103,7 @@ public class AlipayController {
         String orderId = params.get("out_trade_no");
         String totalAmount = params.get("total_amount");
 
-        System.out.println("【支付宝回调】验签成功！订单号：" + orderId);
+        System.out.println("【支付宝回调】验签成功！订单号：" + orderId+"价格为："+totalAmount);
 
         if ("TRADE_SUCCESS".equals(tradeStatus)) {
 
@@ -148,7 +148,7 @@ public class AlipayController {
 
                 msUserOrderService.updateOrderStatusToRefund(Long.valueOf(orderId));
 
-                return R.ok("退款成功");
+                return R.ok("退款成功，订单号：" + orderId);
             } else {
                 System.out.println("退款失败：" + response.getMsg());
                 return R.fail("退款失败：" + response.getMsg());

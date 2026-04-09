@@ -17,18 +17,17 @@ public class MsUserOrderDtlVo{
   private long orderId;
   @ApiModelProperty("用户id")
   private long userId;
-  @ApiModelProperty("桌号id")
-  private long tableId;
+  @ApiModelProperty("桌号")
+  private String tableNumber;
   @ApiModelProperty("商店id")
   private Long storeId;
   @ApiModelProperty("订单号")
   private String orderNumber;
-
+  @ApiModelProperty("取餐号")
+  private String pickupNumber;
   @ApiModelProperty("订单详情商品列表")
   private List<MsUserOrderProductDtl> userOderProductDtlList;
 
-  @ApiModelProperty("订单类型（0为堂食，1为外卖）")
-  private String orderType;
   @ApiModelProperty("订单状态(0为未支付，1为未出单/已支付，2为已取餐，3退款单，4为已删除)")
   private String orderStatus;
   @ApiModelProperty("支付时间")
@@ -38,7 +37,7 @@ public class MsUserOrderDtlVo{
   private String pointsDeduction;
   @ApiModelProperty("实际支付")
   private String actualPay;
-  @ApiModelProperty("支付类型")
+  @ApiModelProperty("购买类型（'0'堂食,'1'自取,'2'预约）")
   private String buyType;
   @ApiModelProperty("预计取餐时间")
   private Date reservePickTime;
