@@ -1,5 +1,6 @@
 package com.mashang.ordering.controller.manage;
 
+import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mashang.ordering.domain.entity.MsTable;
@@ -12,6 +13,7 @@ import com.mashang.ordering.domain.vo.MsStoreNameVo;
 import com.mashang.ordering.domain.vo.MsTableListVo;
 import com.mashang.ordering.mapping.MsTableMapping;
 import com.mashang.ordering.service.IMsTableService;
+import com.mashang.ordering.utils.QrCodeUtil;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.R;
 import com.ruoyi.common.core.page.PageQuery;
@@ -25,7 +27,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Api(tags = "管理端-桌号管理")
 @RestController
@@ -105,5 +113,29 @@ public class MsTableController extends BaseController {
     @GetMapping("/tableNames")
     public R<List<MsStoreNameVo>> selectTeacherNames(){
         return R.ok(msTableService.selectStoreNames());
+    }
+
+
+    @ApiOperation("生成桌号二维码")
+    @GetMapping("/qrcode/{tableId}")
+    public void generateQrCode(@PathVariable Long tableId, HttpServletResponse response) throws IOException {
+        // 1. 查询桌号
+        MsTable table = msTableService.getById(tableId);
+
+        // 2. 构建你要的 JSON 对象
+        Map<String, Object> jsonMap = new HashMap<>();
+        jsonMap.put("tableId", table.getTableId());
+        jsonMap.put("tableNumber", table.getTableNumber());
+
+        // 3. 转成 JSON 字符串（这就是要存库的内容）
+        String qrJson = JSON.toJSONString(jsonMap);
+
+        // 4. 存入数据库 qr_code 字段
+        table.setQrCode(qrJson);
+        msTableService.updateById(table);
+
+        // 5. 根据 JSON 生成二维码图片返回前端
+        response.setContentType("image/png");
+        QrCodeUtil.generateQRCodeByContent(qrJson, 300, response.getOutputStream());
     }
 }
