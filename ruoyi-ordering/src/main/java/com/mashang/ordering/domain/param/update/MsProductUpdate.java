@@ -2,12 +2,14 @@ package com.mashang.ordering.domain.param.update;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.mashang.ordering.domain.entity.MsSpecificationType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
 @ApiModel("商品修改实体")
@@ -71,7 +73,7 @@ public class MsProductUpdate {
     @ApiModelProperty(value = "规格")
     @NotBlank(message = "请输入规格")
     @TableField(typeHandler = JacksonTypeHandler.class)
-    private String specsAndAttrs;
+    private List<MsSpecificationType> specsAndAttrs;
 
     @ApiModelProperty(value = "产品描述")
     private String productDescription;

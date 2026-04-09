@@ -7,12 +7,15 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.mashang.ordering.domain.model.BaseModel;
 import com.ruoyi.common.core.domain.BaseEntity;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
+@ApiModel(value = "MsSpecification",description = "商品规格")
 public class MsSpecification extends BaseModel {
 
   @ApiModelProperty(value = "规格ID")
@@ -27,7 +30,7 @@ public class MsSpecification extends BaseModel {
 
   @ApiModelProperty(value = "规格及属性值")
   @TableField(typeHandler = JacksonTypeHandler.class)
-  private String specsAndAttrs;
+  private List<MsSpecificationType> specsAndAttrs;
 
 
 }

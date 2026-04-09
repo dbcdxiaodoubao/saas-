@@ -16,6 +16,7 @@ import com.mashang.ordering.domain.vo.MsProductPageVo;
 import com.mashang.ordering.mapper.*;
 import com.mashang.ordering.mapping.MsProductMapping;
 import com.mashang.ordering.service.IMsProductService;
+import com.mashang.ordering.utils.Transfromer;
 import com.ruoyi.common.core.page.TableDataInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -157,8 +158,8 @@ public class MsProductServiceImpl extends ServiceImpl<MsProductMapper, MsProduct
         String categoriesName = msCategoriesMapper.selectById(msProduct.getProductCategoriesId()).getCategoriesName();
         msProductDtlVo.setProductCategoriesName(categoriesName);
 
-        //根据规格id从规格表中拿规格信息
-        String specsAndAttrs = msSpecificationMapper.selectById(msProduct.getSpecificationId()).getSpecsAndAttrs();
+        //根据规格id从规格表中拿规格信息 20260409由于下层结构修改 这里暂时用转字符串
+        String specsAndAttrs = Transfromer.toJsonString(msSpecificationMapper.selectById(msProduct.getSpecificationId()).getSpecsAndAttrs());
         msProductDtlVo.setSpecsAndAttrs(specsAndAttrs);
 
         return msProductDtlVo;
