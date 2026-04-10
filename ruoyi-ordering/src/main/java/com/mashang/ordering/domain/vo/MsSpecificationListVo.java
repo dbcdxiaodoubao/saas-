@@ -14,7 +14,7 @@ import java.util.List;
 
 @Data
 @ApiModel(value = "MsSpecificationListVo",description = "商品规格列表参数")
-public class MsSpecificationListVo extends BaseModel {
+public class MsSpecificationListVo {
 
   @ApiModelProperty(value = "规格ID")
   @TableId(type = IdType.AUTO)
