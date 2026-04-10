@@ -71,7 +71,7 @@ public class MsProductUpdate {
     private String specificationName;
 
     @ApiModelProperty(value = "规格")
-    @NotBlank(message = "请输入规格")
+    @NotNull(message = "请输入规格")
     @TableField(typeHandler = JacksonTypeHandler.class)
     private List<MsSpecificationType> specsAndAttrs;
 

@@ -2,12 +2,14 @@ package com.mashang.ordering.domain.vo;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.mashang.ordering.domain.entity.MsSpecificationType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -35,9 +37,12 @@ public class MsProductDtlVo {
     @ApiModelProperty(value = "规格类型（单规格0，多规格1）")
     private String specificationType;
 
-    @ApiModelProperty(value = "规格")
+    @ApiModelProperty(value = "规格名称")
+    private String specificationName;
+
+    @ApiModelProperty(value = "规格及属性值")
     @TableField(typeHandler = JacksonTypeHandler.class)
-    private String specsAndAttrs;
+    private List<MsSpecificationType> specsAndAttrs;
 
     @ApiModelProperty(value = "单位名称")
     private String unitName;
