@@ -22,6 +22,7 @@ import com.ruoyi.common.utils.StringUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -31,6 +32,8 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -137,5 +140,36 @@ public class MsTableController extends BaseController {
         // 5. 根据 JSON 生成二维码图片返回前端
         response.setContentType("image/png");
         QrCodeUtil.generateQRCodeByContent(qrJson, 300, response.getOutputStream());
+    }
+
+    @ApiOperation(value = "下载桌号二维码", produces = "image/png")
+    @GetMapping("/qrcode/download/{tableId}")
+    public void downloadQrCode(@PathVariable Long tableId, HttpServletResponse response) throws IOException {
+        // 1. 查询桌号
+        MsTable table = msTableService.getById(tableId);
+        if (table == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "桌号不存在");
+            return;
+        }
+
+        // 2. 拿数据库里的JSON内容
+        String qrJson = table.getQrCode();
+        if (qrJson == null || qrJson.isEmpty()) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "请先生成二维码");
+            return;
+        }
+
+        // 3. 文件名编码
+        String fileName = table.getTableNumber() + "_桌码";
+        String encodedFileName = URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", "%20");
+
+        // 4. 设置响应头
+        response.setContentType("image/png");
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + encodedFileName + ".png");
+
+        // 5. 输出二维码
+        QrCodeUtil.generateQRCodeByContent(qrJson, 300, response.getOutputStream());
+        response.getOutputStream().flush();
     }
 }
