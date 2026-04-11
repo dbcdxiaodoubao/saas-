@@ -13,6 +13,7 @@ import com.mashang.ordering.domain.param.update.MsTableDtlVo;
 import com.mashang.ordering.domain.param.update.MsTableUpdate;
 import com.mashang.ordering.domain.vo.MsStoreNameVo;
 import com.mashang.ordering.domain.vo.MsTableListVo;
+import com.mashang.ordering.domain.vo.MsTableOrderDto;
 import com.mashang.ordering.domain.vo.MsTableOrderListVo;
 import com.mashang.ordering.mapping.MsTableMapping;
 import com.mashang.ordering.service.IMsOrderService;
@@ -182,5 +183,17 @@ public class MsTableController extends BaseController {
     public TableDataInfo<List<MsTableOrderListVo>> getTableOrder(@Validated MsTableOrderParam msTableOrderParam,@Validated PageQuery pageQuery){
         ResultSet<Page<MsTableOrderListVo>> resultSet = msOrderService.getMsTableOrderListVo(msTableOrderParam, pageQuery);
         return getDataTable(resultSet.getData().getRecords(), resultSet.getData().getTotal());
+    }
+
+    @ApiOperation("获取桌号相关订单详情")
+    @GetMapping("/order/dtl/{tableId},{orderId}")
+    public R<MsTableOrderDto> getTableOrderDtl(@PathVariable Long orderId, @PathVariable Long tableId){
+        if (orderId == null){
+            return R.fail("订单编号不能为空");
+        }
+        if(tableId==null){
+            return R.fail("桌号编号不能为空");
+        }
+        return R.ok(msOrderService.getMsTableOrderDto(orderId,tableId).getData());
     }
 }

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mashang.ordering.domain.entity.MsOrder;
 import com.mashang.ordering.domain.entity.MsStore;
+import com.mashang.ordering.domain.vo.MsTableOrderDto;
 import com.mashang.ordering.domain.vo.MsTableOrderListVo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -20,4 +21,6 @@ public interface MsOrderMapper extends BaseMapper<MsOrder> {
     BigDecimal getTotalAmount();
 
     List<MsTableOrderListVo> getMsTableOrderListVo(@Param("ew") QueryWrapper<Object> qw);
+
+    MsTableOrderDto getMsTableOrderDto(@Param("ew") QueryWrapper<Object> qw);
 }

@@ -11,6 +11,7 @@ import com.mashang.ordering.domain.entity.MsOrder;
 import com.mashang.ordering.domain.entity.MsProduct;
 import com.mashang.ordering.domain.param.selete.MsTableOrderParam;
 import com.mashang.ordering.domain.vo.MsOrderDTO;
+import com.mashang.ordering.domain.vo.MsTableOrderDto;
 import com.mashang.ordering.domain.vo.MsTableOrderListVo;
 import com.mashang.ordering.mapper.MsOrderMapper;
 import com.mashang.ordering.mapper.MsProductMapper;
@@ -148,4 +149,14 @@ public class MsOrderServiceImpl extends ServiceImpl<MsOrderMapper, MsOrder> impl
         page.setRecords(list);
         return ResultSet.success(page);
     }
+
+    @Override
+    public ResultSet<MsTableOrderDto> getMsTableOrderDto(Long orderId,Long tableId) {
+        QueryWrapper<Object> qw = Wrappers.query();
+        qw.eq("t1.order_id", orderId);
+        qw.eq("t3.table_id", tableId);
+        return ResultSet.success(msOrderMapper.getMsTableOrderDto(qw));
+    }
+
+
 }
