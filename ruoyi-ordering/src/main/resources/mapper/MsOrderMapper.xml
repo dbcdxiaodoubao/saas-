@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mashang.ordering.mapper.MsOrderMapper">
+
+    <resultMap id="MsTableOrderListVoMap" type="com.mashang.ordering.domain.vo.MsTableOrderListVo">
+        <id column="order_id" property="orderId"/>
+        <result column="table_id" property="tableId"/>
+        <result column="store_id" property="storeId"/>
+        <result column="user_id" property="userId"/>
+        <result column="store_name" property="storeName"/>
+        <result column="table_number_prefix" property="tableNumberPrefix"/>
+        <result column="table_number" property="tableNumber"/>
+        <result column="nick_name" property="nickName"/>
+        <result column="user_name" property="userName"/>
+        <result column="phonenumber" property="phoneNumber"/>
+        <result column="actual_pay" property="actualPay"/>
+        <result column="pay_type" property="payType"/>
+        <result column="pay_time" property="payTime"/>
+        <result column="order_status" property="orderStatus"/>
+        <result column="order_details" property="orderDetails"
+                typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+    </resultMap>
+
+    <select id="getMsTableOrderListVo" resultMap="MsTableOrderListVoMap">
+        SELECT
+            t1.order_id,
+            t3.table_id,
+            t4.store_id,
+            t5.user_id,
+            t4.store_name,
+            t3.table_number_prefix,
+            t3.table_number,
+            t5.nick_name,
+            t5.user_name,
+            t5.phonenumber,
+            t1.actual_pay,
+            t1.pay_type,
+            t1.pay_time,
+            t1.order_status,
+            JSON_ARRAYAGG(
+                    JSON_OBJECT(
+                            'order_detail_id',
+                            t2.order_detail_id,
+                            'product_id',
+                            t2.product_id,
+                            'product_name',
+                            t6.product_name,
+                            'product_cover_url',
+                            t6.product_cover,
+                            'product_quantity',
+                            t2.product_quantity,
+                            'product_price',
+                            t2.product_price,
+                            'specification',
+                            t2.specification
+                    )
+            ) AS order_details
+        FROM
+            ms_order AS t1
+                JOIN ms_order_detail AS t2 ON t1.order_id = t2.order_id
+                JOIN ms_table AS t3 ON t1.table_id = t3.table_id
+                JOIN ms_store AS t4 ON t4.store_id = t3.store_id
+                JOIN sys_user AS t5 ON t1.user_id = t5.user_id
+                JOIN ms_product AS t6 ON t2.product_id = t6.product_id
+        ${ew.customSqlSegment}
+        GROUP BY
+            t1.order_id
+        ORDER BY
+            t1.order_id ASC,
+            t2.cumulative_add_count ASC
+    </select>
+
+    <!-- 查询订单详情的SQL语句 太晚了先放着 明天再改
+    SELECT
+  t1.order_id,
+  t3.table_id,
+  t1.order_number,
+  t4.store_id,
+  t5.user_id,
+  t4.store_name,
+  t3.table_number_prefix,
+  t3.table_number,
+  t5.nick_name,
+  t5.user_name,
+  t5.phonenumber,
+  t1.actual_pay,
+  t1.pay_type,
+  t1.pay_time,
+  t1.order_status,
+  JSON_ARRAYAGG(
+    JSON_OBJECT(
+      'order_detail_id',
+      t2.order_detail_id,
+      'product_id',
+      t2.product_id,
+      'product_name',
+      t6.product_name,
+      'product_cover_url',
+      t6.product_cover,
+      'product_quantity',
+      t2.product_quantity,
+      'product_price',
+      t2.product_price,
+      'specification',
+      t2.specification
+    )
+  ) AS order_details
+FROM
+  ms_order AS t1
+  JOIN ms_order_detail AS t2 ON t1.order_id = t2.order_id
+  JOIN ms_table AS t3 ON t1.table_id = t3.table_id
+  JOIN ms_store AS t4 ON t4.store_id = t3.store_id
+  JOIN sys_user AS t5 ON t1.user_id = t5.user_id
+  JOIN ms_product AS t6 ON t2.product_id = t6.product_id
+WHERE
+  t3.table_id = 1
+GROUP BY
+  t1.order_id
+ORDER BY
+  t1.order_id ASC,
+  t2.cumulative_add_count ASC
+    -->
+
+</mapper>
