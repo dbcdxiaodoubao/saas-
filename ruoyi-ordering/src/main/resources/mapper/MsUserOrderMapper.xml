@@ -69,24 +69,28 @@
 
     <select id="getDtl" resultMap="OrderDetailResultMap">
         SELECT
-            mo.order_id,
-            mo.user_id,
+            mo.buy_type,
             ms.store_name,
-            mo.order_number,
             mo.pickup_number,
+            mt.table_number,
+            mo.diners_number,
+            mo.order_number,
             mo.order_status,
-            mo.pay_time,
+            mo.product_total_price,
             mo.points_deduction,
             mo.actual_pay,
-            mo.buy_type,
-            mo.reserve_pick_time,
-            mo.product_total_price,
-            mo.diners_number,
-            mo.finish_time,
             mo.create_time,
+            mo.pay_time,
+
+            mo.store_id,
+            mo.order_id,
+            mo.user_id,
+            mo.reserve_pick_time,
+            mo.finish_time,
             mo.remark
         FROM ms_order mo
-        LEFT JOIN ms_store ms ON mo.store_id = ms.store_id
+        INNER JOIN ms_store ms ON mo.store_id = ms.store_id
+        INNER JOIN ms_table mt ON mo.table_id = mt.table_id
         WHERE mo.order_id = #{orderId}
           AND mo.del_flag != 1
     </select>
@@ -100,7 +104,8 @@
             od.specification,
             mp.product_price,
             od.cumulative_add_count,
-            mp.product_cover
+            mp.product_cover,
+            od.issue_status
         FROM ms_order_detail od
                  JOIN ms_product mp ON od.product_id = mp.product_id
         WHERE od.order_id = #{orderId}
@@ -109,20 +114,22 @@
     <!-- 结果映射：订单详情 + 多商品集合 -->
     <resultMap id="OrderDetailResultMap" type="com.mashang.ordering.domain.vo.MsUserOrderDtlVo">
         <id column="order_id" property="orderId"/>
-        <result column="user_id" property="userId"/>
+        <result column="buy_type" property="buyType"/>
         <result column="store_name" property="storeName"/>
-        <result column="order_number" property="orderNumber"/>
         <result column="pickup_number" property="pickupNumber"/>
+        <result column="diners_number" property="dinersNumber"/>
+        <result column="order_number" property="orderNumber"/>
         <result column="order_status" property="orderStatus"/>
-        <result column="pay_time" property="payTime"/>
+        <result column="product_total_price" property="productTotalPrice"/>
         <result column="points_deduction" property="pointsDeduction"/>
         <result column="actual_pay" property="actualPay"/>
-        <result column="buy_type" property="buyType"/>
-        <result column="reserve_pick_time" property="reservePickTime"/>
-        <result column="product_total_price" property="productTotalPrice"/>
-        <result column="diners_number" property="dinersNumber"/>
-        <result column="finish_time" property="finishTime"/>
         <result column="create_time" property="createTime"/>
+        <result column="pay_time" property="payTime"/>
+
+        <result column="user_id" property="userId"/>
+        <result column="store_id" property="storeId"/>
+        <result column="reserve_pick_time" property="reservePickTime"/>
+        <result column="finish_time" property="finishTime"/>
         <result column="remark" property="remark"/>
 
         <!-- 一对多：自动装入多个商品 -->
