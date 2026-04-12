@@ -47,10 +47,17 @@ public class MsUserShoppingCartController extends BaseController {
         return R.ok();
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{storeCategoriesId}")
     @ApiOperation("删除购物车中的信息")
-    public R delete(Long id){
-        msUserShoppingCartService.removeById(id);
+    public R delete(@Validated @PathVariable Long storeCategoriesId){
+        msUserShoppingCartService.removeById(storeCategoriesId);
+        return R.ok();
+    }
+
+    @DeleteMapping("/clear")
+    @ApiOperation("清空购物车")
+    public R deleteAll(Long userId){
+        msUserShoppingCartService.deletAll(userId);
         return R.ok();
     }
 

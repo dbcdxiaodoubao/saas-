@@ -12,6 +12,7 @@ import com.mashang.ordering.domain.vo.MsUserTableListVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Mapper
@@ -99,7 +100,16 @@ public interface MsUserOrderMapper extends BaseMapper<MsOrder> {
     String getLabelNumber(Long orderId);
 
     /**
-     * 分页查询订单列表
+     * 用户退款
+     * @param money
+     * @param orderId
      */
-    List<MsUserOrderListPageVo> selectOrderPage(MsUserOrderPageParam query);
+    void userRecharge(@Param("orderId") Long orderId,@Param("money") BigDecimal money);
+
+    /**
+     * 查询订单
+     * @param msUserOrderPageParam
+     * @return
+     */
+    List<MsUserOrderListPageVo> selectOrderPage(MsUserOrderPageParam msUserOrderPageParam);
 }

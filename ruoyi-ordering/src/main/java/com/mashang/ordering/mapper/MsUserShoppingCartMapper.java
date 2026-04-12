@@ -18,4 +18,11 @@ public interface MsUserShoppingCartMapper extends BaseMapper<MsShoppingCart> {
      * @return
      */
     List<MsUserShoppingCartListVo> getList(@Param("userId")Long userId,@Param("storeId") Long storeId);
+
+    /**
+     * 清空购物车
+     * @param userId
+     * @return
+     */
+    void deletAll(Long userId);
 }

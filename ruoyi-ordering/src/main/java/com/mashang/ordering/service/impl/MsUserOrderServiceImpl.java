@@ -20,6 +20,7 @@ import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -96,6 +97,11 @@ public class MsUserOrderServiceImpl extends ServiceImpl<MsUserOrderMapper, MsOrd
     @Override
     public List<MsUserTableListVo> getLabelId(Long storeId) {
         return msUserOrderMapper.getLabelId(storeId);
+    }
+
+    @Override
+    public void userRecharge(Long userId, BigDecimal money) {
+        msUserOrderMapper.userRecharge(userId,money);
     }
 
 

@@ -10,7 +10,9 @@ import com.mashang.ordering.domain.vo.MsUserOrderDtlVo;
 import com.mashang.ordering.domain.vo.MsUserOrderListVo;
 import com.mashang.ordering.domain.vo.MsUserTableListVo;
 import com.ruoyi.common.core.page.TableDataInfo;
+import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface IMsUserOrderService extends IService<MsOrder> {
@@ -61,9 +63,12 @@ public interface IMsUserOrderService extends IService<MsOrder> {
     List<MsUserTableListVo> getLabelId(Long storeId);
 
     /**
-     * 分页模糊查询订单列表
-     * @param msUserOrderPageParam
-     * @return
+     * 用户退款
+     * @param money
+     * @param orderId
      */
+    void userRecharge(@Param("orderId") Long orderId, @Param("money") BigDecimal money);
+
+
     TableDataInfo<List<MsUserOrderListPageVo>> selectOrderPage(MsUserOrderPageParam msUserOrderPageParam);
 }

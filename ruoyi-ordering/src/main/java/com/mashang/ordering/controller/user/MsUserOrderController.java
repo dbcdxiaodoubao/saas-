@@ -71,6 +71,11 @@ public class MsUserOrderController extends BaseController {
     @PostMapping("/add")
     @ApiOperation("用户加菜")
     public R add(@Validated @RequestBody MsUserOrderAdd msUserOrderAdd){
+
+        if (msUserOrderService.getDtl(msUserOrderAdd.getOrderId())==null){
+            return R.fail("该订单号不存在");
+        }
+
         msUserOrderService.addProduct(msUserOrderAdd);
         return R.ok();
     }
