@@ -9,7 +9,7 @@ import com.mashang.ordering.domain.entity.MsProduct;
 import com.mashang.ordering.domain.entity.MsSpecification;
 import com.mashang.ordering.domain.entity.MsStoreProduct;
 import com.mashang.ordering.domain.param.create.MsProductCreate;
-import com.mashang.ordering.domain.param.selete.MsProductPageQuery;
+import com.mashang.ordering.domain.param.selete.MsProductPageParam;
 import com.mashang.ordering.domain.param.update.MsProductUpdate;
 import com.mashang.ordering.domain.vo.MsProductDtlVo;
 import com.mashang.ordering.domain.vo.MsProductPageVo;
@@ -43,11 +43,11 @@ public class MsProductServiceImpl extends ServiceImpl<MsProductMapper, MsProduct
     private MsCategoriesMapper msCategoriesMapper;
 
     @Override
-    public TableDataInfo<List<MsProductPageVo>> selectProductPage(MsProductPageQuery msProductPageQuery) {
+    public TableDataInfo<List<MsProductPageVo>> selectProductPage(MsProductPageParam msProductPageParam) {
 
-        PageHelper.startPage(msProductPageQuery.getPageNum(), msProductPageQuery.getPageSize());
+        PageHelper.startPage(msProductPageParam.getPageNum(), msProductPageParam.getPageSize());
         //查询分页列表
-        List<MsProductPageVo> list = msProductMapper.page(msProductPageQuery);
+        List<MsProductPageVo> list = msProductMapper.page(msProductPageParam);
 
         TableDataInfo<List<MsProductPageVo>> dataInfo = new TableDataInfo<>();
         dataInfo.setTotal(list.size());

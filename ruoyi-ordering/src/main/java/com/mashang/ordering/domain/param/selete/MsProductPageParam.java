@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @ApiModel("商品分页查询请求")
-public class MsProductPageQuery extends PageDomain {
+public class MsProductPageParam extends PageDomain {
 
     @ApiModelProperty("商品分类id")
     private Integer categoriesId;

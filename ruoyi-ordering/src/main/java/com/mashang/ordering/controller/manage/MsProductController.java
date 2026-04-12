@@ -2,7 +2,7 @@ package com.mashang.ordering.controller.manage;
 
 import com.mashang.ordering.domain.common.ResultSet;
 import com.mashang.ordering.domain.param.create.MsProductCreate;
-import com.mashang.ordering.domain.param.selete.MsProductPageQuery;
+import com.mashang.ordering.domain.param.selete.MsProductPageParam;
 import com.mashang.ordering.domain.param.update.MsProductUpdate;
 import com.mashang.ordering.domain.vo.MsProductDtlVo;
 import com.mashang.ordering.domain.vo.MsProductPageVo;
@@ -27,8 +27,8 @@ public class MsProductController {
 
     @ApiOperation("模糊分页查询商品列表")
     @GetMapping("page")
-    public TableDataInfo<List<MsProductPageVo>> page(MsProductPageQuery msProductPageQuery){
-        return msProductService.selectProductPage(msProductPageQuery);
+    public TableDataInfo<List<MsProductPageVo>> page(MsProductPageParam msProductPageParam){
+        return msProductService.selectProductPage(msProductPageParam);
     }
 
     @ApiOperation("添加商品")

@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mashang.ordering.domain.entity.MsOrder;
 import com.mashang.ordering.domain.param.create.MsUserOrderCreate;
 import com.mashang.ordering.domain.param.create.MsUserOrderProductCreate;
+import com.mashang.ordering.domain.param.selete.MsUserOrderPageParam;
+import com.mashang.ordering.domain.vo.MsUserOrderListPageVo;
 import com.mashang.ordering.domain.vo.MsUserOrderDtlVo;
 import com.mashang.ordering.domain.vo.MsUserOrderListVo;
 import com.mashang.ordering.domain.vo.MsUserTableListVo;
@@ -95,4 +97,9 @@ public interface MsUserOrderMapper extends BaseMapper<MsOrder> {
      * @return
      */
     String getLabelNumber(Long orderId);
+
+    /**
+     * 分页查询订单列表
+     */
+    List<MsUserOrderListPageVo> selectOrderPage(MsUserOrderPageParam query);
 }

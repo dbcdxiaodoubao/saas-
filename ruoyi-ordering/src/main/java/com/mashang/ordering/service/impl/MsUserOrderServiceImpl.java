@@ -3,33 +3,36 @@ package com.mashang.ordering.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.PageHelper;
 import com.mashang.ordering.domain.entity.MsOrder;
-import com.mashang.ordering.domain.entity.MsOrderDetail;
+import com.mashang.ordering.domain.entity.MsStore;
 import com.mashang.ordering.domain.param.create.MsUserOrderAdd;
 import com.mashang.ordering.domain.param.create.MsUserOrderCreate;
 import com.mashang.ordering.domain.param.create.MsUserOrderProductCreate;
-import com.mashang.ordering.domain.vo.MsUserOrderDtlVo;
-import com.mashang.ordering.domain.vo.MsUserOrderListVo;
-import com.mashang.ordering.domain.vo.MsUserOrderProduct;
-import com.mashang.ordering.domain.vo.MsUserTableListVo;
+import com.mashang.ordering.domain.param.selete.MsUserOrderPageParam;
+import com.mashang.ordering.domain.vo.*;
+import com.mashang.ordering.mapper.MsStoreMapper;
 import com.mashang.ordering.mapper.MsUserOrderMapper;
 import com.mashang.ordering.service.IMsUserOrderService;
+import com.ruoyi.common.core.domain.model.LoginUser;
+import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MsUserOrderServiceImpl extends ServiceImpl<MsUserOrderMapper, MsOrder> implements IMsUserOrderService {
 
     @Autowired
     private MsUserOrderMapper msUserOrderMapper;
+
+    @Autowired
+    private MsStoreMapper msStoreMapper;
 
     @Override
     public List<MsUserOrderListVo> getList(Long userId) {
@@ -118,4 +121,36 @@ public class MsUserOrderServiceImpl extends ServiceImpl<MsUserOrderMapper, MsOrd
         if (nextSeq > 9999) nextSeq = 1;
         return String.format("%04d", nextSeq);
     }
+
+    @Override
+    public TableDataInfo<List<MsUserOrderListPageVo>> selectOrderPage(MsUserOrderPageParam msUserOrderPageParam) {
+
+        //根据店主的商店数来返回的订单
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        LambdaQueryWrapper<MsStore> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(MsStore::getUserId, loginUser.getUserId());
+        wrapper.eq(MsStore::getDelFlag, 0);
+        List<MsStore> msStores = msStoreMapper.selectList(wrapper);
+        msUserOrderPageParam.setStoreIds(msStores.stream().map(MsStore::getStoreId).collect(Collectors.toList()));
+        System.out.println(msUserOrderPageParam);
+
+        PageHelper.startPage(msUserOrderPageParam.getPageNum(), msUserOrderPageParam.getPageSize());
+
+        List<MsUserOrderListPageVo> msUserOrderListPageVos = msUserOrderMapper.selectOrderPage(msUserOrderPageParam);
+        TableDataInfo<List<MsUserOrderListPageVo>> tableDataInfo = new TableDataInfo<>();
+        tableDataInfo.setTotal(msUserOrderListPageVos.size());
+        tableDataInfo.setRows(msUserOrderListPageVos);
+
+        if(!msUserOrderListPageVos.isEmpty()){
+            tableDataInfo.setCode(200);
+            tableDataInfo.setMsg("查询成功");
+            return tableDataInfo;
+        }
+
+        tableDataInfo.setCode(500);
+        tableDataInfo.setMsg("查询失败");
+        return tableDataInfo;
+
+    }
+
 }

@@ -5,6 +5,8 @@ import com.github.pagehelper.PageHelper;
 import com.mashang.ordering.domain.common.PageQuery;
 import com.mashang.ordering.domain.param.create.MsUserOrderAdd;
 import com.mashang.ordering.domain.param.create.MsUserOrderCreate;
+import com.mashang.ordering.domain.param.selete.MsUserOrderPageParam;
+import com.mashang.ordering.domain.vo.MsUserOrderListPageVo;
 import com.mashang.ordering.domain.vo.MsUserOrderDtlVo;
 import com.mashang.ordering.domain.vo.MsUserOrderListVo;
 import com.mashang.ordering.domain.vo.MsUserTableListVo;
@@ -73,5 +75,10 @@ public class MsUserOrderController extends BaseController {
         return R.ok();
     }
 
+    @ApiOperation("分页模糊查询订单列表")
+    @GetMapping("/getOrderList")
+    public TableDataInfo<List<MsUserOrderListPageVo>> selectOrderPage(MsUserOrderPageParam msUserOrderPageParam){
+        return msUserOrderService.selectOrderPage(msUserOrderPageParam);
+    }
 
 }
