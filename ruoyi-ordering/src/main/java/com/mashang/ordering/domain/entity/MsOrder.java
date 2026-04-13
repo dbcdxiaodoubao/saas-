@@ -1,6 +1,8 @@
 package com.mashang.ordering.domain.entity;
 
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.ruoyi.common.core.domain.BaseEntity;
 import lombok.Data;
 
@@ -9,6 +11,7 @@ import java.util.Date;
 @Data
 public class MsOrder extends BaseEntity {
 
+  @TableId(type = IdType.AUTO)
   private Long orderId;
   private Long userId;
   private Long tableId;
@@ -21,15 +24,11 @@ public class MsOrder extends BaseEntity {
   private Date reservePickTime;
   private Double productTotalPrice;
   private Long dinersNumber;
-  private String createBy;
-  private Date createTime;
-  private String updateBy;
-  private Date updateTime;
   private String remark;
-  private String delFlag;
   private Date finishTime;
   private Long storeId;
   private String payType;
   private String pickupNumber;
+  private String delFlag;
 
 }

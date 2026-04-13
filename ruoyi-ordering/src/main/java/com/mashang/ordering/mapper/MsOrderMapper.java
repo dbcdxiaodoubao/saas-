@@ -1,19 +1,15 @@
 package com.mashang.ordering.mapper;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mashang.ordering.domain.entity.MsOrder;
-import com.mashang.ordering.domain.entity.MsStore;
 import com.mashang.ordering.domain.vo.MsTableOrderDto;
 import com.mashang.ordering.domain.vo.MsTableOrderListVo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-import org.springframework.security.core.parameters.P;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 
 public interface MsOrderMapper extends BaseMapper<MsOrder> {
 

@@ -105,7 +105,8 @@
             mp.product_price,
             od.cumulative_add_count,
             mp.product_cover,
-            od.issue_status
+            od.issue_status,
+            od.order_detail_id
         FROM ms_order_detail od
                  JOIN ms_product mp ON od.product_id = mp.product_id
         WHERE od.order_id = #{orderId}

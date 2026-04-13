@@ -66,6 +66,9 @@ public class MsUserOrderDtlVo{
   @ApiModelProperty("订单id")
   private Long orderId;
 
+  @ApiModelProperty("订单详情id")
+  private Long orderDetailId;
+
   @ApiModelProperty("预计取餐时间")
   private Date reservePickTime;
 

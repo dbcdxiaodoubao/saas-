@@ -32,4 +32,6 @@ public class MsUserOrderProductDtl {
   @ApiModelProperty("商品id")
   private Long productId;
 
+  @ApiModelProperty("订单详情id")
+  private Long orderDetailId;
 }
