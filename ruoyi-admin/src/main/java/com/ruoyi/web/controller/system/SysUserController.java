@@ -5,12 +5,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 
-import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.core.domain.R;
 import com.ruoyi.common.core.page.PageQuery;
-import com.ruoyi.framework.web.domain.server.Sys;
 import com.ruoyi.system.domain.SysUserRole;
 import com.ruoyi.system.domain.query.SysUserCreate;
 import com.ruoyi.system.domain.query.SysUserQuery;

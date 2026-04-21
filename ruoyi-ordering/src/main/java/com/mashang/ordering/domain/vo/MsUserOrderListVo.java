@@ -32,7 +32,7 @@ public class MsUserOrderListVo{
   @ApiModelProperty("商品信息列表")
   private List<MsUserOrderProduct> productList;
 
-  @ApiModelProperty("订单状态(0为未支付，1为未出单/已支付，2为已取餐，3退款单，4为已删除)")
+  @ApiModelProperty("订单状态(0为未支付，1为未出单/已支付，2为已完成，3退款单，4为已删除)")
   private String orderStatus;
 
   @ApiModelProperty("支付时间")

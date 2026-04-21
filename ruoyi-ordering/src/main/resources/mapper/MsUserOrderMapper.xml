@@ -69,23 +69,28 @@
 
     <select id="getDtl" resultMap="OrderDetailResultMap">
         SELECT
-            mo.order_id,
-            mo.user_id,
-            mo.store_id,
-            mo.order_number,
+            mo.buy_type,
+            ms.store_name,
             mo.pickup_number,
+            mt.table_number,
+            mo.diners_number,
+            mo.order_number,
             mo.order_status,
-            mo.pay_time,
+            mo.product_total_price,
             mo.points_deduction,
             mo.actual_pay,
-            mo.buy_type,
-            mo.reserve_pick_time,
-            mo.product_total_price,
-            mo.diners_number,
-            mo.finish_time,
             mo.create_time,
+            mo.pay_time,
+
+            mo.store_id,
+            mo.order_id,
+            mo.user_id,
+            mo.reserve_pick_time,
+            mo.finish_time,
             mo.remark
         FROM ms_order mo
+        INNER JOIN ms_store ms ON mo.store_id = ms.store_id
+        INNER JOIN ms_table mt ON mo.table_id = mt.table_id
         WHERE mo.order_id = #{orderId}
           AND mo.del_flag != 1
     </select>
@@ -99,7 +104,9 @@
             od.specification,
             mp.product_price,
             od.cumulative_add_count,
-            mp.product_cover
+            mp.product_cover,
+            od.issue_status,
+            od.order_detail_id
         FROM ms_order_detail od
                  JOIN ms_product mp ON od.product_id = mp.product_id
         WHERE od.order_id = #{orderId}
@@ -108,20 +115,22 @@
     <!-- 结果映射：订单详情 + 多商品集合 -->
     <resultMap id="OrderDetailResultMap" type="com.mashang.ordering.domain.vo.MsUserOrderDtlVo">
         <id column="order_id" property="orderId"/>
-        <result column="user_id" property="userId"/>
-        <result column="store_id" property="storeId"/>
-        <result column="order_number" property="orderNumber"/>
+        <result column="buy_type" property="buyType"/>
+        <result column="store_name" property="storeName"/>
         <result column="pickup_number" property="pickupNumber"/>
+        <result column="diners_number" property="dinersNumber"/>
+        <result column="order_number" property="orderNumber"/>
         <result column="order_status" property="orderStatus"/>
-        <result column="pay_time" property="payTime"/>
+        <result column="product_total_price" property="productTotalPrice"/>
         <result column="points_deduction" property="pointsDeduction"/>
         <result column="actual_pay" property="actualPay"/>
-        <result column="buy_type" property="buyType"/>
-        <result column="reserve_pick_time" property="reservePickTime"/>
-        <result column="product_total_price" property="productTotalPrice"/>
-        <result column="diners_number" property="dinersNumber"/>
-        <result column="finish_time" property="finishTime"/>
         <result column="create_time" property="createTime"/>
+        <result column="pay_time" property="payTime"/>
+
+        <result column="user_id" property="userId"/>
+        <result column="store_id" property="storeId"/>
+        <result column="reserve_pick_time" property="reservePickTime"/>
+        <result column="finish_time" property="finishTime"/>
         <result column="remark" property="remark"/>
 
         <!-- 一对多：自动装入多个商品 -->
@@ -241,14 +250,16 @@
         SET order_status = 1,
             actual_pay = #{totalAmount},
             pay_time = NOW(),  -- 同步更新支付时间
-            update_time = NOW()
+            update_time = NOW(),
+            pay_type = 1
         WHERE order_id = #{orderId}
     </update>
 
     <update id="updateOrderStatusToRefund">
         UPDATE ms_order
         SET order_status = 3,  <!-- 3 代表已退款，你可以自己改 -->
-        update_time = NOW()
+        update_time = NOW(),
+        pay_type = '1'
         WHERE order_id = #{orderId}
     </update>
 
@@ -281,4 +292,113 @@
         WHERE
             ms_order.order_id = #{orderId}
     </select>
+
+    <resultMap id="MsUserOrderListPageVo" type="com.mashang.ordering.domain.vo.MsUserOrderListPageVo">
+        <!-- 订单基本信息 -->
+        <id column="order_id" property="orderId"/>
+        <result column="store_name" property="storeName"/>
+        <result column="order_number" property="orderNumber"/>
+        <result column="table_number" property="tableNumber"/>
+        <result column="actual_pay" property="actualPay"/>
+        <result column="pickup_number" property="pickUpNumber"/>
+        <result column="userIdAndNickname" property="userIdAndNickname"/>
+        <result column="usernameAndPhone" property="usernameAndPhone"/>
+        <result column="pay_type" property="payType"/>
+        <result column="buy_type" property="buyType"/>
+        <result column="reserve_pick_time" property="reservePickTime"/>
+        <result column="order_status" property="orderStatus"/>
+        <result column="pay_time" property="payTime"/>
+        <result column="create_time" property="createTime"/>
+
+        <!-- 商品明细列表 -->
+        <collection property="productInfoList" ofType="com.mashang.ordering.domain.vo.MsUserOrderProductInfoVo">
+            <result column="product_image" property="productImage"/>
+            <result column="productNameAndSpecification" property="productNameAndSpecification"/>
+            <result column="productPriceAndQuantity" property="productPriceAndQuantity"/>
+        </collection>
+    </resultMap>
+
+    <!-- 分页模糊查询条件 -->
+    <sql id="page_condition">
+        <where>
+            <if test="storeIds != null and storeIds.size() > 0">
+                AND ms_order.store_id IN
+                <foreach collection="storeIds" item="storeId" open="(" separator="," close=")">
+                    #{storeId}
+                </foreach>
+            </if>
+
+            <!--  -->
+            <if test="buyType != null and buyType != ''">
+                AND ms_order.buy_type = #{buyType}
+            </if>
+            <if test="orderStatus != null and orderStatus != ''">
+                AND ms_order.order_status = #{orderStatus}
+            </if>
+            <if test="payType != null and payType != ''">
+                AND ms_order.pay_type = #{payType}
+            </if>
+            <if test="orderNumber != null and orderNumber != ''">
+                AND ms_order.order_number LIKE CONCAT('%', #{orderNumber}, '%')
+            </if>
+            <if test="userName != null and userName != ''">
+                AND sys_user.user_name LIKE CONCAT('%', #{userName}, '%')
+            </if>
+            <if test="phonenumber != null and phonenumber != ''">
+                AND sys_user.phonenumber LIKE CONCAT('%', #{phonenumber}, '%')
+            </if>
+            <if test="startTime != null">
+                AND ms_order.create_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND ms_order.create_time &lt;= #{endTime}
+            </if>
+
+        </where>
+    </sql>
+
+    <!-- 模糊分页查询订单列表 -->
+    <select id="selectOrderPage" parameterType="com.mashang.ordering.domain.param.selete.MsUserOrderPageParam"
+            resultMap="MsUserOrderListPageVo">
+        SELECT
+        ms_order.order_id,
+        ms_store.store_name,
+        ms_order.order_number,
+        ms_table.table_number,
+        ms_order.actual_pay,
+        ms_order.pickup_number,
+
+        CONCAT(ms_order.user_id, '|', IFNULL(sys_user.nick_name, '')) AS userIdAndNickname,
+        CONCAT(IFNULL(sys_user.user_name, ''), '|', IFNULL(sys_user.phonenumber, '')) AS usernameAndPhone,
+
+        ms_order_detail.product_image,
+        CONCAT(ms_order_detail.product_name, ' - ', IFNULL(ms_order_detail.specification, '')) AS productNameAndSpecification,
+        CONCAT('￥', ms_order_detail.product_price, ' * ', ms_order_detail.product_quantity) AS productPriceAndQuantity,
+
+        ms_order.pay_type,
+        ms_order.buy_type,
+        ms_order.reserve_pick_time,
+        ms_order.order_status,
+        ms_order.pay_time,
+        ms_order.create_time
+        FROM
+        ms_order
+        INNER JOIN ms_store ON ms_order.store_id = ms_store.store_id
+        INNER JOIN ms_table ON ms_store.store_id = ms_table.store_id
+        AND ms_order.table_id = ms_table.table_id
+        INNER JOIN sys_user ON ms_order.user_id = sys_user.user_id
+        INNER JOIN ms_order_detail ON ms_order.order_id = ms_order_detail.order_id
+        <include refid="page_condition"/>
+        ORDER BY
+        ms_order.create_time DESC,
+        ms_order.order_id DESC,
+        ms_order_detail.order_detail_id ASC
+    </select>
+
+
+    <update id="userRecharge">
+        UPDATE sys_user
+        SET account_limit = account_limit + #{money}
+        WHERE user_id = #{userId}
+    </update>
 </mapper>

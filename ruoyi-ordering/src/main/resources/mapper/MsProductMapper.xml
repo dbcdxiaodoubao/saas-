@@ -58,7 +58,7 @@
         ms_product.`status`,
         ms_product.create_time
         FROM ms_product
-        INNER JOIN ms_categories ON ms_product.product_id = ms_categories.product_id
+        INNER JOIN ms_categories ON ms_product.product_categories_id = ms_categories.categories_id
         INNER JOIN ms_store_product ON ms_product.product_id = ms_store_product.product_id
         INNER JOIN ms_store ON ms_store.store_id = ms_store_product.store_id
         <include refid="page_condition"/>

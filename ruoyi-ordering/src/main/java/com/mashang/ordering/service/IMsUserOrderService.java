@@ -1,13 +1,20 @@
 package com.mashang.ordering.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.mashang.ordering.domain.common.ResultSet;
 import com.mashang.ordering.domain.entity.MsOrder;
 import com.mashang.ordering.domain.param.create.MsUserOrderAdd;
 import com.mashang.ordering.domain.param.create.MsUserOrderCreate;
+import com.mashang.ordering.domain.param.selete.MsUserOrderPageParam;
+import com.mashang.ordering.domain.param.update.MsUserOrderUpdate;
+import com.mashang.ordering.domain.vo.MsUserOrderListPageVo;
 import com.mashang.ordering.domain.vo.MsUserOrderDtlVo;
 import com.mashang.ordering.domain.vo.MsUserOrderListVo;
 import com.mashang.ordering.domain.vo.MsUserTableListVo;
+import com.ruoyi.common.core.page.TableDataInfo;
+import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface IMsUserOrderService extends IService<MsOrder> {
@@ -56,4 +63,25 @@ public interface IMsUserOrderService extends IService<MsOrder> {
      * @return
      */
     List<MsUserTableListVo> getLabelId(Long storeId);
+
+    /**
+     * 用户退款
+     * @param money
+     * @param orderId
+     */
+    void userRecharge(@Param("orderId") Long orderId, @Param("money") BigDecimal money);
+
+    /**
+     * 分页模糊查询订单列表
+     * @param msUserOrderPageParam
+     * @return
+     */
+    TableDataInfo<List<MsUserOrderListPageVo>> selectOrderPage(MsUserOrderPageParam msUserOrderPageParam);
+
+    /**
+     * 修改订单详情
+     * @param msUserOrderUpdate
+     * @return
+     */
+    ResultSet updateOrderDtl(MsUserOrderUpdate msUserOrderUpdate);
 }

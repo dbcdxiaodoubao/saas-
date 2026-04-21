@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.mashang.ordering.domain.common.ResultSet;
 import com.mashang.ordering.domain.entity.MsProduct;
 import com.mashang.ordering.domain.param.create.MsProductCreate;
-import com.mashang.ordering.domain.param.selete.MsProductPageQuery;
+import com.mashang.ordering.domain.param.selete.MsProductPageParam;
 import com.mashang.ordering.domain.param.update.MsProductUpdate;
 import com.mashang.ordering.domain.vo.MsProductDtlVo;
 import com.mashang.ordering.domain.vo.MsProductPageVo;
@@ -17,7 +17,7 @@ public interface IMsProductService extends IService<MsProduct> {
     /**
      * 分页查询商品列表
      */
-    TableDataInfo<List<MsProductPageVo>> selectProductPage(MsProductPageQuery msProductPageQuery);
+    TableDataInfo<List<MsProductPageVo>> selectProductPage(MsProductPageParam msProductPageParam);
 
     /**
      * 添加商品

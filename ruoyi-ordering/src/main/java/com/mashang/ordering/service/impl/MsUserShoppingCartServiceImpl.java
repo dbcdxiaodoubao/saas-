@@ -21,4 +21,10 @@ public class MsUserShoppingCartServiceImpl extends ServiceImpl<MsUserShoppingCar
     public List<MsUserShoppingCartListVo> getList(Long userId, Long storeId) {
         return msUserShoppingCartMapper.getList(userId, storeId);
     }
+
+    @Override
+    public void deletAll(Long userId) {
+        msUserShoppingCartMapper.deletAll(userId);
+        return;
+    }
 }

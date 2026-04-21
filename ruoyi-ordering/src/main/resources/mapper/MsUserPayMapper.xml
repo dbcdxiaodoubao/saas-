@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mashang.ordering.mapper.MsUserPayMapper">
+
+    <update id="payOrder">
+        UPDATE ms_order
+        SET order_status = 1,
+            actual_pay = #{totalAmount},
+            pay_time = NOW(),  -- 同步更新支付时间
+            update_time = NOW(),
+            pay_type = 0
+        WHERE order_id = #{orderId}
+    </update>
+
+    <update id="payUser">
+        UPDATE sys_user
+        SET account_limit = account_limit - #{totalAmount}
+        WHERE user_id = #{userId}
+    </update>
+
+    <select id="getAccountLimit" resultType="Double">
+        SELECT
+            account_limit
+        FROM
+            sys_user
+        WHERE user_id = #{userId}
+    </select>
+
+    <update id="refund">
+        UPDATE ms_order
+        SET
+            order_status = 3,
+            update_time =  NOW()
+        WHERE order_id = #{orderId}
+    </update>
+</mapper>

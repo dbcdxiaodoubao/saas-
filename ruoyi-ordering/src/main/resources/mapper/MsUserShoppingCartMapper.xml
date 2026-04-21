@@ -19,4 +19,9 @@
           AND
             ms_shopping_cart.store_id = #{storeId}
     </select>
+
+    <delete id="deletAll">
+        DELETE FROM ms_shopping_cart
+        WHERE user_id = #{userId}
+    </delete>
 </mapper>

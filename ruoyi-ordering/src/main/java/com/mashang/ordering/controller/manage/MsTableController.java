@@ -3,37 +3,38 @@ package com.mashang.ordering.controller.manage;
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.mashang.ordering.domain.common.ResultSet;
 import com.mashang.ordering.domain.entity.MsTable;
 import com.mashang.ordering.domain.param.create.MsTableBatchCreate;
 import com.mashang.ordering.domain.param.create.MsTableCreate;
+import com.mashang.ordering.domain.param.selete.MsTableOrderParam;
 import com.mashang.ordering.domain.param.selete.MsTableParam;
 import com.mashang.ordering.domain.param.update.MsTableDtlVo;
 import com.mashang.ordering.domain.param.update.MsTableUpdate;
 import com.mashang.ordering.domain.vo.MsStoreNameVo;
 import com.mashang.ordering.domain.vo.MsTableListVo;
+import com.mashang.ordering.domain.vo.MsTableOrderDto;
+import com.mashang.ordering.domain.vo.MsTableOrderListVo;
 import com.mashang.ordering.mapping.MsTableMapping;
+import com.mashang.ordering.service.IMsOrderService;
 import com.mashang.ordering.service.IMsTableService;
 import com.mashang.ordering.utils.QrCodeUtil;
+import com.mashang.ordering.utils.Transfromer;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.R;
-import com.ruoyi.common.core.page.PageQuery;
+import com.mashang.ordering.domain.common.PageQuery;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.StringUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,9 @@ public class MsTableController extends BaseController {
 
     @Autowired
     private IMsTableService msTableService;
+
+    @Autowired
+    private IMsOrderService msOrderService;
 
     @ApiOperation("新增桌号信息")
     @PostMapping("/insert")
@@ -70,7 +74,7 @@ public class MsTableController extends BaseController {
     @ApiOperation(("分页查询桌号信息列表"))
     @GetMapping("/list")
     public TableDataInfo<List<MsTableListVo>> list(@Validated PageQuery pageQuery, MsTableParam msTableParam){
-        Page<MsTableListVo> page = msTableService.tablePage(pageQuery, msTableParam);
+        Page<MsTableListVo> page = msTableService.tablePage(Transfromer.oPage2rPage(pageQuery), msTableParam);
         return getDataTable(page.getRecords(), page.getTotal());
 
     }
@@ -171,5 +175,25 @@ public class MsTableController extends BaseController {
         // 5. 输出二维码
         QrCodeUtil.generateQRCodeByContent(qrJson, 300, response.getOutputStream());
         response.getOutputStream().flush();
+    }
+
+
+    @ApiOperation("获取桌号相关订单")
+    @GetMapping("/order/{tableId}")
+    public TableDataInfo<List<MsTableOrderListVo>> getTableOrder(@Validated MsTableOrderParam msTableOrderParam,@Validated PageQuery pageQuery){
+        ResultSet<Page<MsTableOrderListVo>> resultSet = msOrderService.getMsTableOrderListVo(msTableOrderParam, pageQuery);
+        return getDataTable(resultSet.getData().getRecords(), resultSet.getData().getTotal());
+    }
+
+    @ApiOperation("获取桌号相关订单详情")
+    @GetMapping("/order/dtl/{tableId},{orderId}")
+    public R<MsTableOrderDto> getTableOrderDtl(@PathVariable Long orderId, @PathVariable Long tableId){
+        if (orderId == null){
+            return R.fail("订单编号不能为空");
+        }
+        if(tableId==null){
+            return R.fail("桌号编号不能为空");
+        }
+        return R.ok(msOrderService.getMsTableOrderDto(orderId,tableId).getData());
     }
 }

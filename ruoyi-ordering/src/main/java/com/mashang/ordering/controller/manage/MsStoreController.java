@@ -3,7 +3,6 @@ package com.mashang.ordering.controller.manage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mashang.ordering.domain.common.PageQuery;
 import com.mashang.ordering.domain.common.ResultSet;
-import com.mashang.ordering.domain.entity.MsStore;
 import com.mashang.ordering.domain.param.create.MsStoreCreate;
 import com.mashang.ordering.domain.param.selete.MsStoreListParam;
 import com.mashang.ordering.domain.param.update.MsStoreUpdate;

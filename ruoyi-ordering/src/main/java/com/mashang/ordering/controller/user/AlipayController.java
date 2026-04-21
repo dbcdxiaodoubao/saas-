@@ -9,6 +9,7 @@ import com.mashang.ordering.config.AlipayConfig;
 import com.mashang.ordering.domain.vo.MsUserOrderDtlVo;
 import com.mashang.ordering.service.IMsUserOrderService;
 import com.ruoyi.common.annotation.Anonymous;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +31,7 @@ import static com.mashang.ordering.config.AlipayConfig.*;
 
 @RestController
 @RequestMapping("/alipay")
-@Api(tags = "用户端-支付接口")
+@Api(tags = "支付宝支付接口")
 public class AlipayController {
 
     @Resource
@@ -50,22 +52,52 @@ public class AlipayController {
     // 支付接口（绝对不报错）
     @GetMapping("/pay")
     @ApiOperation("支付")
-    public String pay(@ApiParam(value = "商户订单号（唯一）", required = true, example = "ORDER20260407001")
-                          Long orderId) throws Exception {
+    public R pay(@ApiParam(value = "订单id", required = true) Long orderId
+                      ) throws Exception {
         AlipayTradePagePayRequest request = new AlipayTradePagePayRequest();
         request.setNotifyUrl(notifyUrl);
         request.setReturnUrl(returnUrl);
 
         MsUserOrderDtlVo dtl = msUserOrderService.getDtl(orderId);
 
+        if (dtl == null) {
+            R.fail("该订单不存在");
+        }
+
+
         // 拼接支付参数
         String bizContent = "{\"out_trade_no\":\"" + orderId + "\","
-                + "\"total_amount\":\"" + dtl.getProductTotalPrice() + "\","
+                + "\"total_amount\":\"" + (dtl.getProductTotalPrice()-Double.valueOf(dtl.getPointsDeduction())) + "\","
                 + "\"subject\":\"" + "OrderId:"+orderId + "\","
                 + "\"product_code\":\"FAST_INSTANT_TRADE_PAY\"}";
 
         request.setBizContent(bizContent);
-        return alipayClient.pageExecute(request,"utf-8").getBody();
+        String form = alipayClient.pageExecute(request,"utf-8").getBody();
+
+        return R.ok(form);
+    }
+
+    @GetMapping("/recharge")
+    @ApiOperation("余额充值")
+    public String recharge(
+            @ApiParam(value = "充值金额", required = true) BigDecimal amount,
+            @ApiParam(value = "当前登录用户ID", required = true) Long userId
+    ) throws Exception {
+        AlipayTradePagePayRequest request = new AlipayTradePagePayRequest();
+        request.setNotifyUrl(notifyUrl);       // 复用同一个异步回调
+        request.setReturnUrl(returnUrl);
+
+        // 生成一个唯一的充值订单号（规则：RECHARGE_用户ID_时间戳）
+        String outTradeNo = "RECHARGE_" + userId + "_" + System.currentTimeMillis();
+
+        // 拼接充值支付参数
+        String bizContent = "{\"out_trade_no\":\"" + outTradeNo + "\","
+                + "\"total_amount\":\"" + amount + "\","
+                + "\"subject\":\"recharge\","
+                + "\"product_code\":\"FAST_INSTANT_TRADE_PAY\"}";
+
+        request.setBizContent(bizContent);
+        return alipayClient.pageExecute(request, "utf-8").getBody();
     }
 
     // 异步回调
@@ -97,7 +129,7 @@ public class AlipayController {
             System.out.println("【支付宝回调】验签失败！");
             return "fail";
         }
-
+        System.out.println("【支付宝回调】验签！");
         // 4. 验签成功 → 处理业务
         String tradeStatus = params.get("trade_status");
         String orderId = params.get("out_trade_no");
@@ -106,10 +138,21 @@ public class AlipayController {
         System.out.println("【支付宝回调】验签成功！订单号：" + orderId+"价格为："+totalAmount);
 
         if ("TRADE_SUCCESS".equals(tradeStatus)) {
+            String outTradeNo = params.get("out_trade_no");
+            if (outTradeNo.startsWith("RECHARGE_")){
 
-            msUserOrderService.pay(Long.valueOf(orderId),totalAmount);
+                String[] arr = outTradeNo.split("_");
+                Long userId = Long.valueOf(arr[1]);
+                BigDecimal money = new BigDecimal(params.get("total_amount"));
 
-            System.out.println("订单支付成功！");
+                msUserOrderService.userRecharge(userId, money);
+                System.out.println("【余额充值成功】用户ID：" + userId + " 金额：" + money);
+            }
+            else {
+                msUserOrderService.pay(Long.valueOf(orderId),totalAmount);
+                System.out.println("订单支付成功！");
+            }
+
         }
 
         return "success";
@@ -125,13 +168,16 @@ public class AlipayController {
 
     @GetMapping("/refund")
     @Anonymous
-    @ApiOperation("支付宝订单退款")
     public R refund(@ApiParam(value = "订单ID", required = true) Long orderId) {
         try {
             // 1. 构建退款请求
             AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
 
             MsUserOrderDtlVo dtl = msUserOrderService.getDtl(orderId);
+
+            if (dtl == null) {
+                return R.fail("该订单不存在");
+            }
 
             // 退款参数（必须：订单号 + 退款金额 + 唯一退款流水号）
             String bizContent = "{\"out_trade_no\":\"" + orderId + "\","
