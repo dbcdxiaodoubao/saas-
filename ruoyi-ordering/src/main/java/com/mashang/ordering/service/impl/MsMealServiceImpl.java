@@ -72,7 +72,6 @@ public class MsMealServiceImpl extends ServiceImpl<MsMealMapper, MsMeal> impleme
             saveList.add(mm);
         }
 
-        // 直接 return mapper，和你示例完全一样
         return msMealMenuMapper.batchMealMenu(saveList);
     }
 
@@ -137,7 +136,6 @@ public class MsMealServiceImpl extends ServiceImpl<MsMealMapper, MsMeal> impleme
         // 先更新套餐
         msMealMapper.updateById(meal);
 
-        // 直接 return mapper
         return msMealMenuMapper.batchMealMenu(saveList);
     }
 
@@ -162,7 +160,6 @@ public class MsMealServiceImpl extends ServiceImpl<MsMealMapper, MsMeal> impleme
                         .eq(MsMealMenu::getMealId, mealId)
         );
 
-        // 直接 return mapper，和你示例完全一样
         return msMealMapper.deleteById(mealId);
     }
 
