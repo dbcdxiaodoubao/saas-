@@ -126,7 +126,7 @@ public class MsMealServiceImpl extends ServiceImpl<MsMealMapper, MsMeal> impleme
         meal.setMealStatus(msMealUpdate.getMealStatus());
         meal.setRemark(msMealUpdate.getRemark());
 
-        // 执行更新（自动填充 updateBy / updateTime）
+        // 执行更新
         this.updateById(meal);
 
         // 2. 删除该套餐原来绑定的所有菜单
