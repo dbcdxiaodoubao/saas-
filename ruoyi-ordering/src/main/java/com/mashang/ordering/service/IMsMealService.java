@@ -18,7 +18,7 @@ public interface IMsMealService extends IService<MsMeal> {
      * @param msMealCreate
      * @return
      */
-    boolean insertMeal(MsMealCreate msMealCreate);
+    int insertMeal(MsMealCreate msMealCreate);
 
     /**
      * 查询租户套餐信息详情
@@ -32,14 +32,14 @@ public interface IMsMealService extends IService<MsMeal> {
      * @param msMealUpdate
      * @return
      */
-    boolean updateMeal(MsMealUpdate msMealUpdate);
+    int updateMeal(MsMealUpdate msMealUpdate);
 
     /**
      * 删除租户套餐信息
      * @param mealId
      * @return
      */
-     boolean deleteMeal(Long mealId);
+     int deleteMeal(Long mealId);
 
     /**
      *  获取套餐权限树

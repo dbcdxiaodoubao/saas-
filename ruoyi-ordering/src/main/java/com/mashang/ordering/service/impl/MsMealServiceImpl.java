@@ -10,8 +10,6 @@ import com.mashang.ordering.domain.param.update.MsMealUpdate;
 import com.mashang.ordering.domain.vo.MsMealDtlVo;
 import com.mashang.ordering.mapper.MsMealMapper;
 import com.mashang.ordering.mapper.MsMealMenuMapper;
-import com.mashang.ordering.mapping.MsMealMapping;
-import com.mashang.ordering.service.IMsMealMenuService;
 import com.mashang.ordering.service.IMsMealService;
 import com.ruoyi.common.core.domain.entity.SysMenu;
 import com.ruoyi.common.core.domain.entity.SysUser;
@@ -19,13 +17,11 @@ import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.mapper.SysMenuMapper;
 import com.ruoyi.system.mapper.SysUserMapper;
-import com.ruoyi.system.service.ISysMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class MsMealServiceImpl extends ServiceImpl<MsMealMapper, MsMeal> implements IMsMealService {
@@ -34,7 +30,7 @@ public class MsMealServiceImpl extends ServiceImpl<MsMealMapper, MsMeal> impleme
     private MsMealMenuMapper msMealMenuMapper;
 
     @Autowired
-    private  MsMealMapper msMealMapper;
+    private MsMealMapper msMealMapper;
 
     @Autowired
     private SysUserMapper sysUserMapper;
@@ -44,7 +40,7 @@ public class MsMealServiceImpl extends ServiceImpl<MsMealMapper, MsMeal> impleme
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean insertMeal(MsMealCreate msMealCreate) {
+    public int insertMeal(MsMealCreate msMealCreate) {
 
         MsMeal meal = new MsMeal();
         meal.setMealName(msMealCreate.getMealName());
@@ -52,20 +48,18 @@ public class MsMealServiceImpl extends ServiceImpl<MsMealMapper, MsMeal> impleme
         meal.setRemark(msMealCreate.getRemark());
 
         // 保存套餐
-        this.save(meal);
+        int mealResult = msMealMapper.insert(meal);
         Long mealId = meal.getMealId();
 
         //获取菜单ID
         List<Long> menuIds = msMealCreate.getMenuIds();
         if (StringUtils.isEmpty(menuIds)) {
-            return true;
+            return mealResult;
         }
 
         //传父ID → 自动拿所有子菜单
         Set<Long> finalMenuIds = new HashSet<>();
-
         for (Long menuId : menuIds) {
-            // 递归加入：当前菜单 + 所有子菜单（无限层级）
             collectAllMenus(menuId, finalMenuIds);
         }
 
@@ -78,24 +72,17 @@ public class MsMealServiceImpl extends ServiceImpl<MsMealMapper, MsMeal> impleme
             saveList.add(mm);
         }
 
-        msMealMenuMapper.batchMealMenu(saveList);
-
-        return true;
+        // 直接 return mapper，和你示例完全一样
+        return msMealMenuMapper.batchMealMenu(saveList);
     }
 
     //递归获取所有子菜单
     private void collectAllMenus(Long menuId, Set<Long> menuSet) {
-        // 加入自己
         menuSet.add(menuId);
-
-        // 查询子菜单
         LambdaQueryWrapper<SysMenu> wrapper = Wrappers.lambdaQuery();
         wrapper.select(SysMenu::getMenuId);
         wrapper.eq(SysMenu::getParentId, menuId);
-
         List<SysMenu> children = sysMenuMapper.selectList(wrapper);
-
-        // 递归加入子菜单
         for (SysMenu child : children) {
             collectAllMenus(child.getMenuId(), menuSet);
         }
@@ -103,31 +90,23 @@ public class MsMealServiceImpl extends ServiceImpl<MsMealMapper, MsMeal> impleme
 
     @Override
     public MsMealDtlVo getMealDtl(Long mealId) {
-        // 1. 获取套餐基本信息
         MsMealDtlVo meal = msMealMapper.getMealById(mealId);
         if (meal == null) {
             throw new ServiceException("套餐不存在");
         }
-
-        // 2. 获取已勾选菜单ID
         List<Long> menuIds = msMealMenuMapper.selectMenuIdsByMealId(mealId);
         meal.setMenuIds(menuIds);
-
         return meal;
     }
 
     @Override
-    public boolean updateMeal(MsMealUpdate msMealUpdate) {
+    public int updateMeal(MsMealUpdate msMealUpdate) {
         // 1. 修改套餐
-        // 1. 先更新套餐基本信息
         MsMeal meal = new MsMeal();
         meal.setMealId(msMealUpdate.getMealId());
         meal.setMealName(msMealUpdate.getMealName());
         meal.setMealStatus(msMealUpdate.getMealStatus());
         meal.setRemark(msMealUpdate.getRemark());
-
-        // 执行更新
-        this.updateById(meal);
 
         // 2. 删除该套餐原来绑定的所有菜单
         LambdaQueryWrapper<MsMealMenu> delWrapper = Wrappers.lambdaQuery();
@@ -137,7 +116,7 @@ public class MsMealServiceImpl extends ServiceImpl<MsMealMapper, MsMeal> impleme
         // 3. 获取新的菜单ID
         List<Long> menuIds = msMealUpdate.getMenuIds();
         if (StringUtils.isEmpty(menuIds)) {
-            return true;
+            return msMealMapper.updateById(meal);
         }
 
         // 4. 递归获取 父菜单 + 所有子菜单
@@ -147,48 +126,49 @@ public class MsMealServiceImpl extends ServiceImpl<MsMealMapper, MsMeal> impleme
         }
 
         // 5. 批量插入新的关联
-        List<MsMealMenu> saveList = finalMenuIds.stream().map(id -> {
+        List<MsMealMenu> saveList = new ArrayList<>();
+        for (Long id : finalMenuIds) {
             MsMealMenu mm = new MsMealMenu();
             mm.setMealId(msMealUpdate.getMealId());
             mm.setMenuId(id);
-            return mm;
-        }).collect(Collectors.toList());
+            saveList.add(mm);
+        }
 
-        msMealMenuMapper.batchMealMenu(saveList);
+        // 先更新套餐
+        msMealMapper.updateById(meal);
 
-        return true;
+        // 直接 return mapper
+        return msMealMenuMapper.batchMealMenu(saveList);
     }
 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean deleteMeal(Long mealId) {
+    public int deleteMeal(Long mealId) {
 
         Long count = sysUserMapper.selectCount(
                 Wrappers.lambdaQuery(SysUser.class)
-                        .eq(SysUser::getMealId, mealId)  // 租户表的套餐ID = 要删除的套餐ID
-                        .eq(SysUser::getDelFlag, "0")    // 只查未删除的正常租户
+                        .eq(SysUser::getMealId, mealId)
+                        .eq(SysUser::getDelFlag, "0")
         );
 
         if (count > 0) {
             throw new ServiceException("该套餐已经绑定租户，无法删除！");
         }
 
-        boolean removeOk = this.removeById(mealId);
-
+        // 删除绑定关系
         msMealMenuMapper.delete(
                 Wrappers.lambdaQuery(MsMealMenu.class)
                         .eq(MsMealMenu::getMealId, mealId)
         );
 
-        return removeOk;
-        }
+        // 直接 return mapper，和你示例完全一样
+        return msMealMapper.deleteById(mealId);
+    }
 
     @Override
     public Map<String, Object> getMenuTree() {
         Map<String, Object> result = new HashMap<>();
-
-        // 1. 查询新增的业务菜单（1061起，只查必要字段）
         List<SysMenu> menuList = sysMenuMapper.selectList(
                 Wrappers.lambdaQuery(SysMenu.class)
                         .select(SysMenu::getMenuId, SysMenu::getMenuName, SysMenu::getParentId, SysMenu::getOrderNum)
@@ -196,58 +176,61 @@ public class MsMealServiceImpl extends ServiceImpl<MsMealMapper, MsMeal> impleme
                         .eq(SysMenu::getStatus, "0")
         );
 
-        // 2. 构建正确排序的树形结构（父菜单永远在子菜单前面）
         List<Map<String, Object>> menuTree = buildTree(menuList);
-
         result.put("menuTree", menuTree);
         return result;
     }
 
-    /**
-     * 构建树形结构（强制父菜单在前，子菜单在后，按order_num排序）
-     */
     private List<Map<String, Object>> buildTree(List<SysMenu> menuList) {
         List<Map<String, Object>> tree = new ArrayList<>();
 
-        // 筛选根节点（parentId=0），按order_num升序
-        List<SysMenu> rootNodes = menuList.stream()
-                .filter(m -> m.getParentId() == 0)
-                .sorted(Comparator.comparingInt(SysMenu::getOrderNum))
-                .collect(Collectors.toList());
+        // 1. 筛选根节点（parentId=0）
+        List<SysMenu> rootNodes = new ArrayList<>();
+        for (SysMenu menu : menuList) {
+            if (menu.getParentId() == 0) {
+                rootNodes.add(menu);
+            }
+        }
 
+        // 排序
+        rootNodes.sort(Comparator.comparingInt(SysMenu::getOrderNum));
+
+        // 3. 构建树形结构
         for (SysMenu root : rootNodes) {
             Map<String, Object> node = new HashMap<>();
             node.put("id", root.getMenuId());
             node.put("label", root.getMenuName());
 
-            // 递归获取子节点
             List<Map<String, Object>> children = getChildren(root.getMenuId(), menuList);
             if (!children.isEmpty()) {
                 node.put("children", children);
             }
+
             tree.add(node);
         }
         return tree;
     }
 
-    /**
-     * 递归获取子菜单（子节点内部按order_num排序）
-     */
     private List<Map<String, Object>> getChildren(Long parentId, List<SysMenu> menuList) {
         List<Map<String, Object>> children = new ArrayList<>();
 
-        // 筛选当前父节点的子菜单，按order_num升序
-        List<SysMenu> childMenus = menuList.stream()
-                .filter(m -> parentId.equals(m.getParentId()))
-                .sorted(Comparator.comparingInt(SysMenu::getOrderNum))
-                .collect(Collectors.toList());
+        // 1. 筛选子菜单
+        List<SysMenu> childMenus = new ArrayList<>();
+        for (SysMenu menu : menuList) {
+            if (parentId.equals(menu.getParentId())) {
+                childMenus.add(menu);
+            }
+        }
 
+        // 2. 排序
+        childMenus.sort(Comparator.comparingInt(SysMenu::getOrderNum));
+
+        // 3. 循环构建节点
         for (SysMenu menu : childMenus) {
             Map<String, Object> node = new HashMap<>();
             node.put("id", menu.getMenuId());
             node.put("label", menu.getMenuName());
 
-            // 递归获取孙节点
             List<Map<String, Object>> grandChildren = getChildren(menu.getMenuId(), menuList);
             if (!grandChildren.isEmpty()) {
                 node.put("children", grandChildren);
@@ -257,4 +240,3 @@ public class MsMealServiceImpl extends ServiceImpl<MsMealMapper, MsMeal> impleme
         return children;
     }
 }
-
