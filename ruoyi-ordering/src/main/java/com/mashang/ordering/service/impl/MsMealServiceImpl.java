@@ -49,7 +49,7 @@ public class MsMealServiceImpl extends ServiceImpl<MsMealMapper, MsMeal> impleme
         MsMeal meal = new MsMeal();
         meal.setMealName(msMealCreate.getMealName());
         meal.setMealStatus(msMealCreate.getMealStatus());
-        meal.setRemark(msMealCreate.getRemark()); // 修复！从create取remark，不是自己get
+        meal.setRemark(msMealCreate.getRemark());
 
         // 保存套餐
         this.save(meal);
