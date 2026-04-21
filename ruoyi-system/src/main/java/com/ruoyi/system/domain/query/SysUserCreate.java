@@ -21,9 +21,9 @@ public class SysUserCreate {
     @NotBlank(message = "用户昵称不能为空")
     private String nickName;
 
-    @ApiModelProperty("角色ID")
+   /* @ApiModelProperty("角色ID")
     @NotNull(message = "角色ID不能为空")
-    private Long roleId;
+    private Long roleId;*/
 
     @ApiModelProperty("套餐ID")
     @NotNull(message = "套餐ID不能为空")

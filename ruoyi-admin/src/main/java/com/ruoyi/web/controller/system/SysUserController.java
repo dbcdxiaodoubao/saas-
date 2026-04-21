@@ -272,17 +272,17 @@ public class SysUserController extends BaseController {
             return R.fail("保存用户失败");
         }
 
-        // 2. 绑定角色（单个角色，使用你项目自带的 batchUserRole）
-        if (sysUserCreate.getRoleId() != null) {
-            List<SysUserRole> userRoleList = new ArrayList<>();
-            SysUserRole userRole = new SysUserRole();
-            userRole.setUserId(user.getUserId());
-            userRole.setRoleId(sysUserCreate.getRoleId());
-            userRoleList.add(userRole);
+        // 【自动绑定默认租户角色ID】
+        Long defaultTenantRoleId = 100L;
 
-            // 调用你已有的批量插入方法（支持单个+多个）
-            sysUserRoleMapper.batchUserRole(userRoleList);
-        }
+        List<SysUserRole> userRoleList = new ArrayList<>();
+        SysUserRole userRole = new SysUserRole();
+        userRole.setUserId(user.getUserId());
+        userRole.setRoleId(defaultTenantRoleId);
+        userRoleList.add(userRole);
+
+        // 插入绑定关系
+        sysUserRoleMapper.batchUserRole(userRoleList);
 
         return R.ok("新增成功");
     }
