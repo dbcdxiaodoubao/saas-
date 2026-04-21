@@ -55,7 +55,6 @@ public class MsMealServiceImpl extends ServiceImpl<MsMealMapper, MsMeal> impleme
         this.save(meal);
         Long mealId = meal.getMealId();
 
-
         //获取菜单ID
         List<Long> menuIds = msMealCreate.getMenuIds();
         if (StringUtils.isEmpty(menuIds)) {
@@ -70,13 +69,14 @@ public class MsMealServiceImpl extends ServiceImpl<MsMealMapper, MsMeal> impleme
             collectAllMenus(menuId, finalMenuIds);
         }
 
-        //批量插入
-        List<MsMealMenu> saveList = finalMenuIds.stream().map(id -> {
+        // 批量插入
+        List<MsMealMenu> saveList = new ArrayList<>();
+        for (Long id : finalMenuIds) {
             MsMealMenu mm = new MsMealMenu();
             mm.setMealId(mealId);
             mm.setMenuId(id);
-            return mm;
-        }).collect(Collectors.toList());
+            saveList.add(mm);
+        }
 
         msMealMenuMapper.batchMealMenu(saveList);
 
