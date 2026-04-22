@@ -49,6 +49,7 @@
         ON t1.table_id = t3.table_id
         ${ew.customSqlSegment}
         GROUP BY t1.table_id, t2.store_id, t2.store_name, t1.table_number, t1.state
+        ORDER BY t1.create_time DESC
     </select>
 
     <select id="selectStoreNames" resultType="com.mashang.ordering.domain.vo.MsStoreNameVo">
