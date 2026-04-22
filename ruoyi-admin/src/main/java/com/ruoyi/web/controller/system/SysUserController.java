@@ -280,9 +280,7 @@ public class SysUserController extends BaseController {
         userRoleList.add(userRole);
 
         // 插入绑定关系
-        sysUserRoleMapper.batchUserRole(userRoleList);
-
-        return R.ok("新增成功");
+        return toResult(sysUserRoleMapper.batchUserRole(userRoleList));
     }
 
     @ApiOperation(("分页查询租户信息列表"))

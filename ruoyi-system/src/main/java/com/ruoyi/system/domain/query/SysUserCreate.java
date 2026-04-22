@@ -42,8 +42,8 @@ public class SysUserCreate {
     private String sex;
 
     @ApiModelProperty("生日")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @NotBlank(message = "生日不能为空")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @NotNull(message = "生日不能为空")
     private Date birthday;
 
     @ApiModelProperty("地区")
@@ -76,7 +76,7 @@ public class SysUserCreate {
     private String accountLimit;
 
     @ApiModelProperty("过期时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date expirationTime;
 
     @ApiModelProperty("绑定域名")
