@@ -9,6 +9,7 @@ import com.mashang.ordering.domain.param.create.MsTableBatchCreate;
 import com.mashang.ordering.domain.param.selete.MsTableParam;
 import com.mashang.ordering.domain.vo.MsMealListVo;
 import com.mashang.ordering.domain.vo.MsStoreNameVo;
+import com.mashang.ordering.domain.vo.MsTableDtlVo;
 import com.mashang.ordering.domain.vo.MsTableListVo;
 import com.mashang.ordering.mapper.MsTableMapper;
 import com.mashang.ordering.service.IMsTableService;
@@ -94,6 +95,11 @@ public class MsTableServiceImpl extends ServiceImpl<MsTableMapper, MsTable> impl
     @Override
     public List<MsStoreNameVo> selectStoreNames() {
         return msTableMapper.selectStoreNames();
+    }
+
+    @Override
+    public MsTableDtlVo selectByTableId(Long tableId) {
+        return msTableMapper.selectByTableId(tableId);
     }
 
 }

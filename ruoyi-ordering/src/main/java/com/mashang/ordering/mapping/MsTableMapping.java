@@ -5,10 +5,10 @@ import com.mashang.ordering.domain.entity.MsMeal;
 import com.mashang.ordering.domain.entity.MsTable;
 import com.mashang.ordering.domain.param.create.MsMealCreate;
 import com.mashang.ordering.domain.param.create.MsTableCreate;
-import com.mashang.ordering.domain.param.update.MsTableDtlVo;
 import com.mashang.ordering.domain.param.update.MsTableUpdate;
 import com.mashang.ordering.domain.vo.MsMealDtlVo;
 import com.mashang.ordering.domain.vo.MsMealListVo;
+import com.mashang.ordering.domain.vo.MsTableDtlVo;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

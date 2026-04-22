@@ -59,4 +59,17 @@
         from ms_store
     </select>
 
+    <select id="selectByTableId" resultType="com.mashang.ordering.domain.vo.MsTableDtlVo">
+        SELECT
+            t1.table_id,
+            t1.store_id,
+            t2.store_name,
+            t1.table_number,
+            t1.state,
+            t1.remark
+        FROM ms_table AS t1
+        LEFT JOIN ms_store AS t2
+        ON t1.store_id = t2.store_id
+        WHERE t1.table_id = #{tableId}
+    </select>
 </mapper>

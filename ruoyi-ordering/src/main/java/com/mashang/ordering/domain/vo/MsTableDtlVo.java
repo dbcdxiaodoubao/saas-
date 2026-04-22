@@ -1,4 +1,4 @@
-package com.mashang.ordering.domain.param.update;
+package com.mashang.ordering.domain.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -11,8 +11,11 @@ public class MsTableDtlVo {
     @ApiModelProperty("餐桌ID")
     private Long tableId;
 
-    @ApiModelProperty("店铺ID")
+    @ApiModelProperty("商店ID")
     private Long storeId;
+
+    @ApiModelProperty("商店名称")
+    private String storeName;
 
     @ApiModelProperty("桌号")
     private String tableNumber;
@@ -20,7 +23,7 @@ public class MsTableDtlVo {
     @ApiModelProperty("备注")
     private String remark;
 
-    @ApiModelProperty("状态(0禁用，1启用)")
-    private Character state;
+    @ApiModelProperty("状态(0禁用,1启用)")
+    private String state;
 
 }

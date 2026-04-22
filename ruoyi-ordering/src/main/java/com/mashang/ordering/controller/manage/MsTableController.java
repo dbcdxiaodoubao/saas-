@@ -9,12 +9,9 @@ import com.mashang.ordering.domain.param.create.MsTableBatchCreate;
 import com.mashang.ordering.domain.param.create.MsTableCreate;
 import com.mashang.ordering.domain.param.selete.MsTableOrderParam;
 import com.mashang.ordering.domain.param.selete.MsTableParam;
-import com.mashang.ordering.domain.param.update.MsTableDtlVo;
+import com.mashang.ordering.domain.vo.MsTableDtlVo;
 import com.mashang.ordering.domain.param.update.MsTableUpdate;
-import com.mashang.ordering.domain.vo.MsStoreNameVo;
-import com.mashang.ordering.domain.vo.MsTableListVo;
-import com.mashang.ordering.domain.vo.MsTableOrderDto;
-import com.mashang.ordering.domain.vo.MsTableOrderListVo;
+import com.mashang.ordering.domain.vo.*;
 import com.mashang.ordering.mapping.MsTableMapping;
 import com.mashang.ordering.service.IMsOrderService;
 import com.mashang.ordering.service.IMsTableService;
@@ -91,7 +88,7 @@ public class MsTableController extends BaseController {
         if (count == 0){
             return R.fail("当前餐桌不存在，请重新输入!");
         }
-        return R.ok(MsTableMapping.INSTANCE.toDtl(msTableService.getById(tableId)));
+        return R.ok(msTableService.selectByTableId(tableId));
     }
 
     @ApiOperation("修改桌号信息")

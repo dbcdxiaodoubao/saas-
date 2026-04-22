@@ -5,9 +5,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mashang.ordering.domain.entity.MsTable;
-import com.mashang.ordering.domain.vo.MsMealListVo;
-import com.mashang.ordering.domain.vo.MsStoreNameVo;
-import com.mashang.ordering.domain.vo.MsTableListVo;
+import com.mashang.ordering.domain.vo.*;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -36,4 +34,12 @@ public interface MsTableMapper extends BaseMapper<MsTable> {
      */
 
     List<MsStoreNameVo> selectStoreNames();
+
+
+    /**
+     * 查询餐桌详情
+     * @param tableId
+     * @return
+     */
+    MsTableDtlVo selectByTableId(Long tableId);
 }
