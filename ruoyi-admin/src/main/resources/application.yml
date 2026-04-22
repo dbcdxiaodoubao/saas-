@@ -125,7 +125,7 @@ mybatis-plus:
   global-config:
     db-config:
       logic-delete-field: del_flag
-      logic-delete-value: 1
+      logic-delete-value: 2
       logic-not-delete-value: 0
 
 # PageHelper分页插件

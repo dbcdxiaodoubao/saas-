@@ -65,6 +65,8 @@ public class MsMealController extends BaseController {
 
         lqw.eq(StringUtils.isNotEmpty(msMealParam.getMealStatus()), MsMeal::getMealStatus, msMealParam.getMealStatus());
 
+        lqw.orderByDesc(MsMeal::getCreateTime);
+
         Page<MsMeal> page = msMealService.page(new Page<>(pageQuery.getPageNum(), pageQuery.getPageSize()), lqw);
 
         Page<MsMealListVo> result = MsMealMapping.INSTANCE.toPage(page);
