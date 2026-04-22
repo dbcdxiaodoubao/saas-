@@ -578,14 +578,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         Page<SysUserListVo> page = new Page<>(pageQuery.getPageNum(), pageQuery.getPageSize());
 
         QueryWrapper<SysUserListVo> qw = new QueryWrapper();
-        qw.eq(StringUtils.isNotNull(sysUserQuery.getRoleId()),
-                "t4.role_id", sysUserQuery.getRoleId());
+        qw.eq("t4.role_id", 100);
         qw.like(StringUtils.isNotEmpty(sysUserQuery.getNickName()),
                 "t1.nick_name", sysUserQuery.getNickName());
         qw.like(StringUtils.isNotEmpty(sysUserQuery.getContact()),
                 "t1.contact", sysUserQuery.getContact());
         qw.like(StringUtils.isNotEmpty(sysUserQuery.getContactPhonenumber()),
                 "t1.contact_phonenumber", sysUserQuery.getContactPhonenumber());
+        qw.orderByDesc("t1.create_time");
 
         return userMapper.page(page, qw);
     }

@@ -30,8 +30,8 @@ public class SysUserQuery {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
-    @ApiModelProperty(value = "角色ID",required = true)
+   /* @ApiModelProperty(value = "角色ID",required = true)
     @NotBlank(message = "角色ID不能为空")
-    private Long roleId;
+    private Long roleId;*/
 
 }
