@@ -98,11 +98,14 @@ public class MsTableController extends BaseController {
 
         lqw.eq(MsTable::getTableNumber, StringUtils.trim(msTableUpdate.getTableNumber()));
 
+        lqw.ne(MsTable::getTableId, msTableUpdate.getTableId());
+
         MsTable one = msTableService.getOne(lqw);
 
         if (StringUtils.isNotNull(one)){
             return R.fail("当前桌号已存在,请重新修改!");
         }
+
         return toResult(msTableService.updateById(MsTableMapping.INSTANCE.toUpdate(msTableUpdate)));
     }
 
