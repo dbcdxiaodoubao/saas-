@@ -34,7 +34,7 @@ public class MsStoreController extends BaseController {
     @GetMapping("/list")
     private TableDataInfo<List<MsStoreListVo>> getMsStoreList(MsStoreListParam msStoreListParam,@Validated PageQuery pageQuery) {
         Page<MsStoreListVo> msStoreListVos = msStoreService.getMsStoreList(msStoreListParam.getStoreName(), msStoreListParam.getStoreTel(),pageQuery);
-        return new TableDataInfo(msStoreListVos.getRecords(), msStoreListVos.getTotal());
+        return getDataTable(msStoreListVos.getRecords(), msStoreListVos.getTotal());
     }
 
     //4.2 因为用户和打印机外键问题 这里的插入暂时无法测试

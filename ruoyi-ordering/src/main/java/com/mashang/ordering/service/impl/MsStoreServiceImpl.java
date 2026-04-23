@@ -36,6 +36,7 @@ public class MsStoreServiceImpl extends ServiceImpl<MsStoreMapper, MsStore> impl
         LambdaQueryWrapper<MsStore> lqw = new LambdaQueryWrapper<MsStore>();
         lqw.like(StringUtils.isNotEmpty(storeName), MsStore::getStoreName, storeName);
         lqw.like(StringUtils.isNotEmpty(storeTel), MsStore::getStoreTel, storeTel);
+        lqw.orderByDesc(MsStore::getCreateTime);
         List<MsStoreListVo> list = MsStoreMapping.INSTANCE.toListVos(msStoreMapper.getMsStoreList(lqw));
         Page<MsStoreListVo> page = new Page<>(pageQuery.getPageNum(), pageQuery.getPageSize(), list.size());
         page.setRecords(list);
@@ -81,6 +82,7 @@ public class MsStoreServiceImpl extends ServiceImpl<MsStoreMapper, MsStore> impl
         }
         LambdaQueryWrapper<MsStore> lqw = new LambdaQueryWrapper<MsStore>();
         lqw.eq(MsStore::getStoreName, msStoreUpdate.getStoreName());
+        lqw.ne(MsStore::getStoreId, msStoreUpdate.getStoreId());
         if(msStoreMapper.selectOne(lqw) != null){
             right = false;
             msg += "当前门店名称已存在-";

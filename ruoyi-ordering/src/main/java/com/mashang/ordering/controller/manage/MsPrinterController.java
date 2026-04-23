@@ -24,7 +24,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/printer")
-@Api(tags = "打印机管理")
+@Api(tags = "管理端-打印机管理")
 public class MsPrinterController extends BaseController {
 
     @Autowired

@@ -62,6 +62,6 @@ public class MsPrinterServiceImpl extends ServiceImpl<MsPrinterMapper, MsPrinter
         if(msStoreMapper.selectOne(storeLqw) != null){
             return ResultSet.fail("绑定了店铺的打印机无法删除");
         }
-        return ResultSet.success(msStoreMapper.deleteById(id));
+        return ResultSet.success(msPrinterMapper.deleteById(id));
     }
 }

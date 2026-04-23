@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @ApiModel(value = "MsPrinter",description = "打印机信息")
-public class MsPrinterDto extends BaseModel {
+public class MsPrinterDto {
 
     @ApiModelProperty(value = "打印机ID", example = "1")
     private long printerId;

@@ -11,7 +11,7 @@ import java.util.Date;
 
 @Data
 @ApiModel(value = "MsStoreDto",description = "门店详情参数")
-public class MsStoreDto extends BaseModel {
+public class MsStoreDto {
     @TableId(type = IdType.AUTO)
     @ApiModelProperty(value = "门店ID",example = "1")
     private long storeId;
