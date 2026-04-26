@@ -17,6 +17,7 @@ import com.mashang.ordering.mapper.MsCategoriesMapper;
 import com.mashang.ordering.mapper.MsProductMapper;
 import com.mashang.ordering.mapper.MsStoreCategoriesMapper;
 import com.mashang.ordering.mapping.MsCategoriesMapping;
+import com.mashang.ordering.mapping.MsStoreCategoriesMapping;
 import com.mashang.ordering.service.IMsCategoriesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -89,16 +90,22 @@ public class MsCategoriesServiceImpl extends ServiceImpl<MsCategoriesMapper, MsC
     @Transactional(rollbackFor = Exception.class)
     @Override
     public ResultSet<Object> updateCategories(MsCategoriesUpdate msCategoriesUpdate) throws Exception {
-        MsStoreCategories msStoreCategories = new MsStoreCategories();
-        msStoreCategories.setStoreCategoriesId(msCategoriesUpdate.getStoreCategoriesId());
-        msStoreCategories.setStoreId(msCategoriesUpdate.getMsStoreId());
-        int updateRes1 = msStoreCategoriesMapper.updateById(msStoreCategories);
-        if(updateRes1 != 1){
-            throw new Exception("修改失败");
+        //查询原映射
+        MsStoreCategories oriPo = msStoreCategoriesMapper.selectById(msCategoriesUpdate.getStoreCategoriesId());
+        if(oriPo == null){
+            return ResultSet.fail("不存在此分类和门店的关系");
         }
-        MsCategories msCategories = MsCategoriesMapping.INSTANCE.fromUpdate(msCategoriesUpdate);
-        int updateRes2 = msCategoriesMapper.updateById(msCategories);
-        if(updateRes2 != 1){
+        //先改映射
+        MsStoreCategories updatePo1 = new MsStoreCategories();
+        updatePo1.setCategoriesId(oriPo.getCategoriesId());
+        updatePo1.setStoreId(msCategoriesUpdate.getMsStoreId());
+        int updateRes1 = msStoreCategoriesMapper.updateById(updatePo1);
+        //再改分类
+        MsCategories updatePo2 = MsCategoriesMapping.INSTANCE.fromUpdate(msCategoriesUpdate);
+        updatePo2.setCategoriesId(oriPo.getCategoriesId());
+        int updateRes2 = msCategoriesMapper.updateById(updatePo2);
+        //只要映射和分类有一个修改成功
+        if(updateRes1 == 0 && updateRes2 == 0){
             throw new Exception("修改失败");
         }
         return ResultSet.success(null,"修改成功");
@@ -107,16 +114,17 @@ public class MsCategoriesServiceImpl extends ServiceImpl<MsCategoriesMapper, MsC
     @Transactional(rollbackFor = Exception.class)
     @Override
     public ResultSet<Object> deleteCategoriesById(Long msCategoriesid) throws Exception {
-        LambdaQueryWrapper<MsProduct> selectLqw = new LambdaQueryWrapper<>();
-        selectLqw.eq(MsProduct::getProductCategoriesId, msCategoriesid);
-        if(msProductMapper.selectCount(selectLqw) > 0) {
+        //todo 保留意见……
+        LambdaQueryWrapper<MsProduct> selectLqw0 = new LambdaQueryWrapper<>();
+        selectLqw0.eq(MsProduct::getProductCategoriesId, msCategoriesid);
+        if(msProductMapper.selectCount(selectLqw0) > 0) {
             return ResultSet.fail("当前分类下有商品，不能删除");
         }
-        LambdaQueryWrapper<MsStoreCategories> deleteLqw = new LambdaQueryWrapper<>();
-        deleteLqw.eq(MsStoreCategories::getCategoriesId, msCategoriesid);
-        int deleteRes = msStoreCategoriesMapper.delete(deleteLqw);
-        if(deleteRes != 1){
-            throw new Exception("删除失败");
+        LambdaQueryWrapper<MsStoreCategories> selectLqw1 = new LambdaQueryWrapper<>();
+        selectLqw1.eq(MsStoreCategories::getCategoriesId, msCategoriesid);
+        Long deleteRes = msStoreCategoriesMapper.selectCount(selectLqw1);
+        if(deleteRes != 0){
+            return ResultSet.fail("当前分类仍绑定门店，不可删除");
         }
         int deleteRes2 = msCategoriesMapper.deleteById(msCategoriesid);
         if(deleteRes2 != 1){

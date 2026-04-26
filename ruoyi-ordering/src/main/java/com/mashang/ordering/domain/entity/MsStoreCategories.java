@@ -1,5 +1,7 @@
 package com.mashang.ordering.domain.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.mashang.ordering.domain.model.BaseModel;
 import com.ruoyi.common.core.domain.BaseEntity;
 import io.swagger.annotations.ApiModel;
@@ -10,6 +12,7 @@ import lombok.Data;
 @ApiModel(value = "MsStoreCategories",description = "商品分类和门店映射项")
 public class MsStoreCategories extends BaseModel {
 
+    @TableId(type = IdType.AUTO)
     @ApiModelProperty(value = "商品分类和门店映射项id")
     private Long storeCategoriesId;
 

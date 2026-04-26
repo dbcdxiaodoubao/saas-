@@ -16,8 +16,8 @@ public class MsCategoriesUpdate{
     @NotNull(message = "商品分类和门店映射项id不能为空,此项为必填项")
     private Long storeCategoriesId;
 
-    @ApiModelProperty(value = "门店id")
-    @NotNull(message = "门店id不能为空,此项为必填项")
+    @ApiModelProperty(value = "门店id(留空则取消绑定)")
+//    @NotNull(message = "门店id不能为空,此项为必填项")
     private Long msStoreId;
 
     @ApiModelProperty(value = "分类名称")
@@ -28,7 +28,7 @@ public class MsCategoriesUpdate{
     private String pictureUrl;
 
     @ApiModelProperty(value = "排序")
-    @NotBlank(message = "排序不能为空,此项为必填项")
+    @NotNull(message = "排序不能为空,此项为必填项")
     private Integer sort;
 
     @ApiModelProperty(value = "启用状态 0-留 1-删")

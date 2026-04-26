@@ -3,6 +3,7 @@ package com.mashang.ordering.mapping;
 import com.mashang.ordering.domain.entity.MsCategories;
 import com.mashang.ordering.domain.param.create.MsCategoriesCreate;
 import com.mashang.ordering.domain.param.update.MsCategoriesUpdate;
+import com.mashang.ordering.domain.vo.MsCategoriesDto;
 import com.mashang.ordering.domain.vo.MsCategoriesListVo;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -20,4 +21,6 @@ public interface MsCategoriesMapping {
     //List<MsCategoriesListVo> toListVos(List<MsCategories> msCategoriesList);
 
     MsCategories fromUpdate(MsCategoriesUpdate msCategoriesUpdate);
+
+
 }

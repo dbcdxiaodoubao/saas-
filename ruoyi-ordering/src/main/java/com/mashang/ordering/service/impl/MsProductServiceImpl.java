@@ -108,7 +108,7 @@ public class MsProductServiceImpl extends ServiceImpl<MsProductMapper, MsProduct
             //查询规格表sort
             Long count= msSpecificationMapper.selectCount(new LambdaQueryWrapper<>());
             msSpecification.setSort(count + 1);
-            msSpecification.setSpecsAndAttrs(msProductCreate.getSpecsAndAttrs());
+//            msSpecification.setSpecsAndAttrs(msProductCreate.getSpecsAndAttrs());
 
             int insert = msSpecificationMapper.insert(msSpecification);
             if (insert != 1) {
@@ -160,7 +160,7 @@ public class MsProductServiceImpl extends ServiceImpl<MsProductMapper, MsProduct
         //根据规格id从规格表中拿规格信息
         MsSpecification msSpecification = msSpecificationMapper.selectById(msProduct.getSpecificationId());
 
-        msProductDtlVo.setSpecsAndAttrs(msSpecification.getSpecsAndAttrs());
+//        msProductDtlVo.setSpecsAndAttrs(msSpecification.getSpecsAndAttrs());
         msProductDtlVo.setSpecificationName(msSpecification.getSpecificationName());
 
         return msProductDtlVo;
@@ -209,7 +209,7 @@ public class MsProductServiceImpl extends ServiceImpl<MsProductMapper, MsProduct
             //查询规格表sort
             Long count= msSpecificationMapper.selectCount(new LambdaQueryWrapper<>());
             msSpecification.setSort(count + 1);
-            msSpecification.setSpecsAndAttrs(msProductUpdate.getSpecsAndAttrs());
+//            msSpecification.setSpecsAndAttrs(msProductUpdate.getSpecsAndAttrs());
 
             int insert = msSpecificationMapper.insert(msSpecification);
             if (insert != 1) {

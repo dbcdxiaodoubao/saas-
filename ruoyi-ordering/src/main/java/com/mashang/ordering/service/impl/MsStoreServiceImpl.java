@@ -17,6 +17,7 @@ import com.mashang.ordering.mapper.MsStoreMapper;
 import com.mashang.ordering.mapping.MsPrinterMapping;
 import com.mashang.ordering.mapping.MsStoreMapping;
 import com.mashang.ordering.service.IMsStoreService;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,6 +66,8 @@ public class MsStoreServiceImpl extends ServiceImpl<MsStoreMapper, MsStore> impl
             return ResultSet.fail(msg.substring(0, msg.length() - 1));
         }
         MsStore msStore = MsStoreMapping.INSTANCE.fromCreate(msStoreCreate);
+        Long userId = SecurityUtils.getUserId();
+        msStore.setUserId(userId);
         return ResultSet.success(msStoreMapper.insert(msStore));
     }
 
@@ -72,6 +75,16 @@ public class MsStoreServiceImpl extends ServiceImpl<MsStoreMapper, MsStore> impl
     public ResultSet<Object> updateMsStore(MsStoreUpdate msStoreUpdate) {
         boolean right = true;
         String msg = "";
+        MsStore original = msStoreMapper.selectById(msStoreUpdate.getStoreId());
+        if(original==null){
+            right = false;
+            msg += "不存在此门店";
+        }
+        //todo 排除管理员
+        if (original.getUserId() != SecurityUtils.getUserId()) {
+            right = false;
+            msg += "此门店只能由店长或管理员修改";
+        }
         if(msStoreUpdate.getIsOpen().length() > 1 || (msStoreUpdate.getIsOpen().charAt(0)!= '1' && msStoreUpdate.getIsOpen().charAt(0)!= '0')){
             right = false;
             msg += "门店营业状态输入有误 1-开 0-关-";

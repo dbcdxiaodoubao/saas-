@@ -27,9 +27,9 @@ public class MsSpecification extends BaseModel {
   @ApiModelProperty(value = "排序")
   private Long sort;
 
-  @ApiModelProperty(value = "规格及属性值")
-  @TableField(typeHandler = JacksonTypeHandler.class)
-  private List<MsSpecificationType> specsAndAttrs;
+//  @ApiModelProperty(value = "规格及属性值")
+//  @TableField(typeHandler = JacksonTypeHandler.class)
+//  private List<MsSpecificationType> specsAndAttrs;
 
 
 }

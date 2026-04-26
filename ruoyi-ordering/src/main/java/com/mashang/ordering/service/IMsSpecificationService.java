@@ -7,13 +7,15 @@ import com.mashang.ordering.domain.common.ResultSet;
 import com.mashang.ordering.domain.entity.MsSpecification;
 import com.mashang.ordering.domain.param.create.MsSpecificationCreate;
 import com.mashang.ordering.domain.param.update.MsSpecificationUpdate;
-import com.mashang.ordering.domain.vo.MsSpecificationListVo;
+import com.mashang.ordering.domain.vo.MsSpecificationVo;
 
 public interface IMsSpecificationService extends IService<MsSpecification> {
 
-    ResultSet<Object> addSpecification(MsSpecificationCreate msSpecificationCreate);
+    ResultSet<Object> addSpecification(MsSpecificationCreate msSpecificationCreate) throws Exception;
 
-    Page<MsSpecificationListVo> getSpecificationList(String name, PageQuery pageQuery);
+    ResultSet<MsSpecificationVo> getSpecificationById(Long id);
+
+    Page<MsSpecificationVo> getSpecificationList(String name, PageQuery pageQuery);
 
     ResultSet<Object> updateSpecification(MsSpecificationUpdate msSpecificationUpdate);
 
