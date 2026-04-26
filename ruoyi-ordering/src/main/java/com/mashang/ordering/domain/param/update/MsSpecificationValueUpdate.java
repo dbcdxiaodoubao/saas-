@@ -1,14 +1,15 @@
-package com.mashang.ordering.domain.vo;
+package com.mashang.ordering.domain.param.update;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.mashang.ordering.domain.model.BaseModel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@ApiModel(value = "MsSpecificationValue",description = "商品规格值类型")
-public class MsSpecificationValueVo {
-
+@ApiModel(value = "MsSpecificationValueUpdate",description = "商品规格值更新类型")
+public class MsSpecificationValueUpdate{
+  @TableId
   @ApiModelProperty(value = "规格值ID")
   private Long specificationValueId;
 

@@ -17,7 +17,7 @@ public interface IMsSpecificationService extends IService<MsSpecification> {
 
     Page<MsSpecificationVo> getSpecificationList(String name, PageQuery pageQuery);
 
-    ResultSet<Object> updateSpecification(MsSpecificationUpdate msSpecificationUpdate);
+    ResultSet<Object> updateSpecification(MsSpecificationUpdate msSpecificationUpdate) throws Exception;
 
-    ResultSet<Object> deleteSpecification(Long id);
+    ResultSet<Object> deleteSpecification(Long id) throws Exception;
 }

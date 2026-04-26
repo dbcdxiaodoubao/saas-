@@ -16,7 +16,7 @@ public class MsSpecificationValue extends BaseModel {
   @ApiModelProperty(value = "规格类型值名")
   private String specs;
 
-  @ApiModelProperty(value = "规格加价格名")
+  @ApiModelProperty(value = "规格加价格")
   private Long attr;
 
   @ApiModelProperty(value = "排序")

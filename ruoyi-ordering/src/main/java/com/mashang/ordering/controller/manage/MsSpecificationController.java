@@ -55,7 +55,7 @@ public class MsSpecificationController extends BaseController {
 
     @ApiOperation("获得规格详情")
     @GetMapping("/{msSpecificationId}")
-    public R<MsSpecificationDto> getSpecification(@PathVariable("msSpecificationId") Long msSpecificationId) {
+    public R<MsSpecificationDto> getSpecification(@PathVariable Long msSpecificationId) {
         ResultSet<MsSpecificationVo> resultSet = msSpecificationService.getSpecificationById(msSpecificationId);
         if (!resultSet.isSuccess() || resultSet.getData() == null) {
             return R.fail(resultSet.getMessage());
@@ -67,23 +67,29 @@ public class MsSpecificationController extends BaseController {
     @ApiOperation("更新规格详情")
     @PutMapping("")
     public R updateSpecification(@Validated @RequestBody MsSpecificationUpdate msSpecificationUpdate) {
-        ResultSet<Object> result = msSpecificationService.updateSpecification(msSpecificationUpdate);
-        if (result.isSuccess()) {
-            return R.ok(result.getData());
-        }else{
-            return R.fail(result.getMessage());
+        try{
+            ResultSet<Object> result = msSpecificationService.updateSpecification(msSpecificationUpdate);
+            if (result.isSuccess()) {
+                return R.ok();
+            }
+        }catch (Exception e){
+            return R.fail(e.getMessage());
         }
+        return R.fail();
     }
 
     @ApiOperation("删除规格详情")
-    @DeleteMapping("/{id}")
-    public R deleteSpecification(@PathVariable("id") Long id) {
-        ResultSet<Object> result = msSpecificationService.deleteSpecification(id);
-        if (result.isSuccess()) {
-            return R.ok(result.getData());
-        }else{
-            return R.fail(result.getMessage());
+    @DeleteMapping("/{msSpecificationId}")
+    public R deleteSpecification(@PathVariable Long msSpecificationId) {
+        try{
+            ResultSet<Object> result = msSpecificationService.deleteSpecification(msSpecificationId);
+            if (result.isSuccess()) {
+                return R.ok();
+            }
+        }catch (Exception e){
+            return R.fail(e.getMessage());
         }
+        return R.fail();
     }
 
 

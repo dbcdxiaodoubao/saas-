@@ -17,7 +17,7 @@ public class MsSpecificationValueCreate {
   private String specs;
 
   @ApiModelProperty(value = "规格加价格名")
-  @NotNull(message = "规格加价格名不能为空")
+  @NotNull(message = "规格加价格不能为空")
   private Long attr;
 
 }

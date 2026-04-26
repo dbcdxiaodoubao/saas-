@@ -14,12 +14,12 @@ import java.util.List;
 public class MsSpecificationTypeVo {
 
   @ApiModelProperty(value = "规格类型ID")
-  private Long typeId;
+  private Long specificationTypeId;
 
   @ApiModelProperty(value = "规格类型名")
-  private String typeName;
+  private String specificationTypeName;
 
   @ApiModelProperty(value = "规格值列表")
   @TableField(typeHandler = JacksonTypeHandler.class)
-  private List<MsSpecificationValueVo> values;
+  private List<MsSpecificationValueVo> specificationValues;
 }
