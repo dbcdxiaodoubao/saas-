@@ -40,6 +40,8 @@ public class MsUserProductListVo {
   @Data
   @ApiModel("规格实体")
   public static class SpecificationType {
+    @ApiModelProperty("规格类ID")
+    private Long specificationTypeId;
     @ApiModelProperty("规格名称")
     private String type; // 规格类型：份量
     @ApiModelProperty("规格值及加价")
@@ -48,6 +50,8 @@ public class MsUserProductListVo {
     @Data
     @ApiModel("规格值及加价")
     public static class SpecificationValue {
+      @ApiModelProperty("规格值ID")
+      private Long specificationValueId;
       @ApiModelProperty("规格值")
       private String value;   // 1人份
       @ApiModelProperty("加价")
