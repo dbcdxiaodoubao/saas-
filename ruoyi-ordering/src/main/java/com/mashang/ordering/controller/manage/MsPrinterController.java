@@ -33,7 +33,7 @@ public class MsPrinterController extends BaseController {
 
     @ApiOperation("获得所有打印机")
     @GetMapping("/list")
-    public TableDataInfo list() {
+    public TableDataInfo<List<MsPrinterListVo>> list() {
         List<MsPrinterListVo> listVos = MsPrinterMapping.INSTANCE.toVoList(printerService.list());
         return getDataTable(listVos);
     }
@@ -52,7 +52,7 @@ public class MsPrinterController extends BaseController {
     @ApiOperation("获得打印机详情")
     @GetMapping("/{printId}")
     @ApiImplicitParam(name = "printId", value = "打印机id", required = true, dataType = "Long", paramType = "path")
-    public R findById(@PathVariable("printId") long printId) {
+    public R<MsPrinterDto> findById(@PathVariable("printId") long printId) {
         MsPrinter msPrinter = printerService.getById(printId);
         if(msPrinter == null){
             return R.fail("打印机不存在");
