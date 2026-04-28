@@ -1,6 +1,7 @@
 package com.mashang.ordering.controller.manage;
 
 import com.mashang.ordering.domain.common.ResultSet;
+import com.mashang.ordering.domain.entity.MsPrinter;
 import com.mashang.ordering.domain.param.create.MsPrinterCreate;
 import com.mashang.ordering.domain.param.update.MsPrinterUpdate;
 import com.mashang.ordering.domain.vo.MsPrinterDto;
@@ -24,7 +25,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/printer")
-@Api(tags = "打印机管理")
+@Api(tags = "管理端-打印机管理")
 public class MsPrinterController extends BaseController {
 
     @Autowired
@@ -50,8 +51,13 @@ public class MsPrinterController extends BaseController {
 
     @ApiOperation("获得打印机详情")
     @GetMapping("/{printId}")
+    @ApiImplicitParam(name = "printId", value = "打印机id", required = true, dataType = "Long", paramType = "path")
     public R findById(@PathVariable("printId") long printId) {
-        MsPrinterDto msPrinterDto = MsPrinterMapping.INSTANCE.toDto(printerService.getById(printId));
+        MsPrinter msPrinter = printerService.getById(printId);
+        if(msPrinter == null){
+            return R.fail("打印机不存在");
+        }
+        MsPrinterDto msPrinterDto = MsPrinterMapping.INSTANCE.toDto(msPrinter);
         return R.ok(msPrinterDto);
     }
 

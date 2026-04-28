@@ -19,6 +19,7 @@
             t3.categories_name LIKE CONCAT('%', #{msCategoriesName}, '%')
             AND t2.store_name LIKE CONCAT('%', #{msStoreName}, '%')
         </where>
+        ORDER BY t3.sort ASC
     </select>
 
     <select id="getCategoriesById" resultType="com.mashang.ordering.domain.vo.MsCategoriesDto">

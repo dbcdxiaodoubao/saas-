@@ -28,7 +28,7 @@ public class MsSpecificationDto {
 
   @ApiModelProperty(value = "规格及属性值")
   @TableField(typeHandler = JacksonTypeHandler.class)
-  private List<MsSpecificationType> specsAndAttrs;
+  private List<MsSpecificationTypeVo> specsAndAttrs;
 
 
 }

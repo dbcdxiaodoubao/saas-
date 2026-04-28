@@ -9,10 +9,8 @@
         <result column="product_price" property="productPrice"/>
         <result column="product_cover" property="productCover"/>
         <result column="product_introduction" property="productIntroduction"/>
-        <!-- JSON 字段映射 -->
         <result column="specs_and_attrs" property="specsAndAttrs" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
     </resultMap>
-
 
     <select id="getList" resultMap="ProductResultMap">
         SELECT
@@ -22,28 +20,51 @@
         p.product_price,
         p.product_cover,
         p.product_introduction,
-        s.specs_and_attrs  <!-- 这里改成了你要的 specs_and_attrs -->
-        FROM
-        ms_product p
+        CAST(
+        CONCAT(
+        '[',
+        GROUP_CONCAT(
+        JSON_OBJECT(
+        'specificationTypeId', st.specification_type_id,
+        'type', st.specification_type_name,
+        'values', (
+        SELECT JSON_ARRAYAGG(
+        JSON_OBJECT(
+        'specificationValueId', sv2.specification_value_id,
+        'value', sv2.specs,
+        'addPrice', sv2.attr
+        )
+        )
+        FROM ms_specification_value sv2
+        WHERE sv2.specification_type_id = st.specification_type_id
+        AND sv2.del_flag = 0
+        )
+        ) SEPARATOR ','
+        ),
+        ']'
+        ) AS JSON
+        ) AS specs_and_attrs
+        FROM ms_product p
         INNER JOIN ms_store_product sp
         ON p.product_id = sp.product_id
-        INNER JOIN ms_specification s        <!-- 直接关联，不用中间表 -->
+        INNER JOIN ms_specification s
         ON p.specification_id = s.specification_id
-        <where>
-            p.status = 1
-            AND sp.store_id = #{storeId}
+        INNER JOIN ms_specification_type st
+        ON s.specification_id = st.specification_id
+        WHERE p.status = 1
+        AND sp.store_id = #{storeId}
+        AND st.del_flag = 0
 
-            <if test="productCategoriesId != null">
-                AND p.product_categories_id = #{productCategoriesId}
-            </if>
-
-            <if test="keyWord != null and keyWord != ''">
-                AND (
-                p.keyword = #{keyWord}
-                OR p.product_name LIKE concat('%', #{keyWord}, '%')
-                )
-            </if>
-        </where>
+        <if test="productCategoriesId != null">
+            AND p.product_categories_id = #{productCategoriesId}
+        </if>
+        <if test="keyWord != null and keyWord != ''">
+            AND (
+            p.keyword = #{keyWord}
+            OR p.product_name LIKE concat('%', #{keyWord}, '%')
+            )
+        </if>
+        GROUP BY p.product_id
     </select>
 
     <resultMap id="UserProductDtlResultMap" type="com.mashang.ordering.domain.vo.MsUserProductDtlVo">
@@ -56,30 +77,53 @@
         <result column="product_introduction" property="productIntroduction"/>
         <result column="product_description" property="productDescription"/>
         <result column="earn_points" property="earnPoints"/>
-
         <result column="specs_and_attrs" property="specsAndAttrs" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
     </resultMap>
 
     <select id="getDtl" resultMap="UserProductDtlResultMap">
         SELECT
-        p.product_id,
-        c.categories_name,
-        p.product_name,
-        p.product_price,
-        p.product_cover,
-        p.product_carousel,
-        p.product_introduction,
-        p.product_description,
-        p.earn_points,
-        s.specs_and_attrs  <!-- 改成你要的字段 -->
+            p.product_id,
+            c.categories_name,
+            p.product_name,
+            p.product_price,
+            p.product_cover,
+            p.product_carousel,
+            p.product_introduction,
+            p.product_description,
+            p.earn_points,
+            CAST(
+                    CONCAT(
+                            '[',
+                            GROUP_CONCAT(
+                                    JSON_OBJECT(
+                                            'specificationTypeId', st.specification_type_id,
+                                            'type', st.specification_type_name,
+                                            'values', (
+                                                SELECT JSON_ARRAYAGG(
+                                                               JSON_OBJECT(
+                                                                       'specificationValueId', sv.specification_value_id,
+                                                                       'value', sv.specs,
+                                                                       'addPrice', sv.attr
+                                                               )
+                                                       )
+                                                FROM ms_specification_value sv
+                                                WHERE sv.specification_type_id = st.specification_type_id
+                                                  AND sv.del_flag = 0
+                                            )
+                                    ) SEPARATOR ','
+                            ),
+                            ']'
+                    ) AS JSON
+            ) AS specs_and_attrs
         FROM ms_product p
-        INNER JOIN ms_specification s
-        ON p.specification_id = s.specification_id
-        INNER JOIN ms_categories c
-        ON p.product_categories_id = c.categories_id
+                 INNER JOIN ms_specification s ON p.specification_id = s.specification_id
+                 INNER JOIN ms_specification_type st ON s.specification_id = st.specification_id
+                 INNER JOIN ms_categories c ON p.product_categories_id = c.categories_id
         WHERE
-        p.product_id = #{id}
-        AND p.del_flag = 0
-        AND p.status = 1
+            p.product_id = #{id}
+          AND p.del_flag = 0
+          AND p.status = 1
+          AND st.del_flag = 0
+        GROUP BY p.product_id
     </select>
 </mapper>

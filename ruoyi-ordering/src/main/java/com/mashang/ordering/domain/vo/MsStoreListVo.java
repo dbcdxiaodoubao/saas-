@@ -34,7 +34,7 @@ public class MsStoreListVo {
     @ApiModelProperty(value = "门店详细地址",example = "北京市海淀区")
     private String detailAddress;
 
-    @ApiModelProperty(value = "门店是否开启",example = "1-开 0-关")
+    @ApiModelProperty(value = "门店是否开启(1-开 0-关)",example = "1-开 0-关")
     private char isOpen;
 
     @ApiModelProperty(value = "创建时间",example = "2023-04-01 12:00:00")

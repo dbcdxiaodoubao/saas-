@@ -36,15 +36,13 @@ public class MsUserProductController extends BaseController {
 
     @GetMapping
     @ApiOperation("查询商品列表")
-    public TableDataInfo<List<MsUserProductListVo>> list(@Validated PageQuery pageQuery
-            ,@ApiParam(value = "搜索关键词", required = false)String keyWord
+    public R<List<MsUserProductListVo>> list(@ApiParam(value = "搜索关键词", required = false)String keyWord
             ,@ApiParam(value = "分类id", required = false)Long productCategoriesId
             ,@ApiParam(value = "商店id", required = true)Long storeId){
-        Page<MsUserProductListVo> page = PageHelper.startPage(pageQuery.getPageNum(), pageQuery.getPageSize());
 
         List<MsUserProductListVo> list = msUserProductService.getList(productCategoriesId,keyWord,storeId);
 
-        return getDataTable(page.getResult(),page.getTotal());
+        return R.ok(list);
     }
 
     @GetMapping("/dtl/{id}")

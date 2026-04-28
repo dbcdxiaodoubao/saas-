@@ -11,7 +11,7 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 @ApiModel(value = "MsPrinterCreate",description = "打印机信息添加参数")
-public class MsPrinterCreate extends BaseModel {
+public class MsPrinterCreate {
 
     @ApiModelProperty(value = "打印机名字", example = "测试打印机")
     @NotBlank(message = "打印机名字不能为空,请填写此项")

@@ -29,7 +29,7 @@ public class MsSpecificationUpdate {
 
   @ApiModelProperty(value = "规格及属性值")
   @NotNull(message = "规格及属性值不能为空")
-  private List<MsSpecificationType> specsAndAttrs;
+  private List<MsSpecificationTypeUpdate> specsAndAttrs;
 
 
 }
