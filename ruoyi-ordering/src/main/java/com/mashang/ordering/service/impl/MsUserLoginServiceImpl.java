@@ -13,6 +13,8 @@ import com.ruoyi.common.exception.user.CaptchaException;
 import com.ruoyi.common.exception.user.CaptchaExpireException;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.system.domain.SysUserRole;
+import com.ruoyi.system.mapper.SysUserRoleMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,6 +49,9 @@ public class MsUserLoginServiceImpl extends ServiceImpl<MsUserLoginMapper, SysUs
 
     @Autowired
     private OrderingTokenService tokenService;
+
+    @Autowired
+    private SysUserRoleMapper sysUserRoleMapper;
 
     @Override
     public ResultSet<String> send(String email) {
@@ -107,12 +112,19 @@ public class MsUserLoginServiceImpl extends ServiceImpl<MsUserLoginMapper, SysUs
             sysUser.setUserType("00"); // 00表示系统用户
             sysUser.setStatus("0");   // 0正常
             sysUser.setCreateBy(email);
+            sysUser.setRemark("用户");
+            sysUser.setAccountLimit("0");
             int rows = msUserLoginMapper.insert(sysUser);
             if (rows < 1) {
-                return ResultSet.fail("自动注册失败，请稍后重试");
+                return ResultSet.fail("添加用户失败，自动注册失败，请稍后重试");
             }
-            // 重新查询以获取数据库生成的主键等字段
-            sysUser = msUserLoginMapper.selectOne(queryWrapper);
+            //设置用户角色为租户
+            SysUserRole sysUserRole = new SysUserRole();
+            sysUserRole.setRoleId(100L);
+            int insert = sysUserRoleMapper.insert(sysUserRole);
+            if (insert < 1) {
+                return ResultSet.fail("设置用户角色失败，自动注册失败，请稍后重试");
+            }
         }
 
         // 4. 构造LoginUser并生成JWT Token
