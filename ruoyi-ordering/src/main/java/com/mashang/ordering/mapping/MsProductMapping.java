@@ -21,8 +21,6 @@ public interface MsProductMapping {
 
     MsProduct toMsProduct(MsProductCreate msProductCreate);
 
-    MsSpecification toMsSpecification(MsProductCreate msProductCreate);
-
     MsProductDtlVo toMsProductDtlVo(MsProduct msProduct);
 
     MsProduct toMsProduct(MsProductUpdate msProductUpdate);
