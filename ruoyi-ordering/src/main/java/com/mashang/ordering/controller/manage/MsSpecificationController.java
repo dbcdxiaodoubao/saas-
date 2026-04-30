@@ -33,16 +33,15 @@ public class MsSpecificationController extends BaseController {
     @ApiOperation("添加规格")
     @PostMapping("/")
     public R addSpecification(@Validated @RequestBody MsSpecificationCreate msSpecificationCreate) {
-        ResultSet<Object> result = null;
         try {
-            result = msSpecificationService.addSpecification(msSpecificationCreate);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        if (result.isSuccess()) {
-            return R.ok(result.getData());
-        }else{
-            return R.fail(result.getMessage());
+            ResultSet<Object> result = msSpecificationService.addSpecification(msSpecificationCreate);
+            if (result.isSuccess()) {
+                return R.ok();
+            }else{
+                return R.fail(result.getMessage());
+            }
+        }catch (Exception e){
+            return R.fail(e.getMessage());
         }
     }
 
@@ -71,11 +70,12 @@ public class MsSpecificationController extends BaseController {
             ResultSet<Object> result = msSpecificationService.updateSpecification(msSpecificationUpdate);
             if (result.isSuccess()) {
                 return R.ok();
+            }else{
+                return R.fail(result.getMessage());
             }
         }catch (Exception e){
             return R.fail(e.getMessage());
         }
-        return R.fail();
     }
 
     @ApiOperation("删除规格详情")
