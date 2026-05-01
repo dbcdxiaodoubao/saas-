@@ -1,11 +1,16 @@
 package com.mashang.ordering.controller.manage;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.mashang.ordering.domain.common.ResultSet;
+import com.mashang.ordering.domain.entity.MsOrder;
+import com.mashang.ordering.domain.entity.MsOrderDetail;
 import com.mashang.ordering.domain.param.selete.MsUserOrderPageParam;
 import com.mashang.ordering.domain.param.update.MsUserOrderUpdate;
 import com.mashang.ordering.domain.vo.MsOrderDTO;
 import com.mashang.ordering.domain.vo.MsUserOrderListPageVo;
+import com.mashang.ordering.mapper.MsOrderDetailMapper;
+import com.mashang.ordering.mapper.MsOrderMapper;
 import com.mashang.ordering.service.IMsOrderService;
 import com.mashang.ordering.service.IMsUserOrderService;
 import com.mashang.ordering.service.IMsUserPayService;
@@ -37,6 +42,12 @@ public class MsOrderController {
 
     @Autowired
     private IMsUserOrderService userOrderService;
+
+    @Autowired
+    private MsOrderDetailMapper msOrderDetailMapper;
+
+    @Autowired
+    private MsOrderMapper msOrderMapper;
 
     @ApiOperation("获取首页统计数据")
     @GetMapping("/getDate")
@@ -83,6 +94,27 @@ public class MsOrderController {
             return R.ok(resultSet.getData(),"修改商品成功");
         }
         return R.fail(resultSet.getMessage());
+    }
+
+    @ApiOperation("删除订单")
+    @DeleteMapping("delete/{orderId}")
+    public R updateOrderDtl(@PathVariable Long orderId){
+
+        //查询订单详情表，进行删除
+        LambdaQueryWrapper<MsOrderDetail> msOrderDetailLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        msOrderDetailLambdaQueryWrapper.eq(MsOrderDetail::getOrderId, orderId);
+        msOrderDetailMapper.delete(msOrderDetailLambdaQueryWrapper);
+
+        //删除订单，即修改订单状态
+        LambdaUpdateWrapper<MsOrder> msOrderLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        msOrderLambdaUpdateWrapper.eq(MsOrder::getOrderId, orderId)
+                        .eq(MsOrder::getOrderStatus,"5");
+        int update = msOrderMapper.update(null, msOrderLambdaUpdateWrapper);
+        if(update <= 0){
+            return R.fail("修改订单状态失败");
+        }
+
+        return R.ok(null,"删除订单成功");
     }
 
     @GetMapping("/userRefund/{orderId}")
