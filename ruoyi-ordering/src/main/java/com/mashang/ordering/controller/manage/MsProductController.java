@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/product")
-@Api(tags = "管理端-商品管理")
+@Api(tags = "租户管理端-商品管理")
 public class MsProductController {
 
     @Autowired
@@ -55,7 +55,7 @@ public class MsProductController {
 
     @ApiOperation("修改商品")
     @PutMapping("update")
-    public R update(@RequestBody @Validated MsProductUpdate msProductUpdate){
+    public R update(@RequestBody @Validated MsProductUpdate msProductUpdate) throws Exception {
 
         ResultSet resultSet = msProductService.updateProduct(msProductUpdate);
 
@@ -76,6 +76,5 @@ public class MsProductController {
         }
         return R.fail(resultSet.getMessage());
     }
-
 
 }

@@ -39,16 +39,4 @@ public class MsUserPayController {
 
         return R.ok();
     }
-    @GetMapping("/refund/{orderId}")
-    @ApiOperation("申请退款")
-    public R refund(@PathVariable @Validated Long orderId){
-
-        if (userOrderService.getDtl(orderId)==null){
-            return R.fail("该订单号不存在");
-        }
-
-        userPayService.refund(orderId);
-
-        return R.ok();
-    }
 }

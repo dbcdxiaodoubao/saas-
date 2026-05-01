@@ -32,7 +32,7 @@ public interface IMsProductService extends IService<MsProduct> {
     /**
      *修改商品
      */
-    ResultSet updateProduct(MsProductUpdate msProductUpdate);
+    ResultSet updateProduct(MsProductUpdate msProductUpdate) throws Exception;
 
     /**
      *删除商品

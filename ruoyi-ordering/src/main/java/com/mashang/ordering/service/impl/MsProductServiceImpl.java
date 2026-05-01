@@ -7,7 +7,6 @@ import com.github.pagehelper.PageHelper;
 import com.mashang.ordering.domain.common.ResultSet;
 import com.mashang.ordering.domain.entity.*;
 import com.mashang.ordering.domain.param.create.MsProductCreate;
-import com.mashang.ordering.domain.param.create.MsSpecificationCreate;
 import com.mashang.ordering.domain.param.selete.MsProductPageParam;
 import com.mashang.ordering.domain.param.update.MsProductUpdate;
 import com.mashang.ordering.domain.vo.MsProductDtlVo;
@@ -18,7 +17,6 @@ import com.mashang.ordering.mapping.MsProductMapping;
 import com.mashang.ordering.service.IMsProductService;
 import com.mashang.ordering.service.IMsSpecificationService;
 import com.ruoyi.common.core.page.TableDataInfo;
-import com.ruoyi.common.utils.uuid.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -185,7 +183,7 @@ public class MsProductServiceImpl extends ServiceImpl<MsProductMapper, MsProduct
 
     @Override
     @Transactional
-    public ResultSet updateProduct(MsProductUpdate msProductUpdate) {
+    public ResultSet updateProduct(MsProductUpdate msProductUpdate) throws Exception {
 
         //根据门店id查询该门店所有商品，进行查重
         LambdaQueryWrapper<MsStoreProduct> wrapper = new LambdaQueryWrapper<>();
@@ -206,17 +204,16 @@ public class MsProductServiceImpl extends ServiceImpl<MsProductMapper, MsProduct
             wrapper1.in(MsProduct::getProductId, productIds)
                     .eq(MsProduct::getProductCategoriesId, msProductUpdate.getProductCategoriesId())
                     .eq(MsProduct::getProductName, msProductUpdate.getProductName())
-                    .eq(MsProduct::getSpecificationId, msProductUpdate.getSpecificationId())
+                    .eq(MsProduct::getSpecificationId, msProductUpdate.getMsSpecificationUpdate().getSpecificationId())
                     .eq(MsProduct::getDelFlag, "0");  // 未删除的商品
             Long count = msProductMapper.selectCount(wrapper1);
             if(count > 1){
-                return ResultSet.fail("商品已存在");
+                return ResultSet.fail("同类商品已存在");
             }
 
         }
         //门店无商品或门店无重复商品，进修改商品逻辑
 
-        MsSpecification msSpecification = MsProductMapping.INSTANCE.toMsSpecification(msProductUpdate);
         MsProduct msProduct = MsProductMapping.INSTANCE.toMsProduct(msProductUpdate);
 
 //        //判断规格是否已经存在，是否添加新规格
@@ -235,7 +232,11 @@ public class MsProductServiceImpl extends ServiceImpl<MsProductMapper, MsProduct
 //            msProduct.setSpecificationId(msSpecification.getSpecificationId());
 //        }
 
-        //规格已存在，直接修改商品,修改门店商品表
+        //修改规格
+        ResultSet<Object> objectResultSet = iMsSpecificationService
+                .updateSpecification(msProductUpdate.getMsSpecificationUpdate());
+
+        //修改商品,修改门店商品表
         //修改商品
         if(msProduct.getInventory()==0){
             msProduct.setStatus("2");

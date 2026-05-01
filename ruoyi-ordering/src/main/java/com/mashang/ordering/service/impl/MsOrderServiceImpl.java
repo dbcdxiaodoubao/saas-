@@ -5,27 +5,41 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.PageHelper;
 import com.mashang.ordering.domain.common.PageQuery;
 import com.mashang.ordering.domain.common.ResultSet;
 import com.mashang.ordering.domain.entity.MsOrder;
+import com.mashang.ordering.domain.entity.MsOrderDetail;
 import com.mashang.ordering.domain.entity.MsProduct;
+import com.mashang.ordering.domain.entity.MsStore;
 import com.mashang.ordering.domain.param.selete.MsTableOrderParam;
+import com.mashang.ordering.domain.param.selete.MsUserOrderPageParam;
+import com.mashang.ordering.domain.param.update.MsUserOrderDetailUpdate;
+import com.mashang.ordering.domain.param.update.MsUserOrderUpdate;
 import com.mashang.ordering.domain.vo.MsOrderDTO;
 import com.mashang.ordering.domain.vo.MsTableOrderDto;
 import com.mashang.ordering.domain.vo.MsTableOrderListVo;
+import com.mashang.ordering.domain.vo.MsUserOrderListPageVo;
+import com.mashang.ordering.mapper.MsOrderDetailMapper;
 import com.mashang.ordering.mapper.MsOrderMapper;
 import com.mashang.ordering.mapper.MsProductMapper;
 import com.mashang.ordering.mapper.MsStoreMapper;
+import com.mashang.ordering.mapping.MsProductMapping;
 import com.mashang.ordering.service.IMsOrderService;
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.core.domain.model.LoginUser;
+import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.system.mapper.SysUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MsOrderServiceImpl extends ServiceImpl<MsOrderMapper, MsOrder> implements IMsOrderService{
@@ -41,6 +55,9 @@ public class MsOrderServiceImpl extends ServiceImpl<MsOrderMapper, MsOrder> impl
 
     @Autowired
     private MsStoreMapper msStoreMapper;
+
+    @Autowired
+    private MsOrderDetailMapper msOrderDetailMapper;
 
     @Override
     public MsOrderDTO getMsOrderDate() {
@@ -160,6 +177,73 @@ public class MsOrderServiceImpl extends ServiceImpl<MsOrderMapper, MsOrder> impl
         qw.eq("t1.order_id", orderId);
         qw.eq("t3.table_id", tableId);
         return ResultSet.success(msOrderMapper.getMsTableOrderDto(qw));
+    }
+
+    @Override
+    public TableDataInfo<List<MsUserOrderListPageVo>> selectOrderPage(MsUserOrderPageParam msUserOrderPageParam) {
+
+        //根据店主的商店数来返回的订单
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        LambdaQueryWrapper<MsStore> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(MsStore::getUserId, loginUser.getUserId());
+        wrapper.eq(MsStore::getDelFlag, 0);
+        List<MsStore> msStores = msStoreMapper.selectList(wrapper);
+        msUserOrderPageParam.setStoreIds(msStores.stream().map(MsStore::getStoreId).collect(Collectors.toList()));
+        System.out.println(msUserOrderPageParam);
+
+        PageHelper.startPage(msUserOrderPageParam.getPageNum(), msUserOrderPageParam.getPageSize());
+
+        List<MsUserOrderListPageVo> msUserOrderListPageVos = msUserOrderMapper.selectOrderPage(msUserOrderPageParam);
+        TableDataInfo<List<MsUserOrderListPageVo>> tableDataInfo = new TableDataInfo<>();
+        tableDataInfo.setTotal(msUserOrderListPageVos.size());
+        tableDataInfo.setRows(msUserOrderListPageVos);
+
+        if(!msUserOrderListPageVos.isEmpty()){
+            tableDataInfo.setCode(200);
+            tableDataInfo.setMsg("查询成功");
+            return tableDataInfo;
+        }
+
+        tableDataInfo.setCode(500);
+        tableDataInfo.setMsg("查询失败");
+        return tableDataInfo;
+
+    }
+
+    @Override
+    @Transactional
+    public ResultSet updateOrderDtl(MsUserOrderUpdate update) {
+
+        List<MsUserOrderDetailUpdate> userOderProductDtlList = update.getMsUserOrderDetailUpdates();
+
+        //修改订单详情表
+        //如果商品全是已出单，修改订单状态为2已完成
+        String isDone = "1";
+        List<MsOrderDetail> msOrderDetailList = MsProductMapping.INSTANCE.toMsOrderDetailList(userOderProductDtlList);
+
+        for (MsOrderDetail msOrderDetail : msOrderDetailList) {
+            msOrderDetail.setTotalAmount(msOrderDetail.getProductQuantity() * msOrderDetail.getProductPrice());
+            int i = msOrderDetailMapper.updateById(msOrderDetail);
+            if (i < 1) {
+                return ResultSet.fail("修改订单详情表失败");
+            }
+            if("0".equals(msOrderDetail.getIssueStatus())) {
+                isDone = "0";
+            }
+        }
+
+        //修改订单表
+        MsOrder msOrder = MsProductMapping.INSTANCE.toMsOrder(update);
+        if("1".equals(isDone)) {
+            msOrder.setOrderStatus("2");
+        }
+        msOrder.setProductTotalPrice(update.getProductTotalPrice());
+        int i = msOrderMapper.updateById(msOrder);
+        if (i < 1) {
+            return ResultSet.fail("修改订单表失败");
+        }
+        return ResultSet.success(null,"修改成功");
+
     }
 
 

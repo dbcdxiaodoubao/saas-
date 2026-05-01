@@ -3,11 +3,8 @@ package com.mashang.ordering.controller.user;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.mashang.ordering.domain.common.PageQuery;
-import com.mashang.ordering.domain.common.ResultSet;
 import com.mashang.ordering.domain.param.create.MsUserOrderAdd;
 import com.mashang.ordering.domain.param.create.MsUserOrderCreate;
-import com.mashang.ordering.domain.param.selete.MsUserOrderPageParam;
-import com.mashang.ordering.domain.param.update.MsUserOrderUpdate;
 import com.mashang.ordering.domain.vo.*;
 import com.mashang.ordering.service.IMsUserOrderService;
 import com.mashang.ordering.service.impl.MsUserOrderServiceImpl;
@@ -29,9 +26,10 @@ import java.util.List;
 public class MsUserOrderController extends BaseController {
     //TODO 删除buytype字段
     @Autowired
-    IMsUserOrderService msUserOrderService;
+    private IMsUserOrderService msUserOrderService;
     @Autowired
     private MsUserOrderServiceImpl msUserOrderServiceImpl;
+
 
     @GetMapping
     @ApiOperation("用户查询订单列表")
@@ -80,24 +78,6 @@ public class MsUserOrderController extends BaseController {
 
         msUserOrderService.addProduct(msUserOrderAdd);
         return R.ok();
-    }
-
-    @ApiOperation("分页模糊查询订单列表")
-    @GetMapping("/getOrderList")
-    public TableDataInfo<List<MsUserOrderListPageVo>> selectOrderPage(MsUserOrderPageParam msUserOrderPageParam){
-        return msUserOrderService.selectOrderPage(msUserOrderPageParam);
-    }
-
-    @ApiOperation("修改订单详情")
-    @PutMapping("/updateOrderDtl")
-    public R updateOrderDtl(@RequestBody @Validated MsUserOrderUpdate msUserOrderUpdate){
-
-        ResultSet resultSet = msUserOrderService.updateOrderDtl(msUserOrderUpdate);
-
-        if (resultSet.isSuccess()) {
-            return R.ok(resultSet.getData(),"修改商品成功");
-        }
-        return R.fail(resultSet.getMessage());
     }
 
 }
