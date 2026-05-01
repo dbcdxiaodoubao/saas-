@@ -20,10 +20,7 @@ import com.mashang.ordering.domain.vo.MsOrderDTO;
 import com.mashang.ordering.domain.vo.MsTableOrderDto;
 import com.mashang.ordering.domain.vo.MsTableOrderListVo;
 import com.mashang.ordering.domain.vo.MsUserOrderListPageVo;
-import com.mashang.ordering.mapper.MsOrderDetailMapper;
-import com.mashang.ordering.mapper.MsOrderMapper;
-import com.mashang.ordering.mapper.MsProductMapper;
-import com.mashang.ordering.mapper.MsStoreMapper;
+import com.mashang.ordering.mapper.*;
 import com.mashang.ordering.mapping.MsProductMapping;
 import com.mashang.ordering.service.IMsOrderService;
 import com.ruoyi.common.core.domain.entity.SysUser;
@@ -58,6 +55,9 @@ public class MsOrderServiceImpl extends ServiceImpl<MsOrderMapper, MsOrder> impl
 
     @Autowired
     private MsOrderDetailMapper msOrderDetailMapper;
+
+    @Autowired
+    private MsUserOrderMapper msUserOrderMapper;
 
     @Override
     public MsOrderDTO getMsOrderDate() {
