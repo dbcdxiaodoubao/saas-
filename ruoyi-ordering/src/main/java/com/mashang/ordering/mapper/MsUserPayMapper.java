@@ -29,9 +29,15 @@ public interface MsUserPayMapper {
 
 
     /**
-     * 申请退款
+     * 余额退款
      * @param orderId
      */
     void refund(Long orderId);
+
+    /**
+     * 申请退款
+     * @param orderId
+     */
+    void applyRefund(Long orderId);
 
 }

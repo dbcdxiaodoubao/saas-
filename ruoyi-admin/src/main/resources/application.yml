@@ -167,5 +167,5 @@ alipay:
   format: json
   sign-type: RSA2
   # 支付成功后 异步回调地址（必须公网可访问，本地用内网穿透）
-  notify-url: https://1c3893a7.r7.cpolar.top/alipay/notify
-  return-url: https://1c3893a7.r7.cpolar.top/alipay/return
+  notify-url: https://243eaa44.r8.cpolar.cn/alipay/notify
+  return-url: https://243eaa44.r8.cpolar.cn/alipay/return

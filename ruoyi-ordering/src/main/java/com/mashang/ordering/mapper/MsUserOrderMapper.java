@@ -102,9 +102,9 @@ public interface MsUserOrderMapper extends BaseMapper<MsOrder> {
     /**
      * 用户退款
      * @param money
-     * @param orderId
+     * @param userId
      */
-    void userRecharge(@Param("orderId") Long orderId,@Param("money") BigDecimal money);
+    void userRecharge(@Param("userId") Long userId,@Param("money") BigDecimal money);
 
     /**
      * 查询订单

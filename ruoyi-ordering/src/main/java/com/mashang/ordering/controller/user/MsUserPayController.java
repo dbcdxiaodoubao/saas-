@@ -39,4 +39,17 @@ public class MsUserPayController {
 
         return R.ok();
     }
+
+    @GetMapping("/applyRefund/{orderId}")
+    @ApiOperation("申请退款")
+    public R applyRefund(@PathVariable @Validated Long orderId){
+        MsUserOrderDtlVo dtl = userOrderService.getDtl(orderId);
+        if(!(dtl.getOrderStatus().equals("2")||dtl.getOrderStatus().equals("1"))){
+            return R.fail("该订单所处状态不能退款");
+        }
+
+        userPayService.applyRefund(orderId);
+
+        return R.ok();
+    }
 }

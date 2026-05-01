@@ -1,5 +1,8 @@
 package com.mashang.ordering.controller.manage;
 
+import com.alipay.api.AlipayClient;
+import com.alipay.api.request.AlipayTradeRefundRequest;
+import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.mashang.ordering.domain.common.ResultSet;
@@ -8,6 +11,7 @@ import com.mashang.ordering.domain.entity.MsOrderDetail;
 import com.mashang.ordering.domain.param.selete.MsUserOrderPageParam;
 import com.mashang.ordering.domain.param.update.MsUserOrderUpdate;
 import com.mashang.ordering.domain.vo.MsOrderDTO;
+import com.mashang.ordering.domain.vo.MsUserOrderDtlVo;
 import com.mashang.ordering.domain.vo.MsUserOrderListPageVo;
 import com.mashang.ordering.mapper.MsOrderDetailMapper;
 import com.mashang.ordering.mapper.MsOrderMapper;
@@ -20,10 +24,12 @@ import com.ruoyi.system.domain.SysNotice;
 import com.ruoyi.system.mapper.SysNoticeMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
@@ -38,10 +44,13 @@ public class MsOrderController {
     private SysNoticeMapper sysNoticeMapper;
 
     @Autowired
-    private IMsUserPayService userPayService;
+    private AlipayClient alipayClient;
 
     @Autowired
-    private IMsUserOrderService userOrderService;
+    private IMsUserOrderService msUserOrderService;
+
+    @Autowired
+    private IMsUserPayService msUserPayService;
 
     @Autowired
     private MsOrderDetailMapper msOrderDetailMapper;
@@ -119,14 +128,55 @@ public class MsOrderController {
 
     @GetMapping("/userRefund/{orderId}")
     @ApiOperation("确认退款")
-    public R refund(@PathVariable @Validated Long orderId){
+    public R refund(@PathVariable @ApiParam(value = "订单ID", required = true) Long orderId) {
+        try {
+            if (orderId == null) {
+                return R.fail("订单ID不能为空");
+            }
 
-        if (userOrderService.getDtl(orderId)==null){
-            return R.fail("该订单号不存在");
+            AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
+
+            MsUserOrderDtlVo dtl = msUserOrderService.getDtl(orderId);
+
+            System.out.println(dtl);
+
+            if (dtl == null) {
+                return R.fail("该订单不存在");
+            }
+
+            if (!dtl.getOrderStatus().equals("5")){
+                return R.fail("该订单不是申请退款的订单");
+            }
+
+            if(dtl.getPayType().equals("0")){
+                msUserPayService.refund(orderId);
+                return R.ok();
+            }
+
+
+            String bizContent = "{\"out_trade_no\":\"" + orderId + "\","
+                    + "\"refund_amount\":\"" + dtl.getActualPay() + "\","
+                    + "\"out_request_no\":\"REFUND_" + System.currentTimeMillis() + "\"}";
+
+            request.setBizContent(bizContent);
+
+            //调用支付宝退款
+            AlipayTradeRefundResponse response = alipayClient.execute(request);
+
+            if (response.isSuccess()) {
+                System.out.println("退款成功，订单号：" + orderId);
+
+                msUserOrderService.updateOrderStatusToRefund(Long.valueOf(orderId));
+
+                return R.ok("退款成功，订单号：" + orderId);
+            } else {
+                System.out.println("退款失败：" + response.getMsg());
+                return R.fail("退款失败：" + response.getMsg());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.fail("退款异常：" + e.getMessage());
         }
-
-        userPayService.refund(orderId);
-
-        return R.ok();
     }
 }

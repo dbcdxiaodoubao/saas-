@@ -7,7 +7,9 @@ import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.mashang.ordering.config.AlipayConfig;
 import com.mashang.ordering.domain.vo.MsUserOrderDtlVo;
+import com.mashang.ordering.mapper.MsUserPayMapper;
 import com.mashang.ordering.service.IMsUserOrderService;
+import com.mashang.ordering.service.impl.MsUserPayServiceImpl;
 import com.ruoyi.common.annotation.Anonymous;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.R;
@@ -23,6 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,6 +47,9 @@ public class AlipayController {
     @Autowired
     private IMsUserOrderService msUserOrderService;
 
+    @Autowired
+    private MsUserPayMapper msUserPayMapper;
+
     @Value("${alipay.notify-url}")
     private String notifyUrl;
 
@@ -52,8 +59,8 @@ public class AlipayController {
     // 支付接口（绝对不报错）
     @GetMapping("/pay")
     @ApiOperation("支付")
-    public R pay(@ApiParam(value = "订单id", required = true) Long orderId
-                      ) throws Exception {
+    public void pay(@ApiParam(value = "订单id", required = true) Long orderId,
+                    HttpServletResponse response) throws Exception {
         AlipayTradePagePayRequest request = new AlipayTradePagePayRequest();
         request.setNotifyUrl(notifyUrl);
         request.setReturnUrl(returnUrl);
@@ -64,6 +71,10 @@ public class AlipayController {
             R.fail("该订单不存在");
         }
 
+        if (!dtl.getOrderStatus().equals("0")){
+            return;
+        }
+
 
         // 拼接支付参数
         String bizContent = "{\"out_trade_no\":\"" + orderId + "\","
@@ -72,9 +83,16 @@ public class AlipayController {
                 + "\"product_code\":\"FAST_INSTANT_TRADE_PAY\"}";
 
         request.setBizContent(bizContent);
-        String form = alipayClient.pageExecute(request,"utf-8").getBody();
 
-        return R.ok(form);
+        // 3. 获取支付宝自动提交表单
+        String formHtml = alipayClient.pageExecute(request, "utf-8").getBody();
+
+        // 4. 直接输出 HTML，让浏览器自动跳转（核心！）
+        response.setContentType("text/html;charset=utf-8");
+        PrintWriter out = response.getWriter();
+        out.print(formHtml);
+        out.flush();
+        out.close();
     }
 
     @GetMapping("/recharge")
@@ -116,7 +134,7 @@ public class AlipayController {
             params.put(name, valueStr);
         }
 
-        // 2. 执行支付宝官方验签（核心！）
+        // 2. 执行支付宝官方验签
         boolean signVerified = AlipaySignature.rsaCheckV1(
                 params,                 // 回调参数
                 alipayConfig.alipayPublicKey,        // 支付宝公钥
@@ -166,43 +184,5 @@ public class AlipayController {
     }
 
 
-    @GetMapping("/refund")
-    @Anonymous
-    public R refund(@ApiParam(value = "订单ID", required = true) Long orderId) {
-        try {
-            // 1. 构建退款请求
-            AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
 
-            MsUserOrderDtlVo dtl = msUserOrderService.getDtl(orderId);
-
-            if (dtl == null) {
-                return R.fail("该订单不存在");
-            }
-
-            // 退款参数（必须：订单号 + 退款金额 + 唯一退款流水号）
-            String bizContent = "{\"out_trade_no\":\"" + orderId + "\","
-                    + "\"refund_amount\":\"" + dtl.getActualPay() + "\","
-                    + "\"out_request_no\":\"REFUND_" + System.currentTimeMillis() + "\"}";
-
-            request.setBizContent(bizContent);
-
-            // 2. 调用支付宝退款
-            AlipayTradeRefundResponse response = alipayClient.execute(request);
-
-            if (response.isSuccess()) {
-                System.out.println("退款成功，订单号：" + orderId);
-
-                msUserOrderService.updateOrderStatusToRefund(Long.valueOf(orderId));
-
-                return R.ok("退款成功，订单号：" + orderId);
-            } else {
-                System.out.println("退款失败：" + response.getMsg());
-                return R.fail("退款失败：" + response.getMsg());
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return R.fail("退款异常：" + e.getMessage());
-        }
-    }
 }

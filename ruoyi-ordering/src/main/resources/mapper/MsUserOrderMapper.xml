@@ -81,7 +81,7 @@
             mo.actual_pay,
             mo.create_time,
             mo.pay_time,
-
+            mo.pay_type,
             mo.store_id,
             mo.order_id,
             mo.user_id,
@@ -126,6 +126,7 @@
         <result column="actual_pay" property="actualPay"/>
         <result column="create_time" property="createTime"/>
         <result column="pay_time" property="payTime"/>
+        <result column="pay_type" property="payType"/>
 
         <result column="user_id" property="userId"/>
         <result column="store_id" property="storeId"/>

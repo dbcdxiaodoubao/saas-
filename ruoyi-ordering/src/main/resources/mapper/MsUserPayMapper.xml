@@ -33,4 +33,12 @@
             update_time =  NOW()
         WHERE order_id = #{orderId}
     </update>
+
+    <update id="applyRefund">
+        UPDATE ms_order
+        SET
+            order_status = 5,
+            update_time =  NOW()
+        WHERE order_id = #{orderId}
+    </update>
 </mapper>
