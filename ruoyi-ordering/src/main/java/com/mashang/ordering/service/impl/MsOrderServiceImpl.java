@@ -13,13 +13,13 @@ import com.mashang.ordering.domain.entity.MsOrderDetail;
 import com.mashang.ordering.domain.entity.MsProduct;
 import com.mashang.ordering.domain.entity.MsStore;
 import com.mashang.ordering.domain.param.selete.MsTableOrderParam;
-import com.mashang.ordering.domain.param.selete.MsUserOrderPageParam;
+import com.mashang.ordering.domain.param.selete.MsOrderPageParam;
 import com.mashang.ordering.domain.param.update.MsUserOrderDetailUpdate;
 import com.mashang.ordering.domain.param.update.MsUserOrderUpdate;
 import com.mashang.ordering.domain.vo.MsOrderDTO;
+import com.mashang.ordering.domain.vo.MsOrderListPageVo;
 import com.mashang.ordering.domain.vo.MsTableOrderDto;
 import com.mashang.ordering.domain.vo.MsTableOrderListVo;
-import com.mashang.ordering.domain.vo.MsUserOrderListPageVo;
 import com.mashang.ordering.mapper.*;
 import com.mashang.ordering.mapping.MsProductMapping;
 import com.mashang.ordering.service.IMsOrderService;
@@ -55,9 +55,6 @@ public class MsOrderServiceImpl extends ServiceImpl<MsOrderMapper, MsOrder> impl
 
     @Autowired
     private MsOrderDetailMapper msOrderDetailMapper;
-
-    @Autowired
-    private MsUserOrderMapper msUserOrderMapper;
 
     @Override
     public MsOrderDTO getMsOrderDate() {
@@ -180,7 +177,7 @@ public class MsOrderServiceImpl extends ServiceImpl<MsOrderMapper, MsOrder> impl
     }
 
     @Override
-    public TableDataInfo<List<MsUserOrderListPageVo>> selectOrderPage(MsUserOrderPageParam msUserOrderPageParam) {
+    public TableDataInfo<List<MsOrderListPageVo>> selectOrderPage(MsOrderPageParam msOrderPageParam) {
 
         //根据店主的商店数来返回的订单
         LoginUser loginUser = SecurityUtils.getLoginUser();
@@ -188,13 +185,12 @@ public class MsOrderServiceImpl extends ServiceImpl<MsOrderMapper, MsOrder> impl
         wrapper.eq(MsStore::getUserId, loginUser.getUserId());
         wrapper.eq(MsStore::getDelFlag, 0);
         List<MsStore> msStores = msStoreMapper.selectList(wrapper);
-        msUserOrderPageParam.setStoreIds(msStores.stream().map(MsStore::getStoreId).collect(Collectors.toList()));
-        System.out.println(msUserOrderPageParam);
+        msOrderPageParam.setStoreIds(msStores.stream().map(MsStore::getStoreId).collect(Collectors.toList()));
 
-        PageHelper.startPage(msUserOrderPageParam.getPageNum(), msUserOrderPageParam.getPageSize());
+        PageHelper.startPage(msOrderPageParam.getPageNum(), msOrderPageParam.getPageSize());
 
-        List<MsUserOrderListPageVo> msUserOrderListPageVos = msUserOrderMapper.selectOrderPage(msUserOrderPageParam);
-        TableDataInfo<List<MsUserOrderListPageVo>> tableDataInfo = new TableDataInfo<>();
+        List<MsOrderListPageVo> msUserOrderListPageVos = msOrderMapper.selectOrderPage(msOrderPageParam);
+        TableDataInfo<List<MsOrderListPageVo>> tableDataInfo = new TableDataInfo<>();
         tableDataInfo.setTotal(msUserOrderListPageVos.size());
         tableDataInfo.setRows(msUserOrderListPageVos);
 
@@ -204,8 +200,9 @@ public class MsOrderServiceImpl extends ServiceImpl<MsOrderMapper, MsOrder> impl
             return tableDataInfo;
         }
 
-        tableDataInfo.setCode(500);
-        tableDataInfo.setMsg("查询失败");
+        tableDataInfo.setCode(200);
+        tableDataInfo.setMsg("无订单");
+
         return tableDataInfo;
 
     }
@@ -217,7 +214,6 @@ public class MsOrderServiceImpl extends ServiceImpl<MsOrderMapper, MsOrder> impl
         List<MsUserOrderDetailUpdate> userOderProductDtlList = update.getMsUserOrderDetailUpdates();
 
         //修改订单详情表
-        //如果商品全是已出单，修改订单状态为2已完成
         String isDone = "1";
         List<MsOrderDetail> msOrderDetailList = MsProductMapping.INSTANCE.toMsOrderDetailList(userOderProductDtlList);
 
@@ -233,6 +229,7 @@ public class MsOrderServiceImpl extends ServiceImpl<MsOrderMapper, MsOrder> impl
         }
 
         //修改订单表
+        //如果商品全是已出单，修改订单状态为2已完成
         MsOrder msOrder = MsProductMapping.INSTANCE.toMsOrder(update);
         if("1".equals(isDone)) {
             msOrder.setOrderStatus("2");

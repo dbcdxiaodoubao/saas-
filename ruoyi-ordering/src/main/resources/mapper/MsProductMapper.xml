@@ -53,7 +53,7 @@
         ms_product.product_price,
         ms_product.sales,
         ms_product.keyword,
-        ms_product.specification_type,
+        ms_product.specification_kind,
         ms_product.unit_name,
         ms_product.inventory,
         ms_product.`status`,

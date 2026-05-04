@@ -8,11 +8,11 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.mashang.ordering.domain.common.ResultSet;
 import com.mashang.ordering.domain.entity.MsOrder;
 import com.mashang.ordering.domain.entity.MsOrderDetail;
-import com.mashang.ordering.domain.param.selete.MsUserOrderPageParam;
+import com.mashang.ordering.domain.param.selete.MsOrderPageParam;
 import com.mashang.ordering.domain.param.update.MsUserOrderUpdate;
 import com.mashang.ordering.domain.vo.MsOrderDTO;
 import com.mashang.ordering.domain.vo.MsUserOrderDtlVo;
-import com.mashang.ordering.domain.vo.MsUserOrderListPageVo;
+import com.mashang.ordering.domain.vo.MsOrderListPageVo;
 import com.mashang.ordering.mapper.MsOrderDetailMapper;
 import com.mashang.ordering.mapper.MsOrderMapper;
 import com.mashang.ordering.service.IMsOrderService;
@@ -29,12 +29,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
 @RequestMapping("/admin/home")
-@Api(tags = "管理端-主页")
+@Api(tags = "管理端-主页，租户端-订单中心")
 public class MsOrderController {
 
     @Autowired
@@ -89,8 +88,14 @@ public class MsOrderController {
 
     @ApiOperation("分页模糊查询订单列表")
     @GetMapping("/getOrderList")
-    public TableDataInfo<List<MsUserOrderListPageVo>> selectOrderPage(MsUserOrderPageParam msUserOrderPageParam){
-        return msOrderService.selectOrderPage(msUserOrderPageParam);
+    public TableDataInfo<List<MsOrderListPageVo>> selectOrderPage(MsOrderPageParam msOrderPageParam){
+        return msOrderService.selectOrderPage(msOrderPageParam);
+    }
+
+    @ApiOperation("查询订单详情")
+    @PutMapping("/getOrderDtl/{orderId}")
+    public R<MsUserOrderDtlVo> getOrderDtl(@Validated @PathVariable Long orderId){
+        return R.ok(msUserOrderService.getDtl(orderId));
     }
 
     @ApiOperation("修改订单详情")
@@ -117,7 +122,7 @@ public class MsOrderController {
         //删除订单，即修改订单状态
         LambdaUpdateWrapper<MsOrder> msOrderLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         msOrderLambdaUpdateWrapper.eq(MsOrder::getOrderId, orderId)
-                        .eq(MsOrder::getOrderStatus,"5");
+                        .set(MsOrder::getOrderStatus,"4");
         int update = msOrderMapper.update(null, msOrderLambdaUpdateWrapper);
         if(update <= 0){
             return R.fail("修改订单状态失败");

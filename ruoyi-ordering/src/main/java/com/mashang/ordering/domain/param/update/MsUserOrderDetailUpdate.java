@@ -20,7 +20,7 @@ public class MsUserOrderDetailUpdate{
   @ApiModelProperty("出单状态（'0'待出单，'1'已出单）")
   private String issueStatus;
 
-  @ApiModelProperty("商品单价")
+  @ApiModelProperty(value = "总额")
   private Double totalAmount;
 
 }

@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-public class MsUserOrderListPageVo extends BaseModel {
+public class MsOrderListPageVo extends BaseModel {
 
   @ApiModelProperty(value = "订单id")
   private Long orderId;

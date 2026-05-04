@@ -3,6 +3,8 @@ package com.mashang.ordering.mapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mashang.ordering.domain.entity.MsOrder;
+import com.mashang.ordering.domain.param.selete.MsOrderPageParam;
+import com.mashang.ordering.domain.vo.MsOrderListPageVo;
 import com.mashang.ordering.domain.vo.MsTableOrderDto;
 import com.mashang.ordering.domain.vo.MsTableOrderListVo;
 import org.apache.ibatis.annotations.Param;
@@ -19,4 +21,11 @@ public interface MsOrderMapper extends BaseMapper<MsOrder> {
     List<MsTableOrderListVo> getMsTableOrderListVo(@Param("ew") QueryWrapper<Object> qw);
 
     MsTableOrderDto getMsTableOrderDto(@Param("ew") QueryWrapper<Object> qw);
+
+    /**
+     * 查询订单
+     * @param msOrderPageParam
+     * @return
+     */
+    List<MsOrderListPageVo> selectOrderPage(MsOrderPageParam msOrderPageParam);
 }
