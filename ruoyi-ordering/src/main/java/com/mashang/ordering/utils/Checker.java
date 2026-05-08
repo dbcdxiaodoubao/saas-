@@ -16,10 +16,4 @@ public class Checker {
                 (second >= 0 && second < 60);
     }
 
-    public static boolean isValidJson(String jsonStr) {
-        if (jsonStr == null || jsonStr.trim().isEmpty()) {
-            return false;
-        }
-        return JSONValidator.from(jsonStr).validate();
-    }
 }

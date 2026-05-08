@@ -120,12 +120,6 @@ public class MsCategoriesServiceImpl extends ServiceImpl<MsCategoriesMapper, MsC
         if(msProductMapper.selectCount(selectLqw0) > 0) {
             return ResultSet.fail("当前分类下有商品，不能删除");
         }
-        LambdaQueryWrapper<MsStoreCategories> selectLqw1 = new LambdaQueryWrapper<>();
-        selectLqw1.eq(MsStoreCategories::getCategoriesId, msCategoriesid);
-        Long deleteRes = msStoreCategoriesMapper.selectCount(selectLqw1);
-        if(deleteRes != 0){
-            return ResultSet.fail("当前分类仍绑定门店，不可删除");
-        }
         int deleteRes2 = msCategoriesMapper.deleteById(msCategoriesid);
         if(deleteRes2 != 1){
             throw new Exception("删除失败");

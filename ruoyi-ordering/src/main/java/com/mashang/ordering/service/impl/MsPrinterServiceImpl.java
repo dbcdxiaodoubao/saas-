@@ -43,11 +43,13 @@ public class MsPrinterServiceImpl extends ServiceImpl<MsPrinterMapper, MsPrinter
     public ResultSet<Object> updateMsPrinter(MsPrinterUpdate msPrinterUpdate) {
         LambdaQueryWrapper<MsPrinter> lqw = new LambdaQueryWrapper<>();
         lqw.eq(MsPrinter::getPrinterName, msPrinterUpdate.getPrinterName());
+        lqw.ne(MsPrinter::getPrinterId,msPrinterUpdate.getPrinterId());
         if(msPrinterMapper.selectOne(lqw) != null){
             return ResultSet.fail("打印机设备名不可重复");
         }
         lqw = new LambdaQueryWrapper<>();
         lqw.eq(MsPrinter::getPrinterDeviceCode,msPrinterUpdate.getPrinterDeviceCode());
+        lqw.ne(MsPrinter::getPrinterId,msPrinterUpdate.getPrinterId());
         if(msPrinterMapper.selectOne(lqw) != null){
             return ResultSet.fail("打印机设备码不可重复");
         }
