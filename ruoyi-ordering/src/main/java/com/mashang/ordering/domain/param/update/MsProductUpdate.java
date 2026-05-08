@@ -62,9 +62,9 @@ public class MsProductUpdate {
     @NotBlank(message = "请输入规格类型")
     private String specificationKind;
 
-    @ApiModelProperty(value = "修改的规格")
-    @NotNull(message = "请输入修改的规格")
-    private MsSpecificationUpdate msSpecificationUpdate;
+    @ApiModelProperty(value = "规格ID")
+    @NotNull(message = "规格id不能为空")
+    private Long specificationId;
 
     @ApiModelProperty(value = "产品描述")
     private String productDescription;
