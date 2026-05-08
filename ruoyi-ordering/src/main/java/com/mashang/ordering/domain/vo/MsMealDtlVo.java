@@ -14,7 +14,7 @@ import java.util.List;
 public class MsMealDtlVo {
 
   @ApiModelProperty("套餐ID")
-  private long mealId;
+  private Long mealId;
 
   @ApiModelProperty("套餐名称")
   private String mealName;
@@ -25,6 +25,9 @@ public class MsMealDtlVo {
   @ApiModelProperty("备注")
   private String remark;
 
-  @ApiModelProperty("菜单ID集合")
-  private List<Long> menuIds;
+/*  @ApiModelProperty("菜单ID集合")
+  private List<Long> menuIds;*/
+
+  @ApiModelProperty("租户菜单父级数据列表")
+  private List<MsMenuListVo> msMenuListVo;
 }

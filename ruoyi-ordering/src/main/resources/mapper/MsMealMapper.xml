@@ -2,20 +2,42 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mashang.ordering.mapper.MsMealMapper">
 
-    <resultMap id="MealResult" type="com.mashang.ordering.domain.vo.MsMealDtlVo">
+    <resultMap id="MsMealDtlVoMap" type="com.mashang.ordering.domain.vo.MsMealDtlVo">
         <id column="meal_id" property="mealId"/>
         <result column="meal_name" property="mealName"/>
         <result column="meal_status" property="mealStatus"/>
         <result column="remark" property="remark"/>
+
+        <!-- 父菜单-->
+        <collection property="msMenuListVo" ofType="com.mashang.ordering.domain.vo.MsMenuListVo">
+            <id column="t3_menu_id" property="menuId"/>
+            <result column="t3_menu_name" property="menuName"/>
+
+            <!-- 子菜单 -->
+            <collection property="msMenuChildListVo" ofType="com.mashang.ordering.domain.vo.MsMenuChildListVo">
+                <id column="t4_menu_id" property="menuId"/>
+                <result column="t4_menu_name" property="menuName"/>
+            </collection>
+        </collection>
     </resultMap>
 
-    <!-- 获取套餐详情 -->
-    <select id="getMealById" resultMap="MealResult">
-        select meal_id, meal_name, meal_status, remark
-        from ms_meal
-        where meal_id = #{mealId}
+    <!-- 根据ID获取套餐详情（含三级菜单） -->
+    <select id="getMealById" resultMap="MsMealDtlVoMap">
+        SELECT
+            t1.meal_id,
+            t1.meal_name,
+            t1.meal_status,
+            t1.remark,
+            t3.menu_id   AS t3_menu_id,
+            t3.menu_name AS t3_menu_name,
+            t4.menu_id   AS t4_menu_id,
+            t4.menu_name AS t4_menu_name
+        FROM ms_meal t1
+                 LEFT JOIN ms_meal_menu t2 ON t1.meal_id = t2.meal_id
+                 LEFT JOIN sys_menu t3 ON t2.menu_id = t3.menu_id AND t3.parent_id = 0
+                 LEFT JOIN sys_menu t4 ON t4.parent_id = t3.menu_id
+        WHERE t1.meal_id = #{mealId}
     </select>
-
     <!-- 修改套餐 -->
     <update id="updateMeal">
         update ms_meal

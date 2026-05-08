@@ -8,8 +8,11 @@ import com.mashang.ordering.domain.entity.MsMealMenu;
 import com.mashang.ordering.domain.param.create.MsMealCreate;
 import com.mashang.ordering.domain.param.update.MsMealUpdate;
 import com.mashang.ordering.domain.vo.MsMealDtlVo;
+import com.mashang.ordering.domain.vo.MsMenuChildListVo;
+import com.mashang.ordering.domain.vo.MsMenuListVo;
 import com.mashang.ordering.mapper.MsMealMapper;
 import com.mashang.ordering.mapper.MsMealMenuMapper;
+import com.mashang.ordering.mapper.MsMenuMapper;
 import com.mashang.ordering.service.IMsMealService;
 import com.ruoyi.common.core.domain.entity.SysMenu;
 import com.ruoyi.common.core.domain.entity.SysUser;
@@ -37,6 +40,9 @@ public class MsMealServiceImpl extends ServiceImpl<MsMealMapper, MsMeal> impleme
 
     @Autowired
     private SysMenuMapper sysMenuMapper;
+
+    @Autowired
+    private MsMenuMapper msMenuMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -89,12 +95,15 @@ public class MsMealServiceImpl extends ServiceImpl<MsMealMapper, MsMeal> impleme
 
     @Override
     public MsMealDtlVo getMealDtl(Long mealId) {
+        // 1. 直接获取【套餐 + 父菜单 + 子菜单】三级结构（XML 已经全部搞定）
         MsMealDtlVo meal = msMealMapper.getMealById(mealId);
         if (meal == null) {
             throw new ServiceException("套餐不存在");
         }
+
+        // 2. 设置菜单ID集合
         List<Long> menuIds = msMealMenuMapper.selectMenuIdsByMealId(mealId);
-        meal.setMenuIds(menuIds);
+/*        meal.setMenuIds(menuIds);*/
         return meal;
     }
 

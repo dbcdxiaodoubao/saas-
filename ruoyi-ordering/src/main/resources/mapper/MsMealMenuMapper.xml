@@ -21,5 +21,6 @@
         select menu_id
         from ms_meal_menu
         where meal_id = #{mealId}
+        and del_flag = 0
     </select>
 </mapper>
