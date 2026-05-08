@@ -95,7 +95,7 @@ public class MsMealServiceImpl extends ServiceImpl<MsMealMapper, MsMeal> impleme
 
     @Override
     public MsMealDtlVo getMealDtl(Long mealId) {
-        // 1. 直接获取【套餐 + 父菜单 + 子菜单】三级结构（XML 已经全部搞定）
+        // 1. 直接获取【套餐 + 父菜单 + 子菜单】三级结构
         MsMealDtlVo meal = msMealMapper.getMealById(mealId);
         if (meal == null) {
             throw new ServiceException("套餐不存在");
