@@ -14,8 +14,14 @@ public interface IMsUserPayService {
     Double getAccountLimit(@Param("userId")Long userId);
 
     /**
-     * 申请退款
+     * 余额退款
      * @param orderId
      */
     void refund(Long orderId);
+
+    /**
+     * 申请退款
+     * @param orderId
+     */
+    void applyRefund(Long orderId);
 }

@@ -5,17 +5,17 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.mashang.ordering.domain.common.ResultSet;
-import com.mashang.ordering.domain.entity.MsProduct;
-import com.mashang.ordering.domain.entity.MsSpecification;
-import com.mashang.ordering.domain.entity.MsStoreProduct;
+import com.mashang.ordering.domain.entity.*;
 import com.mashang.ordering.domain.param.create.MsProductCreate;
 import com.mashang.ordering.domain.param.selete.MsProductPageParam;
 import com.mashang.ordering.domain.param.update.MsProductUpdate;
 import com.mashang.ordering.domain.vo.MsProductDtlVo;
 import com.mashang.ordering.domain.vo.MsProductPageVo;
+import com.mashang.ordering.domain.vo.MsSpecificationVo;
 import com.mashang.ordering.mapper.*;
 import com.mashang.ordering.mapping.MsProductMapping;
 import com.mashang.ordering.service.IMsProductService;
+import com.mashang.ordering.service.IMsSpecificationService;
 import com.ruoyi.common.core.page.TableDataInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,6 +42,9 @@ public class MsProductServiceImpl extends ServiceImpl<MsProductMapper, MsProduct
     @Autowired
     private MsCategoriesMapper msCategoriesMapper;
 
+    @Autowired
+    private IMsSpecificationService iMsSpecificationService;
+
     @Override
     public TableDataInfo<List<MsProductPageVo>> selectProductPage(MsProductPageParam msProductPageParam) {
 
@@ -58,8 +61,8 @@ public class MsProductServiceImpl extends ServiceImpl<MsProductMapper, MsProduct
             dataInfo.setMsg("查询成功");
             return dataInfo;
         }
-        dataInfo.setCode(500);
-        dataInfo.setMsg("查询失败");
+        dataInfo.setCode(200);
+        dataInfo.setMsg("查询成功");
         return dataInfo;
     }
 
@@ -94,29 +97,42 @@ public class MsProductServiceImpl extends ServiceImpl<MsProductMapper, MsProduct
             }
 
         }
+
+//        //规格种类（'0'单规格默认，'1'多规格）
+//        //添加规格，单规格，判断规格值是否已经存在，存在直接跳，不存在则新增单规格的规格值。
+//        MsSpecificationCreate msSpecificationCreate = msProductCreate.getMsSpecificationCreate();
+//        if("0".equals(msProductCreate.getSpecificationKind())){
+//            //单规格存储：单规格+UUID,
+//            String uuid = UUID.randomUUID().toString();
+//            msSpecificationCreate.setSpecificationName("单规格"+ uuid);
+//            ResultSet<Object> objectResultSet = iMsSpecificationService.addSpecification(msSpecificationCreate);
+//            if(!objectResultSet.isSuccess()){
+//                return ResultSet.fail("新增单规格失败");
+//            }
+//        }
+////        是否重复，重复直接跳，不重复则新增，有新增规格类、规格值，则添加新的规格类、规格值
+//        //多规格，遍历判断规格类进行判断
+//        if("1".equals(msProductCreate.getSpecificationKind())) {
+//
+//            //1.2存在，判断规格值有没有新增字段
+//            //1.2.1规格值有新增字段，新增规格值
+//            //1.2.2规格值没有新增字段，跳出
+//            //1.规格类是否存在
+//            LambdaQueryWrapper<MsSpecification> wrapper1 = new LambdaQueryWrapper<>();
+//            wrapper1.eq(MsSpecification::getSpecificationName,msSpecificationCreate.getSpecificationName());
+//            MsSpecification msSpecification1 = msSpecificationMapper.selectOne(wrapper1);
+//            //1.1不存在,新增规格类，新增规格值
+//            if(msSpecification1 == null){
+//                MsSpecificationType msSpecificationType = new MsSpecificationType();
+//                msSpecificationType.setSpecificationTypeName(msSpecificationCreate.getSpecificationName());
+//                int insert = msSpecificationTypeMapper.insert(msSpecificationType);
+//
+//
+//            }
+//        }
+
         //门店无商品或门店无重复商品，进添加商品逻辑
-
-        MsSpecification msSpecification = MsProductMapping.INSTANCE.toMsSpecification(msProductCreate);
         MsProduct msProduct = MsProductMapping.INSTANCE.toMsProduct(msProductCreate);
-
-        //判断规格是否已经存在，是否添加新规格
-        //规格不存在添加新规格
-        //TODO 规格名称查重？
-
-        if (!msProductCreate.getIsSpecSame()) {
-
-            //查询规格表sort
-            Long count= msSpecificationMapper.selectCount(new LambdaQueryWrapper<>());
-            msSpecification.setSort(count + 1);
-//            msSpecification.setSpecsAndAttrs(msProductCreate.getSpecsAndAttrs());
-
-            int insert = msSpecificationMapper.insert(msSpecification);
-            if (insert != 1) {
-                return ResultSet.fail("添加新规格失败");
-            }
-            msProduct.setSpecificationId(msSpecification.getSpecificationId());
-        }
-
         //规格已存在，直接添加商品,添加门店商品表
         //添加商品
         if(msProduct.getInventory()==0){
@@ -158,17 +174,16 @@ public class MsProductServiceImpl extends ServiceImpl<MsProductMapper, MsProduct
         msProductDtlVo.setProductCategoriesName(categoriesName);
 
         //根据规格id从规格表中拿规格信息
-        MsSpecification msSpecification = msSpecificationMapper.selectById(msProduct.getSpecificationId());
-
-//        msProductDtlVo.setSpecsAndAttrs(msSpecification.getSpecsAndAttrs());
-        msProductDtlVo.setSpecificationName(msSpecification.getSpecificationName());
+        MsSpecificationVo msSpecificationVo = msSpecificationMapper
+                .getSpecificationById(msProduct.getSpecificationId());
+        msProductDtlVo.setMsSpecificationVo(msSpecificationVo);
 
         return msProductDtlVo;
     }
 
     @Override
     @Transactional
-    public ResultSet updateProduct(MsProductUpdate msProductUpdate) {
+    public ResultSet updateProduct(MsProductUpdate msProductUpdate) throws Exception {
 
         //根据门店id查询该门店所有商品，进行查重
         LambdaQueryWrapper<MsStoreProduct> wrapper = new LambdaQueryWrapper<>();
@@ -189,36 +204,39 @@ public class MsProductServiceImpl extends ServiceImpl<MsProductMapper, MsProduct
             wrapper1.in(MsProduct::getProductId, productIds)
                     .eq(MsProduct::getProductCategoriesId, msProductUpdate.getProductCategoriesId())
                     .eq(MsProduct::getProductName, msProductUpdate.getProductName())
-                    .eq(MsProduct::getSpecificationId, msProductUpdate.getSpecificationId())
+                    .eq(MsProduct::getSpecificationId, msProductUpdate.getMsSpecificationUpdate().getSpecificationId())
                     .eq(MsProduct::getDelFlag, "0");  // 未删除的商品
             Long count = msProductMapper.selectCount(wrapper1);
             if(count > 1){
-                return ResultSet.fail("商品已存在");
+                return ResultSet.fail("同类商品已存在");
             }
 
         }
         //门店无商品或门店无重复商品，进修改商品逻辑
 
-        MsSpecification msSpecification = MsProductMapping.INSTANCE.toMsSpecification(msProductUpdate);
         MsProduct msProduct = MsProductMapping.INSTANCE.toMsProduct(msProductUpdate);
 
-        //判断规格是否已经存在，是否添加新规格
-        //规格不存在添加新规格
-        if (!msProductUpdate.getIsSpecSame()) {
+//        //判断规格是否已经存在，是否添加新规格
+//        //规格不存在添加新规格
+//        if (!msProductUpdate.getIsSpecSame()) {
+//
+//            //查询规格表sort
+//            Long count= msSpecificationMapper.selectCount(new LambdaQueryWrapper<>());
+//            msSpecification.setSort(count + 1);
+////            msSpecification.setSpecsAndAttrs(msProductUpdate.getSpecsAndAttrs());
+//
+//            int insert = msSpecificationMapper.insert(msSpecification);
+//            if (insert != 1) {
+//                return ResultSet.fail("添加新规格失败");
+//            }
+//            msProduct.setSpecificationId(msSpecification.getSpecificationId());
+//        }
 
-            //查询规格表sort
-            Long count= msSpecificationMapper.selectCount(new LambdaQueryWrapper<>());
-            msSpecification.setSort(count + 1);
-//            msSpecification.setSpecsAndAttrs(msProductUpdate.getSpecsAndAttrs());
+        //修改规格
+        ResultSet<Object> objectResultSet = iMsSpecificationService
+                .updateSpecification(msProductUpdate.getMsSpecificationUpdate());
 
-            int insert = msSpecificationMapper.insert(msSpecification);
-            if (insert != 1) {
-                return ResultSet.fail("添加新规格失败");
-            }
-            msProduct.setSpecificationId(msSpecification.getSpecificationId());
-        }
-
-        //规格已存在，直接修改商品,修改门店商品表
+        //修改商品,修改门店商品表
         //修改商品
         if(msProduct.getInventory()==0){
             msProduct.setStatus("2");

@@ -34,7 +34,7 @@ public class MsUserOrderDtlVo{
   @ApiModelProperty("订单号")
   private String orderNumber;
 
-  @ApiModelProperty("订单状态(0为未支付，1为未出单/已支付，2为已完成，3退款单，4为已删除)")
+  @ApiModelProperty("订单状态(0为未支付，1为未出单/已支付，2为已完成，3退款单（已退款），4为已删除,5退款中)")
   private String orderStatus;
 
   @ApiModelProperty("商品总价")
@@ -65,9 +65,6 @@ public class MsUserOrderDtlVo{
 
   @ApiModelProperty("订单id")
   private Long orderId;
-
-  @ApiModelProperty("订单详情id")
-  private Long orderDetailId;
 
   @ApiModelProperty("预计取餐时间")
   private Date reservePickTime;

@@ -56,19 +56,34 @@ public class MsSpecificationServiceImpl extends ServiceImpl<MsSpecificationMappe
     @Autowired
     private MsProductMapper msProductMapper;
 
+    private boolean isSortReplace(Long sort,Long id){
+        LambdaQueryWrapper<MsSpecification> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(MsSpecification::getSort, sort);
+        lqw.ne(id!=null, MsSpecification::getSpecificationId, id);
+        return msSpecificationMapper.selectCount(lqw) != 0;
+    }
+
+    private boolean isNameReplace(String name,Long id){
+        LambdaQueryWrapper<MsSpecification> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(MsSpecification::getSpecificationName, name);
+        lqw.ne(id!=null, MsSpecification::getSpecificationId, id);
+        return msSpecificationMapper.selectCount(lqw) != 0;
+    }
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public ResultSet<Object> addSpecification(MsSpecificationCreate msSpecificationCreate) throws Exception {
         //添加规格(组)
         MsSpecification msSpecification = MsSpecificationMapping.INSTANCE.fromCreate(msSpecificationCreate);
-        LambdaQueryWrapper<MsSpecification> lqw = new LambdaQueryWrapper<>();
-        lqw.eq(MsSpecification::getSpecificationName, msSpecification.getSpecificationName());
-        if(msSpecificationMapper.selectOne(lqw) != null){
+        if(isNameReplace(msSpecification.getSpecificationName(), null)){
             return ResultSet.fail("规格名重复");
+        }
+        if(isSortReplace(msSpecification.getSort(), null)){
+            return ResultSet.fail("排序值重复");
         }
         int insert0 = msSpecificationMapper.insert(msSpecification);
         if (insert0 == 0) {
-            return ResultSet.fail("添加规格失败");
+            throw new Exception("添加规格失败");
         }
         //添加规格类
         List<MsSpecificationTypeCreate> specsAndAttrs = msSpecificationCreate.getSpecsAndAttrs();
@@ -77,7 +92,7 @@ public class MsSpecificationServiceImpl extends ServiceImpl<MsSpecificationMappe
             msSpecificationType.setSpecificationId(msSpecification.getSpecificationId());
             int insert1 = msSpecificationTypeMapper.insert(msSpecificationType);
             if (insert1 == 0) {
-                return ResultSet.fail("添加规格失败");
+                throw new Exception("添加规格失败");
             }
         }
         //添加规格值
@@ -88,7 +103,7 @@ public class MsSpecificationServiceImpl extends ServiceImpl<MsSpecificationMappe
                 value.setSpecificationTypeId(msSpecificationTypes.get(i).getSpecificationTypeId());
                 int insert2 = msSpecificationValueMapper.insert(value);
                 if (insert2 == 0) {
-                    return ResultSet.fail("添加规格值失败");
+                    throw new Exception("添加规格失败");
                 }
             }
         }
@@ -118,29 +133,31 @@ public class MsSpecificationServiceImpl extends ServiceImpl<MsSpecificationMappe
     @Transactional(rollbackFor = Exception.class)
     @Override
     public ResultSet<Object> updateSpecification(MsSpecificationUpdate msSpecificationUpdate) throws Exception {
+        int updateCount = 0;
         //更新规格组
         MsSpecification msSpecification = MsSpecificationMapping.INSTANCE.fromUpdate(msSpecificationUpdate);
-        int update0 = msSpecificationMapper.updateById(msSpecification);
-        if(update0 == 0){
-            throw new Exception("更新规格失败");
+        if(isNameReplace(msSpecification.getSpecificationName(), msSpecification.getSpecificationId())){
+            return ResultSet.fail("规格名重复");
         }
+        if(isSortReplace(msSpecification.getSort(), msSpecification.getSpecificationId())){
+            return ResultSet.fail("排序值重复");
+        }
+        updateCount+=msSpecificationMapper.updateById(msSpecification);
         //更新规格类
         for(MsSpecificationTypeUpdate typeUpdate : msSpecificationUpdate.getSpecsAndAttrs()){
             MsSpecificationType msSpecificationType = MsSpecificationTypeMapping.INSTANCE.fromUpdate(typeUpdate);
-            int update1 = msSpecificationTypeMapper.updateById(msSpecificationType);
-            if(update1 == 0){
-                throw new Exception("更新规格失败");
-            }
+            updateCount+=msSpecificationTypeMapper.updateById(msSpecificationType);
             //更新规格值
             for(MsSpecificationValueUpdate valueUpdate : typeUpdate.getSpecificationValues()){
                 MsSpecificationValue msSpecificationValue = MsSpecificationValueMapping.INSTANCE.fromUpdate(valueUpdate);
-                int update2 = msSpecificationValueMapper.updateById(msSpecificationValue);
-                if(update2 == 0){
-                    throw new Exception("更新规格失败");
-                }
+                updateCount+=msSpecificationValueMapper.updateById(msSpecificationValue);
             }
         }
-        return ResultSet.success(null,"更新规格成功");
+        if(updateCount == 0){
+            return ResultSet.success(null,"更新规格成功");
+        }else{
+            return ResultSet.success(null,"规格未更新");
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)

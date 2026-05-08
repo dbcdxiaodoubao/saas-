@@ -4,11 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mashang.ordering.domain.entity.MsOrder;
 import com.mashang.ordering.domain.param.create.MsUserOrderCreate;
 import com.mashang.ordering.domain.param.create.MsUserOrderProductCreate;
-import com.mashang.ordering.domain.param.selete.MsUserOrderPageParam;
-import com.mashang.ordering.domain.vo.MsUserOrderListPageVo;
-import com.mashang.ordering.domain.vo.MsUserOrderDtlVo;
-import com.mashang.ordering.domain.vo.MsUserOrderListVo;
-import com.mashang.ordering.domain.vo.MsUserTableListVo;
+import com.mashang.ordering.domain.vo.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -102,14 +98,8 @@ public interface MsUserOrderMapper extends BaseMapper<MsOrder> {
     /**
      * 用户退款
      * @param money
-     * @param orderId
+     * @param userId
      */
-    void userRecharge(@Param("orderId") Long orderId,@Param("money") BigDecimal money);
+    void userRecharge(@Param("userId") Long userId,@Param("money") BigDecimal money);
 
-    /**
-     * 查询订单
-     * @param msUserOrderPageParam
-     * @return
-     */
-    List<MsUserOrderListPageVo> selectOrderPage(MsUserOrderPageParam msUserOrderPageParam);
 }

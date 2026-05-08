@@ -20,6 +20,7 @@
     <!-- 分页模糊查询条件 -->
     <sql id="page_condition">
         <where>
+                AND ms_product.del_flag = '0'
             <!-- 商品分类ID精确查询 -->
             <if test="categoriesId != null">
                 AND ms_categories.categories_id = #{categoriesId}
@@ -52,7 +53,7 @@
         ms_product.product_price,
         ms_product.sales,
         ms_product.keyword,
-        ms_product.specification_type,
+        ms_product.specification_kind,
         ms_product.unit_name,
         ms_product.inventory,
         ms_product.`status`,

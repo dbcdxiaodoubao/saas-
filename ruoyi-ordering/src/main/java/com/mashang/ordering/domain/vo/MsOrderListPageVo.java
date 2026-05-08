@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-public class MsUserOrderListPageVo extends BaseModel {
+public class MsOrderListPageVo extends BaseModel {
 
   @ApiModelProperty(value = "订单id")
   private Long orderId;
@@ -53,7 +53,7 @@ public class MsUserOrderListPageVo extends BaseModel {
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private Date payTime;
 
-  @ApiModelProperty(value = "订单状态（'0'未支付,'1'待出单,'2'已收货/已取餐,'3'退款单,'4'已删除）")
+  @ApiModelProperty(value = "订单状态（'0'未支付,'1'待出单,'2'已收货/已取餐,'3'退款单,'4'已删除,'5'退款中）")
   private String orderStatus;
 
   @ApiModelProperty(value = "添加时间")

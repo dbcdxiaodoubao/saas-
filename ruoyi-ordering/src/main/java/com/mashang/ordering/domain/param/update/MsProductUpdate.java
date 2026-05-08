@@ -1,15 +1,11 @@
 package com.mashang.ordering.domain.param.update;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
-import com.mashang.ordering.domain.entity.MsSpecificationType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Data
 @ApiModel("商品修改实体")
@@ -64,28 +60,16 @@ public class MsProductUpdate {
 
     @ApiModelProperty(value = "规格类型（单规格0，多规格1）")
     @NotBlank(message = "请输入规格类型")
-    private String specificationType;
+    private String specificationKind;
 
-    @ApiModelProperty(value = "规格名称")
-    @NotBlank(message = "请输入规格名称")
-    private String specificationName;
-
-    @ApiModelProperty(value = "规格")
-    @NotNull(message = "请输入规格")
-    @TableField(typeHandler = JacksonTypeHandler.class)
-    private List<MsSpecificationType> specsAndAttrs;
+    @ApiModelProperty(value = "修改的规格")
+    @NotNull(message = "请输入修改的规格")
+    private MsSpecificationUpdate msSpecificationUpdate;
 
     @ApiModelProperty(value = "产品描述")
     private String productDescription;
 
     @ApiModelProperty(value = "获得积分")
     private String earnPoints;
-
-    @ApiModelProperty(value = "规格id")
-    private Long specificationId;
-
-    @ApiModelProperty(value = "规格是否相同")
-    @NotNull(message = "请选择规格是否相同")
-    private Boolean isSpecSame;
 
 }

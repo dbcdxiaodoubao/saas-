@@ -1,14 +1,15 @@
 package com.mashang.ordering.domain.param.selete;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.core.page.PageDomain;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.util.Date;
 import java.util.List;
 
 @Data
-public class MsUserOrderPageParam extends PageDomain {
+public class MsOrderPageParam extends PageDomain {
 
     @ApiModelProperty(value = "购买类型（0堂食,1自取,2预约）")
     private String buyType;
@@ -28,15 +29,15 @@ public class MsUserOrderPageParam extends PageDomain {
     @ApiModelProperty(value = "用户电话")
     private String phonenumber;
 
-    @ApiModelProperty(value = "开始时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(value = "开始时间，空时传null")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date startTime;
 
-    @ApiModelProperty(value = "结束时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(value = "结束时间,空时传null")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date endTime;
 
-    @ApiModelProperty(value = "门店id列表")
+    @ApiModelProperty(value = "门店id列表，无需传",hidden = true)
     private List<Long> storeIds;
 
 }

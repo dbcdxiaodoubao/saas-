@@ -39,15 +39,16 @@ public class MsUserPayController {
 
         return R.ok();
     }
-    @GetMapping("/refund/{orderId}")
-    @ApiOperation("申请退款")
-    public R refund(@PathVariable @Validated Long orderId){
 
-        if (userOrderService.getDtl(orderId)==null){
-            return R.fail("该订单号不存在");
+    @GetMapping("/applyRefund/{orderId}")
+    @ApiOperation("申请退款")
+    public R applyRefund(@PathVariable @Validated Long orderId){
+        MsUserOrderDtlVo dtl = userOrderService.getDtl(orderId);
+        if(!(dtl.getOrderStatus().equals("2")||dtl.getOrderStatus().equals("1"))){
+            return R.fail("该订单所处状态不能退款");
         }
 
-        userPayService.refund(orderId);
+        userPayService.applyRefund(orderId);
 
         return R.ok();
     }

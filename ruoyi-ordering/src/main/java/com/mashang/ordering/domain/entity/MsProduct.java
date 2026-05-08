@@ -22,7 +22,7 @@ public class MsProduct extends BaseModel {
   private String keyword;
 
   @ApiModelProperty(value = "规格类型（单规格0，多规格1）")
-  private String specificationType;
+  private String specificationKind;
 
   @ApiModelProperty(value = "单位名称")
   private String unitName;

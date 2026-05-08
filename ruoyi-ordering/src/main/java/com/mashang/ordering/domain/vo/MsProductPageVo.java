@@ -1,5 +1,6 @@
 package com.mashang.ordering.domain.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -48,6 +49,7 @@ public class MsProductPageVo {
     private String status;
 
     @ApiModelProperty(value = "添加时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
 }

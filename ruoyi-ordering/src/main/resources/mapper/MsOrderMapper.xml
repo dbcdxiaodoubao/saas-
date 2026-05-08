@@ -143,4 +143,106 @@ ORDER BY
   t1.order_id ASC, t2.cumulative_add_count ASC
     </select>
 
+    <!-- 分页模糊查询条件 -->
+    <sql id="page_condition">
+        <where>
+            <if test="storeIds != null and storeIds.size() > 0">
+                AND ms_order.store_id IN
+                <foreach collection="storeIds" item="storeId" open="(" separator="," close=")">
+                    #{storeId}
+                </foreach>
+            </if>
+
+            <!--  -->
+            <if test="buyType != null and buyType != ''">
+                AND ms_order.buy_type = #{buyType}
+            </if>
+            <if test="orderStatus != null and orderStatus != ''">
+                AND ms_order.order_status = #{orderStatus}
+            </if>
+            <if test="payType != null and payType != ''">
+                AND ms_order.pay_type = #{payType}
+            </if>
+            <if test="orderNumber != null and orderNumber != ''">
+                AND ms_order.order_number LIKE CONCAT('%', #{orderNumber}, '%')
+            </if>
+            <if test="userName != null and userName != ''">
+                AND sys_user.user_name LIKE CONCAT('%', #{userName}, '%')
+            </if>
+            <if test="phonenumber != null and phonenumber != ''">
+                AND sys_user.phonenumber LIKE CONCAT('%', #{phonenumber}, '%')
+            </if>
+            <if test="startTime != null">
+                AND ms_order.create_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND ms_order.create_time &lt;= #{endTime}
+            </if>
+
+        </where>
+    </sql>
+
+    <resultMap id="MsOrderListPageVo" type="com.mashang.ordering.domain.vo.MsOrderListPageVo">
+        <!-- 订单基本信息 -->
+        <id column="order_id" property="orderId"/>
+        <result column="store_name" property="storeName"/>
+        <result column="order_number" property="orderNumber"/>
+        <result column="table_number" property="tableNumber"/>
+        <result column="actual_pay" property="actualPay"/>
+        <result column="pickup_number" property="pickUpNumber"/>
+        <result column="userIdAndNickname" property="userIdAndNickname"/>
+        <result column="usernameAndPhone" property="usernameAndPhone"/>
+        <result column="pay_type" property="payType"/>
+        <result column="buy_type" property="buyType"/>
+        <result column="reserve_pick_time" property="reservePickTime"/>
+        <result column="order_status" property="orderStatus"/>
+        <result column="pay_time" property="payTime"/>
+        <result column="create_time" property="createTime"/>
+
+        <!-- 商品明细列表 -->
+        <collection property="productInfoList" ofType="com.mashang.ordering.domain.vo.MsUserOrderProductInfoVo">
+            <result column="product_image" property="productImage"/>
+            <result column="productNameAndSpecification" property="productNameAndSpecification"/>
+            <result column="productPriceAndQuantity" property="productPriceAndQuantity"/>
+        </collection>
+    </resultMap>
+
+    <!-- 模糊分页查询订单列表 -->
+    <select id="selectOrderPage" parameterType="com.mashang.ordering.domain.param.selete.MsOrderPageParam"
+            resultMap="MsOrderListPageVo">
+        SELECT
+        ms_order.order_id,
+        ms_store.store_name,
+        ms_order.order_number,
+        ms_table.table_number,
+        ms_order.actual_pay,
+        ms_order.pickup_number,
+
+        CONCAT(ms_order.user_id, '|', IFNULL(sys_user.nick_name, '')) AS userIdAndNickname,
+        CONCAT(IFNULL(sys_user.user_name, ''), '|', IFNULL(sys_user.phonenumber, '')) AS usernameAndPhone,
+
+        ms_order_detail.product_image,
+        CONCAT(ms_order_detail.product_name, ' - ', IFNULL(ms_order_detail.specification, '')) AS productNameAndSpecification,
+        CONCAT('￥', ms_order_detail.product_price, ' * ', ms_order_detail.product_quantity) AS productPriceAndQuantity,
+
+        ms_order.pay_type,
+        ms_order.buy_type,
+        ms_order.reserve_pick_time,
+        ms_order.order_status,
+        ms_order.pay_time,
+        ms_order.create_time
+        FROM
+        ms_order
+        INNER JOIN ms_store ON ms_order.store_id = ms_store.store_id
+        INNER JOIN ms_table ON ms_store.store_id = ms_table.store_id
+        AND ms_order.table_id = ms_table.table_id
+        INNER JOIN sys_user ON ms_order.user_id = sys_user.user_id
+        INNER JOIN ms_order_detail ON ms_order.order_id = ms_order_detail.order_id
+        <include refid="page_condition"/>
+        ORDER BY
+        ms_order.create_time DESC,
+        ms_order.order_id DESC,
+        ms_order_detail.order_detail_id ASC
+    </select>
+
 </mapper>

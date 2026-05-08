@@ -1,15 +1,12 @@
 package com.mashang.ordering.domain.vo;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
-import com.mashang.ordering.domain.entity.MsSpecificationType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.Date;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -21,6 +18,9 @@ public class MsProductDtlVo {
 
     @ApiModelProperty(value = "商品分类ID")
     private Long productCategoriesId;
+
+    @ApiModelProperty(value = "门店id")
+    private Long storeId;
 
     @ApiModelProperty(value = "商品名称")
     private String productName;
@@ -35,14 +35,10 @@ public class MsProductDtlVo {
     private String keyword;
 
     @ApiModelProperty(value = "规格类型（单规格0，多规格1）")
-    private String specificationType;
+    private String specificationKind;
 
-    @ApiModelProperty(value = "规格名称")
-    private String specificationName;
-
-    @ApiModelProperty(value = "规格及属性值")
-    @TableField(typeHandler = JacksonTypeHandler.class)
-    private List<MsSpecificationType> specsAndAttrs;
+    @ApiModelProperty(value = "规格")
+    private MsSpecificationVo msSpecificationVo;
 
     @ApiModelProperty(value = "单位名称")
     private String unitName;
@@ -81,14 +77,10 @@ public class MsProductDtlVo {
     private String createBy;
 
     @ApiModelProperty(value = "创建时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     @ApiModelProperty(value = "备注")
     private String remark;
 
-    @ApiModelProperty(value = "规格id")
-    private Long specificationId;
-
-    @ApiModelProperty(value = "门店id")
-    private Long storeId;
 }

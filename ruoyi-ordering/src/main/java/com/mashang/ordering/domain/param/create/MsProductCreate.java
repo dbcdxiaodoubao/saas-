@@ -1,15 +1,11 @@
 package com.mashang.ordering.domain.param.create;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
-import com.mashang.ordering.domain.entity.MsSpecificationType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Data
 @ApiModel("商品添加实体")
@@ -52,36 +48,24 @@ public class MsProductCreate {
   private String productCarousel;
 
   @ApiModelProperty(value = "状态（'0'下架，'1'上架）")
-  @NotBlank(message = "请插入状态（'0'下架，'1'上架）")
+  @NotBlank(message = "请输入状态（'0'下架，'1'上架）")
   private String status;
 
   @ApiModelProperty(value = "商品简介")
   private String productIntroduction;
 
-  @ApiModelProperty(value = "规格类型（单规格0，多规格1）")
-  @NotBlank(message = "请输入规格类型")
-  private String specificationType;
+  @ApiModelProperty(value = "规格种类（'0'单规格默认，'1'多规格）")
+  @NotBlank(message = "请输入规格种类（'0'单规格默认，'1'多规格）")
+  private String specificationKind;
 
-  @ApiModelProperty(value = "规格名称")
-  @NotBlank(message = "请输入规格名称")
-  private String specificationName;
-
-  @ApiModelProperty(value = "规格")
-  @NotNull(message = "请输入规格")
-  @TableField(typeHandler = JacksonTypeHandler.class)
-  private List<MsSpecificationType> specsAndAttrs;
+  @ApiModelProperty(value = "规格Id")
+  @NotNull(message = "请输入规格Id")
+  private Long specificationId;
 
   @ApiModelProperty(value = "产品描述")
   private String productDescription;
 
   @ApiModelProperty(value = "获得积分")
   private String earnPoints;
-
-  @ApiModelProperty(value = "规格id")
-  private Long specificationId;
-
-  @ApiModelProperty(value = "规格是否相同")
-  @NotNull(message = "请选择规格是否相同")
-  private Boolean isSpecSame;
 
 }
