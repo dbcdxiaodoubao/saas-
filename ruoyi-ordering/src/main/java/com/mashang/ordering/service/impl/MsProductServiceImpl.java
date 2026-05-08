@@ -15,7 +15,6 @@ import com.mashang.ordering.domain.vo.MsSpecificationVo;
 import com.mashang.ordering.mapper.*;
 import com.mashang.ordering.mapping.MsProductMapping;
 import com.mashang.ordering.service.IMsProductService;
-import com.mashang.ordering.service.IMsSpecificationService;
 import com.ruoyi.common.core.page.TableDataInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,9 +40,6 @@ public class MsProductServiceImpl extends ServiceImpl<MsProductMapper, MsProduct
 
     @Autowired
     private MsCategoriesMapper msCategoriesMapper;
-
-    @Autowired
-    private IMsSpecificationService iMsSpecificationService;
 
     @Override
     public TableDataInfo<List<MsProductPageVo>> selectProductPage(MsProductPageParam msProductPageParam) {
@@ -97,39 +93,6 @@ public class MsProductServiceImpl extends ServiceImpl<MsProductMapper, MsProduct
             }
 
         }
-
-//        //规格种类（'0'单规格默认，'1'多规格）
-//        //添加规格，单规格，判断规格值是否已经存在，存在直接跳，不存在则新增单规格的规格值。
-//        MsSpecificationCreate msSpecificationCreate = msProductCreate.getMsSpecificationCreate();
-//        if("0".equals(msProductCreate.getSpecificationKind())){
-//            //单规格存储：单规格+UUID,
-//            String uuid = UUID.randomUUID().toString();
-//            msSpecificationCreate.setSpecificationName("单规格"+ uuid);
-//            ResultSet<Object> objectResultSet = iMsSpecificationService.addSpecification(msSpecificationCreate);
-//            if(!objectResultSet.isSuccess()){
-//                return ResultSet.fail("新增单规格失败");
-//            }
-//        }
-////        是否重复，重复直接跳，不重复则新增，有新增规格类、规格值，则添加新的规格类、规格值
-//        //多规格，遍历判断规格类进行判断
-//        if("1".equals(msProductCreate.getSpecificationKind())) {
-//
-//            //1.2存在，判断规格值有没有新增字段
-//            //1.2.1规格值有新增字段，新增规格值
-//            //1.2.2规格值没有新增字段，跳出
-//            //1.规格类是否存在
-//            LambdaQueryWrapper<MsSpecification> wrapper1 = new LambdaQueryWrapper<>();
-//            wrapper1.eq(MsSpecification::getSpecificationName,msSpecificationCreate.getSpecificationName());
-//            MsSpecification msSpecification1 = msSpecificationMapper.selectOne(wrapper1);
-//            //1.1不存在,新增规格类，新增规格值
-//            if(msSpecification1 == null){
-//                MsSpecificationType msSpecificationType = new MsSpecificationType();
-//                msSpecificationType.setSpecificationTypeName(msSpecificationCreate.getSpecificationName());
-//                int insert = msSpecificationTypeMapper.insert(msSpecificationType);
-//
-//
-//            }
-//        }
 
         //门店无商品或门店无重复商品，进添加商品逻辑
         MsProduct msProduct = MsProductMapping.INSTANCE.toMsProduct(msProductCreate);
@@ -204,7 +167,7 @@ public class MsProductServiceImpl extends ServiceImpl<MsProductMapper, MsProduct
             wrapper1.in(MsProduct::getProductId, productIds)
                     .eq(MsProduct::getProductCategoriesId, msProductUpdate.getProductCategoriesId())
                     .eq(MsProduct::getProductName, msProductUpdate.getProductName())
-                    .eq(MsProduct::getSpecificationId, msProductUpdate.getMsSpecificationUpdate().getSpecificationId())
+                    .eq(MsProduct::getSpecificationId, msProductUpdate.getSpecificationId())
                     .eq(MsProduct::getDelFlag, "0");  // 未删除的商品
             Long count = msProductMapper.selectCount(wrapper1);
             if(count > 1){
@@ -213,28 +176,7 @@ public class MsProductServiceImpl extends ServiceImpl<MsProductMapper, MsProduct
 
         }
         //门店无商品或门店无重复商品，进修改商品逻辑
-
         MsProduct msProduct = MsProductMapping.INSTANCE.toMsProduct(msProductUpdate);
-
-//        //判断规格是否已经存在，是否添加新规格
-//        //规格不存在添加新规格
-//        if (!msProductUpdate.getIsSpecSame()) {
-//
-//            //查询规格表sort
-//            Long count= msSpecificationMapper.selectCount(new LambdaQueryWrapper<>());
-//            msSpecification.setSort(count + 1);
-////            msSpecification.setSpecsAndAttrs(msProductUpdate.getSpecsAndAttrs());
-//
-//            int insert = msSpecificationMapper.insert(msSpecification);
-//            if (insert != 1) {
-//                return ResultSet.fail("添加新规格失败");
-//            }
-//            msProduct.setSpecificationId(msSpecification.getSpecificationId());
-//        }
-
-        //修改规格
-        ResultSet<Object> objectResultSet = iMsSpecificationService
-                .updateSpecification(msProductUpdate.getMsSpecificationUpdate());
 
         //修改商品,修改门店商品表
         //修改商品
