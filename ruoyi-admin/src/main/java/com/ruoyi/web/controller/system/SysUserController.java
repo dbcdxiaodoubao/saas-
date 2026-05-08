@@ -314,6 +314,10 @@ public class SysUserController extends BaseController {
         //容错
         LambdaQueryWrapper<SysUser> lqw = new LambdaQueryWrapper<>();
         lqw.eq(SysUser::getNickName, StringUtils.trim(sysUserUpdate.getNickName()));
+
+        //过滤租户本身数据
+        lqw.ne(SysUser::getUserId, sysUserUpdate.getUserId());
+
         //检验租户名称是否重复
         SysUser one = userService.getOne(lqw);
         if (StringUtils.isNotNull(one)){
