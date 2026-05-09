@@ -104,7 +104,7 @@
             od.specification,
             mp.product_price,
             od.cumulative_add_count,
-            mp.product_cover,
+            od.product_image,
             od.issue_status,
             od.order_detail_id
         FROM ms_order_detail od

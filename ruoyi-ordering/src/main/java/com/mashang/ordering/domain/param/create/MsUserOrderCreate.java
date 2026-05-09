@@ -15,8 +15,7 @@ import java.util.List;
 @ApiModel("用户新建订单实体")
 public class MsUserOrderCreate {
 
-  @ApiModelProperty(value = "用户id",required = true,example = "1")
-  @NotNull(message = "用户id不能为空")
+  @ApiModelProperty(hidden = true)
   private Long userId;
   @ApiModelProperty(value = "桌号id",required = true,example = "1")
   @NotNull(message = "桌号id不能为空")
@@ -38,8 +37,11 @@ public class MsUserOrderCreate {
   @ApiModelProperty(value = "备注",required = false,example = "多加米饭")
   private String remark;
 
-  @ApiModelProperty(value = "商品列表",required = true)
+  @ApiModelProperty(hidden = true)
   private List<MsUserOrderProductCreate> msUserOderProductCreateList;
+
+  @ApiModelProperty(value = "购物车id列表",required = true)
+  private List<Long> MsUserShoppingCartIdList;
 
   @ApiModelProperty(hidden = true)
   private Long orderId;
