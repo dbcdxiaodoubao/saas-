@@ -101,9 +101,9 @@ public class MsMealServiceImpl extends ServiceImpl<MsMealMapper, MsMeal> impleme
             throw new ServiceException("套餐不存在");
         }
 
-        // 2. 设置菜单ID集合
+       /* // 2. 设置菜单ID集合
         List<Long> menuIds = msMealMenuMapper.selectMenuIdsByMealId(mealId);
-/*        meal.setMenuIds(menuIds);*/
+        meal.setMenuIds(menuIds);*/
         return meal;
     }
 

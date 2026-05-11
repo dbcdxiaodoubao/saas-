@@ -19,6 +19,6 @@ public interface MsMealMenuMapper extends BaseMapper<MsMealMenu> {
     // 根据套餐ID删除菜单权限
     int deleteByMealId(Long mealId);
 
-    // 查询套餐已绑定的菜单ID
-    List<Long> selectMenuIdsByMealId(Long mealId);
+    /*// 查询套餐已绑定的菜单ID
+    List<Long> selectMenuIdsByMealId(Long mealId);*/
 }
