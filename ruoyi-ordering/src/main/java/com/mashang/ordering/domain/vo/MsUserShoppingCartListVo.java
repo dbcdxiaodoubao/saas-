@@ -22,7 +22,7 @@ public class MsUserShoppingCartListVo {
   @ApiModelProperty("商品数量")
   private double productQuantity;
   @ApiModelProperty("商品总额")
-  private Long totalAmount;
+  private Double totalAmount;
   @ApiModelProperty("商品名称")
   private String productName;
   @ApiModelProperty("规格")

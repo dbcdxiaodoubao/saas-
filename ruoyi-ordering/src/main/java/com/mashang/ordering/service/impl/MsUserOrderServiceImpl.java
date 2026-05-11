@@ -4,6 +4,8 @@ package com.mashang.ordering.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mashang.ordering.domain.entity.MsOrder;
+import com.mashang.ordering.domain.entity.MsProduct;
+import com.mashang.ordering.domain.entity.MsSpecificationValue;
 import com.mashang.ordering.domain.param.create.MsUserOrderAdd;
 import com.mashang.ordering.domain.param.create.MsUserOrderCreate;
 import com.mashang.ordering.domain.param.create.MsUserOrderProductCreate;
@@ -23,6 +25,12 @@ public class MsUserOrderServiceImpl extends ServiceImpl<MsUserOrderMapper, MsOrd
 
     @Autowired
     private MsUserOrderMapper msUserOrderMapper;
+
+    @Autowired
+    private MsSpecificationValueMapper msSpecificationValueMapper;
+
+    @Autowired
+    private MsUserProductMapper msUserProductMapper;
 
     @Override
     public List<MsUserOrderListVo> getList(Long userId) {
@@ -68,6 +76,24 @@ public class MsUserOrderServiceImpl extends ServiceImpl<MsUserOrderMapper, MsOrd
 
         for (MsUserOrderProductCreate product : productList) {
             product.setCumulativeAddCount(addCount);
+
+            MsProduct temp = msUserProductMapper.selectById(product.getProductId());
+            product.setProductName(temp.getProductName());
+            product.setProductPrice(temp.getProductPrice());
+            product.setProductImage(temp.getProductCover());
+
+            StringBuilder specification= new StringBuilder();
+            int tmp=0;
+            for (Long id: product.getSpecificationIdLIst()){
+                if(tmp!=0){
+                    specification.append(";");
+                }
+                MsSpecificationValue msSpecificationValue = msSpecificationValueMapper.selectById(id);
+                specification.append(msSpecificationValue.getSpecs());
+                tmp++;
+            }
+
+            product.setSpecification(specification.toString());
         }
 
         msUserOrderMapper.batchInsertOrderDetail(msUserOrderAdd.getOrderId(), productList);

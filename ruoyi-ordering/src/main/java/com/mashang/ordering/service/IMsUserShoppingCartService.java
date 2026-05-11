@@ -2,6 +2,7 @@ package com.mashang.ordering.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.mashang.ordering.domain.entity.MsShoppingCart;
+import com.mashang.ordering.domain.param.create.MsUserOrderProductCreate;
 import com.mashang.ordering.domain.vo.MsUserShoppingCartListVo;
 import org.apache.ibatis.annotations.Param;
 
@@ -23,4 +24,6 @@ public interface IMsUserShoppingCartService extends IService<MsShoppingCart> {
      * @return
      */
     void deletAll(Long userId);
+
+    List<MsUserOrderProductCreate> getProductList(List<Long> ids);
 }

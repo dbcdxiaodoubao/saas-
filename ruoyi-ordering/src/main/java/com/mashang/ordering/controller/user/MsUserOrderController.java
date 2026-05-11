@@ -7,10 +7,14 @@ import com.mashang.ordering.domain.param.create.MsUserOrderAdd;
 import com.mashang.ordering.domain.param.create.MsUserOrderCreate;
 import com.mashang.ordering.domain.vo.*;
 import com.mashang.ordering.service.IMsUserOrderService;
+import com.mashang.ordering.service.IMsUserShoppingCartService;
 import com.mashang.ordering.service.impl.MsUserOrderServiceImpl;
+import com.mashang.ordering.service.impl.MsUserShoppingCartServiceImpl;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.R;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.http.UserAgentUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -29,14 +33,16 @@ public class MsUserOrderController extends BaseController {
     private IMsUserOrderService msUserOrderService;
     @Autowired
     private MsUserOrderServiceImpl msUserOrderServiceImpl;
+    @Autowired
+    private IMsUserShoppingCartService msUserShoppingCartService;
 
 
     @GetMapping
     @ApiOperation("用户查询订单列表")
-    public TableDataInfo<MsUserOrderListVo> list(@Validated PageQuery pageQuery
-            , @ApiParam(value = "用户id", required = true)Long userId){
+    public TableDataInfo<MsUserOrderListVo> list(@Validated PageQuery pageQuery){
         Page<MsUserOrderListVo> page = PageHelper.startPage(pageQuery.getPageNum(), pageQuery.getPageSize());
 
+        Long userId = SecurityUtils.getUserId();
         List<MsUserOrderListVo> list = msUserOrderService.getList(userId);
 
         return getDataTable(page.getResult(),page.getTotal());
@@ -51,6 +57,10 @@ public class MsUserOrderController extends BaseController {
     @PostMapping("/new")
     @ApiOperation("用户新建订单")
     public R newOder(@Validated @RequestBody MsUserOrderCreate msUserOrderCreate){
+
+        msUserOrderCreate.setUserId(SecurityUtils.getUserId());
+        msUserOrderCreate.setMsUserOderProductCreateList(msUserShoppingCartService
+                .getProductList(msUserOrderCreate.getMsUserShoppingCartIdList()));
 
         List<MsUserTableListVo> tables = msUserOrderService.getLabelId(msUserOrderCreate.getStoreId());
 

@@ -39,7 +39,6 @@ public class MsStoreController extends BaseController {
         return getDataTable(msStoreListVos.getRecords(), msStoreListVos.getTotal());
     }
 
-    //4.2 因为用户和打印机外键问题 这里的插入暂时无法测试
     @ApiOperation("添加门店")
     @PostMapping("")
     private R addMsStore(@RequestBody @Validated MsStoreCreate msStoreCreate) {

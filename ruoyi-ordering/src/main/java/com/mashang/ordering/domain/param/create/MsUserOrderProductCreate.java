@@ -6,6 +6,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
 @ApiModel("用户订单新增商品实体")
@@ -15,22 +16,23 @@ public class MsUserOrderProductCreate {
   @NotNull(message = "商品id不能为空")
   private long productId;
 
-  @ApiModelProperty(value = "商品名称",required = true)
-  @NotBlank(message = "商品名称不能为空")
+  @ApiModelProperty(hidden = true)
   private String productName;
 
   @ApiModelProperty(value = "商品数量",required = true)
   @NotNull(message = "商品数量不能为空")
   private long productQuantity;
 
-  @ApiModelProperty(value = "商品图片url",required = true)
+  @ApiModelProperty(hidden = true)
   private String productImage;
 
-  @ApiModelProperty("规格")
+  @ApiModelProperty(hidden = true)
   private String specification;
 
-  @ApiModelProperty(value = "商品价格",required = true)
-  @NotNull(message = "商品价格不能为空")
+  @ApiModelProperty("规格id列表")
+  private List<Long> specificationIdLIst;
+
+  @ApiModelProperty(hidden = true)
   private double productPrice;
 
   @ApiModelProperty(hidden = true)

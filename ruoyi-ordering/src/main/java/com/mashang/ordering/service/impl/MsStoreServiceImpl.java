@@ -37,6 +37,7 @@ public class MsStoreServiceImpl extends ServiceImpl<MsStoreMapper, MsStore> impl
         LambdaQueryWrapper<MsStore> lqw = new LambdaQueryWrapper<MsStore>();
         lqw.like(StringUtils.isNotEmpty(storeName), MsStore::getStoreName, storeName);
         lqw.like(StringUtils.isNotEmpty(storeTel), MsStore::getStoreTel, storeTel);
+        lqw.ne(MsStore::getDelFlag,2);
         lqw.orderByDesc(MsStore::getCreateTime);
         List<MsStoreListVo> list = MsStoreMapping.INSTANCE.toListVos(msStoreMapper.getMsStoreList(lqw));
         Page<MsStoreListVo> page = new Page<>(pageQuery.getPageNum(), pageQuery.getPageSize(), list.size());
@@ -80,11 +81,6 @@ public class MsStoreServiceImpl extends ServiceImpl<MsStoreMapper, MsStore> impl
             right = false;
             msg += "不存在此门店";
         }
-        //todo 排除管理员
-        if (original.getUserId() != SecurityUtils.getUserId()) {
-            right = false;
-            msg += "此门店只能由店长或管理员修改";
-        }
         if(msStoreUpdate.getIsOpen().length() > 1 || (msStoreUpdate.getIsOpen().charAt(0)!= '1' && msStoreUpdate.getIsOpen().charAt(0)!= '0')){
             right = false;
             msg += "门店营业状态输入有误 1-开 0-关-";
@@ -101,9 +97,10 @@ public class MsStoreServiceImpl extends ServiceImpl<MsStoreMapper, MsStore> impl
             msg += "当前门店名称已存在-";
         }
         if(!right){
-            return ResultSet.fail(msg.substring(0, msg.length() - 1));
+            return ResultSet.fail(msg);
         }
         MsStore msStore = MsStoreMapping.INSTANCE.fromUpdate(msStoreUpdate);
+        msStore.setUserId(original.getUserId());
         return ResultSet.success(msStoreMapper.updateById(msStore));
     }
 

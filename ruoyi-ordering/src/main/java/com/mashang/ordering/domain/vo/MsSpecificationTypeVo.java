@@ -3,6 +3,7 @@ package com.mashang.ordering.domain.vo;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.mashang.ordering.domain.model.BaseModel;
+import com.mashang.ordering.utils.JsonSpecificationTypeHandle;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -20,6 +21,6 @@ public class MsSpecificationTypeVo {
   private String specificationTypeName;
 
   @ApiModelProperty(value = "规格值列表")
-  @TableField(typeHandler = JacksonTypeHandler.class)
+  @TableField(typeHandler = JsonSpecificationTypeHandle.class)
   private List<MsSpecificationValueVo> specificationValues;
 }
