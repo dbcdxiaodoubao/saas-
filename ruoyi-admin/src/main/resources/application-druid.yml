@@ -11,9 +11,9 @@ spring:
             slave:
                 # 从数据源开关/默认关闭
                 enabled: false
-                url: 
-                ${DB_URL:change-me}
-                ${DB_USERNAME:change-me} 
+                url: ${DB_URL:change-me}
+                username: ${DB_USERNAME:change-me}
+                password: ${DB_PASSWORD:change-me}
             # 初始连接数
             initialSize: 5
             # 最小连接池数量
