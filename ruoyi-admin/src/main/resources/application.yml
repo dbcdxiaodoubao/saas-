@@ -42,7 +42,7 @@ logging:
 # 用户配置
 user:
   password:
-    change-me
+    ${REDIS_PASSWORD:change-me}
     maxRetryCount: 5
     # 密码锁定时间（默认10分钟）
     lockTime: 10
@@ -77,7 +77,7 @@ spring:
     database: 0
     # 密码
     password:
-    change-me
+    ${REDIS_PASSWORD:change-me}
     timeout: 10s
     lettuce:
       pool:
