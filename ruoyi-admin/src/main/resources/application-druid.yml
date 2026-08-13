@@ -12,7 +12,7 @@ spring:
                 # 从数据源开关/默认关闭
                 enabled: false
                 url: 
-                username: 
+                ${DB_URL:change-me}
                 ${DB_USERNAME:change-me} 
             # 初始连接数
             initialSize: 5
