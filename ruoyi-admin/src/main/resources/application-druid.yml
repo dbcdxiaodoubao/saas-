@@ -13,8 +13,8 @@ spring:
                 enabled: false
                 url: 
                 username: 
-                password: 
-            change-me
+                ${DB_USERNAME:change-me} 
+            # 初始连接数
             initialSize: 5
             # 最小连接池数量
             minIdle: 10
@@ -45,8 +45,8 @@ spring:
                 allow:
                 url-pattern: /druid/*
                 # 控制台管理用户名和密码
-                login-username: ruoyi
-                login-password: change-me
+                login-username: ${DRUID_USERNAME:change-me}
+                login-password: ${DRUID_PASSWORD:change-me}
             filter:
                 stat:
                     enabled: true
