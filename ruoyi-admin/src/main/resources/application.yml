@@ -41,8 +41,8 @@ logging:
 
 # 用户配置
 user:
-  password:
-    ${REDIS_PASSWORD:change-me}
+  password: ${REDIS_PASSWORD:change-me}
+    # 密码最大错误次数
     maxRetryCount: 5
     # 密码锁定时间（默认10分钟）
     lockTime: 10
@@ -76,8 +76,8 @@ spring:
     # 数据库索引
     database: 0
     # 密码
-    password:
-    ${REDIS_PASSWORD:change-me}
+    password: ${REDIS_PASSWORD:change-me}
+    # 连接超时时间
     timeout: 10s
     lettuce:
       pool:
@@ -94,7 +94,7 @@ spring:
     # 平台地址，用的是qq邮箱
     host: ${REDIS_HOST:localhost}
     # 改成自己的邮箱
-    username: change-me@example.com
+    username: ${DB_USERNAME:change-me}
     # 发送短信后它给你的授权码 填写到这里
     password: ${REDIS_PASSWORD:change-me}
     # 启用SSL加密连接
